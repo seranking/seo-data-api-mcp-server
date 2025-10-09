@@ -47,7 +47,7 @@ git pull origin main
 
 ### Connect to Claude Desktop
 
-Claude Desktop reads its configuration from claude_desktop_config.json.
+Claude Desktop reads its configuration from `claude_desktop_config.json`.
 
 - Click on the Claude menu and select **Settings...**.
 - In the Settings window, navigate to the **Developer** tab in the left sidebar.
@@ -77,7 +77,6 @@ Example of **Claude Desktop** configuration for MCP server
         "SERANKING_API_TOKEN",
         "se-ranking/seo-data-api-mcp-server"
       ],
-      "cwd": "/absolute-path/to/your/seo-data-api-mcp-server",
       "env": {
         "SERANKING_API_BASE": "https://api.seranking.com",
         "SERANKING_API_TOKEN": "<your-api-token-here>"
@@ -86,7 +85,7 @@ Example of **Claude Desktop** configuration for MCP server
   }
 }
 ```
-Most likely in the configuration template you only need to change the **SERANKING_API_TOKEN** and **"cwd"** path to the repository.
+Most likely in the configuration template you only need to change the **SERANKING_API_TOKEN**.
 
 After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
 
@@ -113,9 +112,9 @@ This confirms that your AI assistant has successfully started the container, and
 
 If `docker ps` shows no running containers related to the MCP server, it usually points to a configuration issue:
 
-- Incorrect/invalid JSON: Double-check the <b>claude_desktop_config.json</b> or <b>settings.json</b> for any syntax errors like missing commas or brackets. You can validate the JSON here: https://jsonlint.com/.
+- Incorrect/invalid JSON: Double-check the **claude_desktop_config.json** or **settings.json** for any syntax errors like missing commas or brackets. You can validate the JSON here: https://jsonlint.com/.
 
-- Incorrect Path: Ensure the <b>"cwd"</b> path in your JSON configuration is the correct, full absolute path to the <b>seo-data-api-mcp-server</b> directory.
+- Incorrect image name: Double-check the **claude_desktop_config.json** or **settings.json** for the correct image name `se-ranking/seo-data-api-mcp-server`
 
 #### Docker image running, but MCP server is not visible in Claude Desktop
 
