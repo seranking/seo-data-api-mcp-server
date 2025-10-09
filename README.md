@@ -176,3 +176,5 @@ This will show you the big JSON output, where particularly important is the "Con
 }
 ```
 Which shows you if you have the correct environment variables set.
+
+In case you have any questions or need help, please contact us at [api@seranking.com](mailto:api@seranking.com)
