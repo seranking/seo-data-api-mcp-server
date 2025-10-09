@@ -5,7 +5,7 @@
 ### Prerequisites
    Before you begin, please ensure you have the following software and accounts ready:
 
-- **SE Ranking Account**: You will need an active SE Ranking account to generate an API token. If you don’t have one, you can [sign up here](https://seranking.com/sign-up.html).
+- **SE Ranking Account**: You will need an active SE Ranking account to generate an API token. If you don’t have one, you can [sign up here](https://online.seranking.com/admin.api.dashboard.html).
 - **Docker**: A platform for developing, shipping, and running applications in containers. If you don’t have it, you can [download it from the official Docker website](https://www.docker.com/get-started).
 - **Docker Compose Plugin**: The Docker Compose plugin is a Docker CLI plugin that provides a command-line interface (CLI) for Docker Compose. To build the Docker image, you need to have [Docker Compose installed](https://docs.docker.com/compose/install/).
 - **Git**: A free and open-source distributed version control system. You can download it from the official Git website.
@@ -23,7 +23,7 @@ git clone https://github.com/seranking/seo-data-api-mcp-server.git
 cd seo-data-api-mcp-server
 ```
 
-### Option 1: Build the Docker Image (recommended)
+### Build the Docker Image
 Make sure you're in the `seo-data-api-mcp-server` repository directory, and run:
 ```bash
 docker compose build
@@ -34,17 +34,6 @@ Note: don't worry about the warnings, this is normal when building the image:
 ```
 WARN[0000] The "SERANKING_API_TOKEN" variable is not set. Defaulting to a blank string. 
 WARN[0000] The "SERANKING_API_BASE" variable is not set. Defaulting to a blank string.
-```
-
-### Option 2: Installation as an NPM package
-
-Check weather you have `Node.js 18+` and `npm 8+` installed, and
-make sure you're in the `seo-data-api-mcp-server` repository directory, and then run:
-```bash
-npm install
-npm run build
-# Check that the build starts successfully and press Ctrl+C to stop it.
-npm start
 ```
 
 #### How to Update SEO-MCP
@@ -71,23 +60,7 @@ The file is located at:
 
 Example of **Claude Desktop** configuration for MCP server
 
-**Node configuration template**:
-```json
-{
-  "mcpServers": {
-    "se-ranking/seo-data-api-mcp-server": {
-      "command": "node",
-      "args": ["/absolute-path/to/seo-data-api-mcp-server/dist/index.js"],
-      "env": {
-        "SERANKING_API_BASE": "https://api.seranking.com",
-        "SERANKING_API_TOKEN": "<your-api-token-here>"
-      }
-    }
-  }
-}
-```
-
-<b>Docker configuration template</b>:
+<b>JSON Configuration Template</b>:
 
 ```json
 {
