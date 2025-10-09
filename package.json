@@ -1,0 +1,24 @@
+{
+  "name": "ser-data-api-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server based on TypeScript SDK",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20",
+    "vitest": "^2.0.5",
+    "ts-node": "^10.9.2"
+  }
+}
