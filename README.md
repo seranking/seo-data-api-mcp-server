@@ -65,7 +65,7 @@ Claude Desktop reads its configuration from claude_desktop_config.json.
 - Click the **Edit Config** button to open the configuration file. This action creates a new configuration file if one doesn’t exist or opens your existing configuration.
 
 The file is located at:
-- macOS: `~/Library/Application\ Support/Claude/claude_desktop_config.json`
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%AppData%\Claude\claude_desktop_config.json`
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
