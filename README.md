@@ -79,6 +79,7 @@ Example of **Claude Desktop** configuration for MCP server
       "command": "node",
       "args": ["/absolute-path/to/seo-data-api-mcp-server/dist/index.js"],
       "env": {
+        "SERANKING_API_BASE": "https://api.seranking.com",
         "SERANKING_API_TOKEN": "<your-api-token-here>"
       }
     }
