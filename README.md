@@ -1,28 +1,31 @@
 # MCP Server
 
-
 ## Installation
 
-### Getting a copy of the project
+### Prerequisites
+   Before you begin, please ensure you have the following software and accounts ready:
 
-Save a copy of the project to a local directory, for example /path/to/seo-data-api-mcp-server.
+- **SE Ranking Account**: You will need an active SE Ranking account to generate an API token. If you don’t have one, you can sign up here.
+- **Docker**: A platform for developing, shipping, and running applications in containers. If you don’t have it, you can [download it from the official Docker website](https://www.docker.com/get-started).
+- **Docker Compose Plugin**: The Docker Compose plugin is a Docker CLI plugin that provides a command-line interface (CLI) for Docker Compose. To build the Docker image, you need to have [Docker Compose installed](https://docs.docker.com/compose/install/).
+- **Git**: A free and open-source distributed version control system. You can download it from the official Git website.
+- **AI Assistant**: You will need either the Claude Desktop App or the Gemini CLI installed and configured on your machine.
 
-### Set up environment variables
-
-The SE Ranking Data API access key is set via an environment variable, which can be done globally or through the Claude Desktop configuration.
-
-```bash
-export SERANKING_API_TOKEN=your-token-here
+### Installation Steps
+Follow these steps to install the SEO-MCP server on your local machine.
+- Open your terminal (or Command Prompt/PowerShell on Windows).
+- Clone the project repository from GitHub. This command downloads the necessary files to your machine.
+```shell 
+git clone https://github.com/seranking/seo-data-api-mcp-server.git
+```
+- Navigate into the new directory in your terminal: 
+```shell
+cd seo-data-api-mcp-server
 ```
 
 ### Option 1: Build the Docker Image (recommended)
-
-#### Prerequisites
-
-- Docker, Docker Compose
-
+Make sure you're in the `seo-data-api-mcp-server` repository directory, and run:
 ```bash
-cd /path/to/seo-data-api-mcp-server
 docker compose build
 # Check that the image is built and named `se-ranking/seo-data-api-mcp-server`:
 docker image ls
@@ -35,34 +38,40 @@ WARN[0000] The "SERANKING_API_BASE" variable is not set. Defaulting to a blank s
 
 ### Option 2: Installation as an NPM package
 
-#### Prerequisites
-
-- Node.js 18+
-
+Check weather you have `Node.js 18+` and `npm 8+` installed, and
+make sure you're in the `seo-data-api-mcp-server` repository directory, and then run:
 ```bash
-cd /path/to/seo-data-api-mcp-server
 npm install
 npm run build
 # Check that the build starts successfully and press Ctrl+C to stop it.
 npm start
 ```
 
+#### How to Update SEO-MCP
+To ensure you have the latest features and improvements, you should update the tool periodically.
+- Navigate to your `seo-data-api-mcp-server` directory in the terminal. 
+- Pull the latest changes from the GitHub repository.
+
+```shell
+git pull origin main
+```
+
 ### Connect to Claude Desktop
 
 Claude Desktop reads its configuration from claude_desktop_config.json.
 
-- Click on the Claude menu and select “Settings…”.
-- In the Settings window, navigate to the “Developer” tab in the left sidebar.
-- Click the “Edit Config” button to open the configuration file. This action creates a new configuration file if one doesn’t exist or opens your existing configuration.
+- Click on the Claude menu and select **Settings...**.
+- In the Settings window, navigate to the **Developer** tab in the left sidebar.
+- Click the **Edit Config** button to open the configuration file. This action creates a new configuration file if one doesn’t exist or opens your existing configuration.
 
 The file is located at:
-- macOS: ~/Library/Application\ Support/Claude/claude_desktop_config.json
-- Windows: %AppData%\Claude\claude_desktop_config.json
-- Linux: ~/.config/Claude/claude_desktop_config.json
+- macOS: `~/Library/Application\ Support/Claude/claude_desktop_config.json`
+- Windows: `%AppData%\Claude\claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
 
-Example of <b>Claude Desktop</b> configuration for MCP server
+Example of **Claude Desktop** configuration for MCP server
 
-<b>Node configuration template</b>:
+**Node configuration template**:
 ```json
 {
   "mcpServers": {
@@ -103,12 +112,9 @@ Example of <b>Claude Desktop</b> configuration for MCP server
   }
 }
 ```
-Most likely in the configuration template you only need to change the <b>SERANKING_API_TOKEN</b> and <b>"cwd"</b> path to the repository.
+Most likely in the configuration template you only need to change the **SERANKING_API_TOKEN** and **"cwd"** path to the repository.
 
-After saving <b>claude_desktop_config.json</b>, restart Claude Desktop. You should see the server under MCP Servers/Tools.
-
-### SE Ranking API
-For the reference, see https://seranking.com/api/mcp/
+After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
 
 ### Troubleshooting
 
@@ -176,5 +182,8 @@ This will show you the big JSON output, where particularly important is the "Con
 }
 ```
 Which shows you if you have the correct environment variables set.
+
+### Support
+SE Ranking API documentation: https://seranking.com/api/mcp/.
 
 In case you have any questions or need help, please contact us at [api@seranking.com](mailto:api@seranking.com)
