@@ -85,7 +85,7 @@ Example of **Claude Desktop** configuration for MCP server
   }
 }
 ```
-Most likely in the configuration template you only need to change the **SERANKING_API_TOKEN**.
+Most likely in the configuration template you only need to change the **SERANKING_API_TOKEN**,  get yours from https://online.seranking.com/admin.api.dashboard.html
 
 After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
 
@@ -94,7 +94,7 @@ After saving **claude_desktop_config.json**, restart Claude Desktop. You should 
 #### Docker image problems
 If you’re having trouble getting the MCP server to connect, here are a few steps to diagnose the issue.
 
-Verifying if the Docker container is running when you run your AI Assistant (Claude or Gemini). If you start a chat with an AI, and your MCP Server is set up properly via JSON config, it should automatically start the Docker container.
+Verifying if the Docker container is running when you run your AI Assistant ([Claude](https://www.anthropic.com/claude) or [Gemini](https://github.com/google-gemini/gemini-cli)). If you start a chat with an AI, and your MCP Server is set up properly via JSON config, it should automatically start the Docker container.
 
 To check if it’s running, open your terminal and run:
 
