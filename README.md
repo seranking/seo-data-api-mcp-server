@@ -9,7 +9,7 @@
 - **Docker**: A platform for developing, shipping, and running applications in containers. If you don’t have it, you can [download it from the official Docker website](https://www.docker.com/get-started).
 - **Docker Compose Plugin**: The Docker Compose plugin is a Docker CLI plugin that provides a command-line interface (CLI) for Docker Compose. To build the Docker image, you need to have [Docker Compose installed](https://docs.docker.com/compose/install/).
 - **Git**: A free and open-source distributed version control system. You can download it from the official Git website.
-- **AI Assistant**: You will need either the Claude Desktop App or the Gemini CLI installed and configured on your machine.
+- **AI Assistant**: You will need either the [Claude Desktop App](https://www.anthropic.com/claude) or the [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed and configured on your machine.
 
 ### Installation Steps
 Follow these steps to install the SEO-MCP server on your local machine.
@@ -94,7 +94,7 @@ After saving **claude_desktop_config.json**, restart Claude Desktop. You should 
 #### Docker image problems
 If you’re having trouble getting the MCP server to connect, here are a few steps to diagnose the issue.
 
-Verifying if the Docker container is running when you run your AI Assistant ([Claude](https://www.anthropic.com/claude) or [Gemini](https://github.com/google-gemini/gemini-cli)). If you start a chat with an AI, and your MCP Server is set up properly via JSON config, it should automatically start the Docker container.
+Verifying if the Docker container is running when you run your AI Assistant (Claude or Gemini). If you start a chat with an AI, and your MCP Server is set up properly via JSON config, it should automatically start the Docker container.
 
 To check if it’s running, open your terminal and run:
 
