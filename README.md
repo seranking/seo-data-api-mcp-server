@@ -145,6 +145,42 @@ To start the server use the command:
 ```shell
 npm run start-http
 ```
+Then your HTTP server should be running at: http://0.0.0.0:5000/mcp.
+
+In case you'd like to modify the `HOST` and `PORT`, you can do so by creating a `.env` file in the root directory of the project with the settings you want to override, for example:
+```shell
+HOST=127.0.0.1
+PORT=5555
+```
+
+## Usage Example: Finding Keyword Opportunities
+With the configuration complete, you can now use natural language prompts to interact with your SE Ranking data. Here is an example prompt to identify low-hanging keyword opportunities for a domain.
+
+Copy and paste the following into your configured AI assistant:
+
+```
+Use the seo-mcp to identify the Keywords my domain is overlooking and find low-hanging fruit opportunities.
+1. Analyze my domain's keyword performance:
+   - Find keywords my domain has lost (not ranking) using the tool for domainKeywords with pos_change=lost.
+   - Find keywords where my domain's position has gone down using the tool for domainKeywords with pos_change=down.
+2. Conduct a competitive analysis:
+   - Identify my top 2 competitors by finding all competitors with the tool for domainCompetitors and ordering them by common_keywords DESC.
+   - Find 30 keywords that these competitors are ranking for but my domain is not. Use the domainKeywordsComparison tool with diff=1, order_field=volume, and order_type=DESC.
+3. Identify new keyword opportunities:
+   - For 10 of the competitor keywords found in the previous step, use the tools for relatedKeywords and similarKeywords to find the top 5 related and similar keywords for each, ordered by volume DESC.
+4. Synthesize and Report:
+   - Create a final report of the findings. In the report, highlight potential low-hanging fruit from the new keyword opportunities by analyzing their CPC and keyword difficulty.
+Domain to review: seranking.com
+Market: us
+```
+
+### What This Prompt Does
+This prompt instructs the model to perform a comprehensive competitive analysis by:
+
+- **Finding Lost & Declining Keywords**: It first identifies keywords for seranking.com that have either been lost from the rankings or have dropped in position.
+- **Identifying Top Competitors**: It finds all organic competitors and sorts them to identify the top two based on the number of shared keywords.
+- **Uncovering Competitor-Ranked Keywords**: It compares seranking.com against its top competitors to find 30 high-volume keywords that they rank for, but seranking.com does not.
+- **Generating a Final Report**: Finally, it synthesizes all of this information into a concise report, highlighting the most promising opportunities for growth.
 
 To send the sample test request, which will verify if your server runs properly and has the correct setup,
 **open another terminal window**, and run the following command **with your SE Ranking API token provided** as an argument: 
