@@ -10,6 +10,10 @@ function extractTokenFromHeader(authorization?: string) {
     return m?.[1]?.trim();
 }
 
+function isAuthenticationRequired(req: express.Request) {
+    return req.body.method !== "tools/list";
+}
+
 const app = express();
 
 app.use(express.json());
@@ -26,7 +30,7 @@ app.all("/mcp", async (req, res) => {
     const bearer = extractTokenFromHeader(req.headers.authorization);
     const token = bearer || SERANKING_API_TOKEN;
 
-    if (!token) {
+    if (isAuthenticationRequired(req) && !token) {
         console.log("Empty token! MCP request received:", req.method, req.url);
         return res.status(401).json({ error: "Missing SERANKING_API_TOKEN (Bearer or env)" });
     }
