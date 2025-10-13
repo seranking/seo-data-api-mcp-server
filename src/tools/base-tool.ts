@@ -1,5 +1,5 @@
-import type {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
-import {SERANKING_API_BASE} from "./../constants.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { SERANKING_API_BASE } from "./../constants.js";
 
 export type TokenProvider = () => string | undefined;
 

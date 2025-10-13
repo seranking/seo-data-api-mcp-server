@@ -72,13 +72,10 @@ Example of **Claude Desktop** configuration for MCP server
         "-i",
         "--rm",
         "-e",
-        "SERANKING_API_BASE",
-        "-e",
         "SERANKING_API_TOKEN",
         "se-ranking/seo-data-api-mcp-server"
       ],
       "env": {
-        "SERANKING_API_BASE": "https://api.seranking.com",
         "SERANKING_API_TOKEN": "<your-api-token-here>"
       }
     }
@@ -145,7 +142,6 @@ This will show you the big JSON output, where particularly important is the "Con
     "StdinOnce": true,
     "Env": [
       "SERANKING_API_TOKEN=8abcdef-6fdd-a981-3ad5-123456",
-      "SERANKING_API_BASE=https://api.seranking.com",
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
       "NODE_VERSION=20.19.5",
       "YARN_VERSION=1.22.22",
