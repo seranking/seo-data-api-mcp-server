@@ -25,6 +25,7 @@ import { BacklinksIndexedPages } from "./tools/backlinks/backlinks-indexed-pages
 import { BacklinksAuthority } from "./tools/backlinks/backlinks-authority.js";
 import { BacklinksRefdomains } from "./tools/backlinks/backlinks-refdomains.js";
 import {setTokenProvider, TokenProvider} from "./tools/base-tool.js";
+import {SERANKING_API_TOKEN} from "./constants.js";
 
 export class DataApiMcpServer {
     constructor(
@@ -35,7 +36,7 @@ export class DataApiMcpServer {
             setTokenProvider(this.opts.getToken);
         } else {
             // default to env var if not provided
-            setTokenProvider(() => process.env.SERANKING_API_TOKEN);
+            setTokenProvider(() => process.env?.SERANKING_API_TOKEN || SERANKING_API_TOKEN);
         }
     }
 
