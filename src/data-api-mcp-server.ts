@@ -24,10 +24,20 @@ import { BacklinksAnchors } from "./tools/backlinks/backlinks-anchors.js";
 import { BacklinksIndexedPages } from "./tools/backlinks/backlinks-indexed-pages.js";
 import { BacklinksAuthority } from "./tools/backlinks/backlinks-authority.js";
 import { BacklinksRefdomains } from "./tools/backlinks/backlinks-refdomains.js";
+import {setTokenProvider, TokenProvider} from "./tools/base-tool.js";
+import {SERANKING_API_TOKEN} from "./constants.js";
 
 export class DataApiMcpServer {
-    constructor(protected readonly server: McpServer) {
-        this.server = server;
+    constructor(
+        private readonly server: McpServer,
+        private readonly opts?: { getToken?: TokenProvider }
+    ) {
+        if (this.opts?.getToken) {
+            setTokenProvider(this.opts.getToken);
+        } else {
+            // default to env var if not provided
+            setTokenProvider(() => process.env?.SERANKING_API_TOKEN || SERANKING_API_TOKEN);
+        }
     }
 
     init(): void {
