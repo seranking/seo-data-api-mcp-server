@@ -158,6 +158,10 @@ HOST=127.0.0.1
 PORT=5555
 ```
 
+Additionally, when you're running the server in the external environments/tools like [Replit](https://replit.com/) and similar, you can set the `SERANKING_API_TOKEN` environment variable in the configuration panel, and the application will use it when you start the server.
+
+Note: If you change the `SERANKING_API_TOKEN` value when the server is running, you need to restart the server.
+
 ## Usage Example: Finding Keyword Opportunities
 With the configuration complete, you can now use natural language prompts to interact with your SE Ranking data. Here is an example prompt to identify low-hanging keyword opportunities for a domain.
 
