@@ -15,7 +15,7 @@ dist/
 *.ipa
 *.apk
 
-# IDE specific files
+# .env file
 .env
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
