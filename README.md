@@ -32,8 +32,7 @@ docker image ls
 ```
 Note: don't worry about the warnings, this is normal when building the image:
 ```
-WARN[0000] The "SERANKING_API_TOKEN" variable is not set. Defaulting to a blank string. 
-WARN[0000] The "SERANKING_API_BASE" variable is not set. Defaulting to a blank string.
+WARN[0000] The "SERANKING_API_TOKEN" variable is not set. Defaulting to a blank string.
 ```
 
 #### How to Update SEO-MCP
@@ -45,7 +44,7 @@ To ensure you have the latest features and improvements, you should update the t
 git pull origin main
 ```
 
-### Connect to Claude Desktop
+## Connect to Claude Desktop
 
 Claude Desktop reads its configuration from `claude_desktop_config.json`.
 
@@ -82,13 +81,84 @@ Example of **Claude Desktop** configuration for MCP server
   }
 }
 ```
-Most likely in the configuration template you only need to change the **SERANKING_API_TOKEN**,  get yours from https://online.seranking.com/admin.api.dashboard.html
+- You need to change the **SERANKING_API_TOKEN**, get yours from https://online.seranking.com/admin.api.dashboard.html
 
-After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
+- After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
 
-### Troubleshooting
+- To verify the setup, ask Claude: `Do you have access to MCP?` It should respond by listing `seo-data-api-mcp`.
 
-#### Docker image problems
+![Claude Desktop: Verify the MCP access](docs-img/claude-desktop-1.png)
+
+- Your setup is complete! You can now run complex SEO queries using natural language.
+
+![Claude Desktop: List MCP Servers](docs-img/claude-desktop-2.png)
+
+
+## Connect to Gemini CLI
+
+- Open the Gemini CLI settings file, which is typically located at: `~/.gemini/settings.json`
+- Add the following JSON configuration, making sure to **replace the SERANKING_API_TOKEN placeholder value.**
+
+```json
+{
+  "mcpServers": {
+    "seo-data-api-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "SERANKING_API_TOKEN",
+        "se-ranking/seo-data-api-mcp-server"
+      ],
+      "env": {
+        "SERANKING_API_TOKEN": "<your-api-token-here>"
+      }
+    }
+  }
+}
+```
+
+`"SERANKING_API_TOKEN"`: Use your personal API token, which you can generate from the [SE Ranking API Dashboard](https://online.seranking.com/admin.api.dashboard.html).
+
+- Save the configuration file.
+
+- To verify the setup, launch the **Gemini CLI** by running `gemini` in your terminal. Once the interface is active, press `Ctrl+T` to view the available MCP servers. Ensure seo-data-api-mcp is listed.
+
+![Gemini CLI: Configured MCP Servers](docs-img/gemini-1.png)
+
+- Your setup is complete! You can now run complex SEO queries using natural language.
+
+![Gemini CLI: SEO Queries Example](docs-img/gemini-1.png)
+
+
+## Run as HTTP Server (Node)
+In order to run the local Node server, you need to have [Node.js 18+](https://nodejs.org/en/download) version installed on your machine.
+
+To build the project, use the following command:
+```shell
+npm run build
+```
+
+To start the server use the command:
+```shell
+npm run start-http
+```
+
+To send the sample test request, which will verify if your server runs properly and has the correct setup,
+**open another terminal window**, and run the following command **with your SE Ranking API token provided** as an argument: 
+```shell
+./test-http-server-curl-request.sh '<your-api-token-here>'
+```
+For batch MCP Requests testing, you can use this script:
+```shell
+./test-batch-http-server-curl-request.sh '<your-api-token-here>'
+```
+
+## Troubleshooting
+
+### Docker image problems
 If you’re having trouble getting the MCP server to connect, here are a few steps to diagnose the issue.
 
 Verifying if the Docker container is running when you run your AI Assistant (Claude or Gemini). If you start a chat with an AI, and your MCP Server is set up properly via JSON config, it should automatically start the Docker container.
@@ -105,6 +175,7 @@ If it’s working correctly, you will see an output similar to this:
 CONTAINER ID   IMAGE                                    COMMAND                  CREATED          STATUS          PORTS     NAMES
 de4e410ef0fd   se-ranking/seo-data-api-mcp-server       "docker-entrypoint.s…"   9 seconds ago    Up 8 seconds              musing_bhabha
 ```
+
 This confirms that your AI assistant has successfully started the container, and it’s listening for connections.
 
 If `docker ps` shows no running containers related to the MCP server, it usually points to a configuration issue:
@@ -113,7 +184,7 @@ If `docker ps` shows no running containers related to the MCP server, it usually
 
 - Incorrect image name: Double-check the **claude_desktop_config.json** or **settings.json** for the correct image name `se-ranking/seo-data-api-mcp-server`
 
-#### Docker image running, but MCP server is not visible in Claude Desktop
+### Docker image running, but MCP server is not visible in Claude Desktop / Gemini CLI
 
 If the docker image is running, but the MCP server is not visible in Claude Desktop, you can investigate the container by:
 ```
@@ -152,7 +223,7 @@ This will show you the big JSON output, where particularly important is the "Con
 ```
 Which shows you if you have the correct environment variables set.
 
-### Support
-SE Ranking API documentation: https://seranking.com/api/mcp/.
+## Support
+SE Ranking API documentation: https://seranking.com/api/integrations/mcp/.
 
 In case you have any questions or need help, please contact us at [api@seranking.com](mailto:api@seranking.com)
