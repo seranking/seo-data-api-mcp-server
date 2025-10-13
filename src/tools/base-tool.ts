@@ -20,7 +20,9 @@ export abstract class BaseTool {
 
     protected isValidCommaSeparatedList(list: readonly string[], val?: string | null): boolean {
         if (!val) return true;
+
         const allowed = new Set<string>(list as readonly string[]);
+
         return val
             .split(",")
             .map((s) => s.trim())
@@ -46,8 +48,6 @@ export abstract class BaseTool {
         }
 
         try {
-            console.log("before GET request to the API", url);
-
             const res = await fetch(url, {
                 method: "GET",
                 headers: {Authorization: `Token ${token}`},
@@ -87,8 +87,6 @@ export abstract class BaseTool {
         const form = this.getFormDataFromParams(formParams);
 
         try {
-            console.log("before POST request to the API", url, "form params:", formParams);
-
             const res = await fetch(url, {
                 method: "POST",
                 headers: {Authorization: `Token ${token}`},
@@ -124,7 +122,8 @@ export abstract class BaseTool {
 
         try {
             pretty = JSON.stringify(JSON.parse(text), null, 2);
-        } catch {
+        } catch (err: any) {
+            console.error("Failed to pretty-print JSON response:", err?.message || String(err), "Response text:", text);
         }
 
         return {content: [{type: "text" as const, text: pretty}]};
