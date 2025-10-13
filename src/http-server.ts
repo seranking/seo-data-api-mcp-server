@@ -21,6 +21,7 @@ app.use((req, _res, next) => {
 });
 
 
+// catch all requests for MCP requests
 app.all("/mcp", async (req, res) => {
     const bearer = extractTokenFromHeader(req.headers.authorization);
     const token = bearer || SERANKING_API_TOKEN;
