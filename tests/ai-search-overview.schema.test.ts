@@ -1,19 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 import { AiSearchOverview } from '../src/tools/ai-search/ai-search-overview.js';
+import captureSchema from "../src/helpers/captureSchema.js";
 
-// helper to get inputSchema defined inside registerTool
-function getSchema() {
-    let captured: any = null;
-
-    const mockServer = {
-        registerTool: (_name: string, def: any) => { captured = def?.inputSchema; }
-    } as any;
-
-    new AiSearchOverview().registerTool(mockServer);
-
-    return captured as Record<string, any>;
-}
+const getSchema = () => captureSchema(new AiSearchOverview());
 
 describe('AiSearchOverview input schema (from tool definition)', () => {
     it('accepts a valid payload', () => {

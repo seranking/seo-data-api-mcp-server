@@ -2,19 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 import { KeywordsSimilar } from '../src/tools/keywords/keywords-similar.js';
 import { SERP_FEATURE_CODES } from '../src/tools/keywords/constants.js';
+import captureSchema from "../src/helpers/captureSchema.js";
 
-// helper to get inputSchema defined inside registerTool
-function getSchema() {
-  let captured: any = null;
-
-  const mockServer = {
-    registerTool: (_name: string, def: any) => { captured = def?.inputSchema; }
-  } as any;
-
-  new KeywordsSimilar().registerTool(mockServer);
-
-  return captured as Record<string, any>;
-}
+const getSchema = () => captureSchema(new KeywordsSimilar());
 
 describe('KeywordsSimilar input schema (from tool definition)', () => {
   it('accepts a valid payload', () => {
