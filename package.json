@@ -15,7 +15,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "prepare": "husky"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "latest",
@@ -28,16 +29,26 @@
     "@types/node": "^20",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
     "@typescript-eslint/parser": "^8.46.1",
-    "typescript-eslint": "^8.46.1",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.4",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.1",
     "vitest": "^2.0.5"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,mts,cts,js,jsx}": [
+      "eslint --fix"
+    ],
+    "**/*.{ts,tsx,mts,cts,js,jsx,json,md,yml,yaml,css,scss,html}": [
+      "prettier --write"
+    ]
   }
 }
