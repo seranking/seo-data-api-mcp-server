@@ -30,42 +30,36 @@ export const AISearchFilterObject = {
     "filter[volume][from]": z
         .number()
         .int()
-        .positive()
         .min(0)
         .optional()
         .describe("Specifies the minimum volume of searches to be included in the results."),
     "filter[volume][to]": z
         .number()
         .int()
-        .positive()
         .min(1)
         .optional()
         .describe("Specifies the maximum volume of searches to be included in the results."),
     "filter[keyword_count][from]": z
         .number()
         .int()
-        .positive()
         .min(0)
         .optional()
         .describe("Specifies the minimum number of words in prompts."),
     "filter[keyword_count][to]": z
         .number()
         .int()
-        .positive()
         .min(1)
         .optional()
         .describe("Specifies the maximum number of words in prompts."),
     "filter[characters_count][from]": z
         .number()
         .int()
-        .positive()
         .min(0)
         .optional()
         .describe("Specifies the minimum prompt length in characters."),
     "filter[characters_count][to]": z
         .number()
         .int()
-        .positive()
         .min(1)
         .optional()
         .describe("Specifies the maximum prompt length in characters."),

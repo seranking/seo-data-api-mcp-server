@@ -34,11 +34,11 @@ export class AiSearchPromptsByTarget extends BaseTool {
                             "Scope of analysis: base_domain (the root domain only), domain (the domain including all subdomains), or url (an exact URL)."
                         ),
                     sort: z
-                        .enum(["domain", "host", "url"])
+                        .enum(["volume", "type", "snippet_length"])
                         .optional()
-                        .default("host")
+                        .default("volume")
                         .describe(
-                            "Scope of the target: 'domain' (domain + subdomains), 'host' (the host), or 'url' (single URL)."
+                            "The field to sort the results by. Options: volume, type, snippet_length."
                         ),
                     sort_order: z
                         .enum(["desc", "asc"])

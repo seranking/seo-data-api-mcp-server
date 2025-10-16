@@ -31,7 +31,7 @@ export class AiSearchPromptsByBrand extends BaseTool {
                         .enum(["volume", "type", "snippet_length"])
                         .optional()
                         .default("volume")
-                        .describe("Sort field. Default: volume."),
+                        .describe("The field to sort the results by. Options: volume, type, snippet_length."),
                     sort_order: z
                         .enum(["asc", "desc"])
                         .optional()
