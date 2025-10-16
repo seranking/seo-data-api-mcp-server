@@ -44,7 +44,7 @@ describe('AiSearchOverview input schema (from tool definition)', () => {
     it('accepts valid scope values', () => {
         const schema = z.object(getSchema());
 
-        const validScopes = ['domain', 'host', 'url'];
+        const validScopes = ['domain', 'base_domain', 'url'];
 
         validScopes.forEach(scope => {
             const payload = { engine: 'chatgpt', source: 'us', target: 'example.com', scope };

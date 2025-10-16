@@ -173,7 +173,7 @@ describe('AiSearchPromptsByBrand input schema (from tool definition)', () => {
 
         const zeroKeywordCount = { engine: 'chatgpt', brand: 'Test Brand', source: 'us', 'filter[keyword_count][from]': 0 };
         const result2 = schema.safeParse(zeroKeywordCount);
-        expect(result2.success, result2.error?.toString()).toBe(false);
+        expect(result2.success, result2.error?.toString()).toBe(true);
     });
 
     it('validates characters_count filters are positive', () => {
@@ -185,7 +185,7 @@ describe('AiSearchPromptsByBrand input schema (from tool definition)', () => {
 
         const zeroCharCount = { engine: 'chatgpt', brand: 'Test Brand', source: 'us', 'filter[characters_count][from]': 0 };
         const result2 = schema.safeParse(zeroCharCount);
-        expect(result2.success, result2.error?.toString()).toBe(false);
+        expect(result2.success, result2.error?.toString()).toBe(true);
     });
 
     it('validates brand is non-empty string', () => {

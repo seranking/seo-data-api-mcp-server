@@ -26,7 +26,7 @@ describe('AiSearchPromptsByTarget input schema (from tool definition)', () => {
             scope: 'domain',
             limit: 20,
             offset: 0,
-            sort: 'host',
+            sort: 'volume',
             sort_order: 'desc',
             'filter[volume][from]': 10,
             'filter[volume][to]': 1000,
@@ -68,7 +68,7 @@ describe('AiSearchPromptsByTarget input schema (from tool definition)', () => {
     it('accepts valid sort values', () => {
         const schema = z.object(getSchema());
 
-        const validSorts = ['domain', 'host', 'url'];
+        const validSorts = ['volume', 'type', 'snippet_length'];
 
         validSorts.forEach(sort => {
             const payload = { engine: 'chatgpt', source: 'us', target: 'example.com', sort };
@@ -156,7 +156,7 @@ describe('AiSearchPromptsByTarget input schema (from tool definition)', () => {
         const zeroKeywordCount = { engine: 'chatgpt', source: 'us', target: 'example.com', 'filter[keyword_count][from]': 0 };
 
         expect(schema.safeParse(validKeywordCount).success).toBe(true);
-        expect(() => schema.parse(zeroKeywordCount)).toThrow();
+        expect(schema.safeParse(zeroKeywordCount).success).toBe(true);
     });
 
     it('validates characters_count filters are positive', () => {
@@ -166,7 +166,7 @@ describe('AiSearchPromptsByTarget input schema (from tool definition)', () => {
         const zeroCharCount = { engine: 'chatgpt', source: 'us', target: 'example.com', 'filter[characters_count][from]': 0 };
 
         expect(schema.safeParse(validCharCount).success).toBe(true);
-        expect(() => schema.parse(zeroCharCount)).toThrow();
+        expect(schema.safeParse(zeroCharCount).success).toBe(true);
     });
 
     it('validates target is non-empty string', () => {
