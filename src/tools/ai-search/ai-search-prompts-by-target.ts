@@ -42,7 +42,7 @@ export class AiSearchPromptsByTarget extends BaseTool {
             .optional()
             .default('desc')
             .describe(
-              "Scope of the target: 'domain' (domain + subdomains), 'host' (the host), or 'url' (single URL).",
+              "Sort order ('asc' for ascending, 'desc' for descending). Default is 'desc'.",
             ),
           limit: z
             .number()
