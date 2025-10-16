@@ -47,19 +47,24 @@ app.all('/mcp', async (req, res) => {
 
   let cleaned = false;
 
-  const cleanup = () => {
+  const cleanup = async () => {
     if (cleaned) return;
     cleaned = true;
     try {
-      transport.close();
+      await transport.close();
     } catch {}
     try {
-      server.close();
+      await server.close();
     } catch {}
   };
 
-  res.on('close', cleanup);
-  res.on('finish', cleanup);
+  res.on('close', () => {
+    void cleanup().catch(console.error);
+  });
+
+  res.on('finish', () => {
+    void cleanup().catch(console.error);
+  });
 
   try {
     await server.connect(transport);
@@ -76,7 +81,7 @@ app.all('/mcp', async (req, res) => {
       JSON.stringify(req.body),
     );
 
-    cleanup();
+    void cleanup().catch(console.error);
 
     if (!res.headersSent) res.status(500).json({ error: 'Internal server error' });
   }

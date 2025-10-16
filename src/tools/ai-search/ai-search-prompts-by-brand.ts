@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
 import { AISearchFilterObject } from '../../validation-partials/json-filters-partials.js';
-import { BaseTool } from './../base-tool.js';
+import { BaseTool } from "../base-tool.js";
 
 export class AiSearchPromptsByBrand extends BaseTool {
   registerTool(server: McpServer): void {

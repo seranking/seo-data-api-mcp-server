@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { BaseTool } from './../base-tool.js';
+import { BaseTool } from '../base-tool.js';
 
 export class KeywordsExport extends BaseTool {
   readonly COLS = ['keyword', 'volume', 'cpc', 'competition', 'difficulty', 'history_trend'];
@@ -50,7 +50,13 @@ export class KeywordsExport extends BaseTool {
             ),
         },
       },
-      async (params: any) => {
+      async (params: {
+        source: string;
+        sort: 'volume' | 'cpc' | 'competition' | 'difficulty' | 'history_trend';
+        keywords: string[];
+        sort_order: 'asc' | 'desc';
+        cols: string;
+      }) => {
         const { source, keywords, sort, sort_order, cols } = params;
         const form: Record<string, unknown> = {};
         // API expects repeated form fields named keywords[]

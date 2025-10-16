@@ -10,6 +10,7 @@ export default function captureSchema(tool: BaseTool) {
     },
   } as any;
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   tool.registerTool(mockServer);
 
   return captured as Record<string, any>;

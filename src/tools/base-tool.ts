@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
-import { SERANKING_API_BASE } from './../constants.js';
+import { SERANKING_API_BASE } from "../constants.js";
 
 export type TokenProvider = () => string | undefined;
 
@@ -22,7 +22,7 @@ export abstract class BaseTool {
   protected isValidCommaSeparatedList(list: readonly string[], val?: string | null): boolean {
     if (!val) return true;
 
-    const allowed = new Set<string>(list as readonly string[]);
+    const allowed = new Set<string>(list);
 
     return val
       .split(',')

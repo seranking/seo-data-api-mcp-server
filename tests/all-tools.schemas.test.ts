@@ -13,11 +13,13 @@ describe('All tools expose valid input schemas and handlers', () => {
       });
 
       it('inputSchema compiles to Zod object', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const schema = buildZodObject(tool.def?.inputSchema);
         expect(schema).toBeTruthy();
       });
 
       it('inputSchema enforces required fields if any', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const schema = buildZodObject(tool.def?.inputSchema);
         const result = schema.safeParse({});
         // If parsing an empty object succeeds, we just accept that the schema has no required fields.
