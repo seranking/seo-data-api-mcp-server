@@ -31,7 +31,7 @@ export class AiSearchPromptsByTarget extends BaseTool {
                         .enum(["domain", "base_domain", "url"])
                         .default("base_domain")
                         .describe(
-                            "Scope of the target: 'domain' (domain + subdomains), 'host' (the host), or 'url' (single URL)."
+                            "Scope of analysis: base_domain (the root domain only), domain (the domain including all subdomains), or url (an exact URL)."
                         ),
                     sort: z
                         .enum(["domain", "host", "url"])

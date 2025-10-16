@@ -24,10 +24,10 @@ export class AiSearchOverview extends BaseTool {
                             "The target to analyze for LLM performance. Can be a root domain, subdomain, or a specific URL."
                         ),
                     scope: z
-                        .enum(["domain", "host", "url"])
+                        .enum(["domain", "base_domain", "url"])
                         .default("domain")
                         .describe(
-                            "Scope of analysis: domain (all subpages and subdomains), host (specific subdomain), or url (exact URL)."
+                            "Scope of analysis: base_domain (the root domain only), domain (the domain including all subdomains), or url (an exact URL)."
                         ),
                     source: z
                         .string()
