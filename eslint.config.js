@@ -6,12 +6,11 @@ import unusedImports from 'eslint-plugin-unused-imports';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
-  // Zamiast .eslintignore:
   {
     ignores: ['dist/', 'build/', 'coverage/', 'node_modules/', '.idea/'],
   },
 
-  // Główny zestaw reguł (type-aware przez "project")
+  // Main ruleset (type-aware with "project")
   ...tseslint.config({
     files: ['**/*.{ts,tsx,mts,cts}'],
     languageOptions: {
@@ -22,7 +21,7 @@ export default [
         project: ['./tsconfig.eslint.json'],
         tsconfigRootDir: import.meta.dirname,
       },
-      // podpowiedzi globali dla vitest (opcjonalnie, jeśli używasz)
+      // vitest global hints
       globals: {
         vi: 'readonly',
         describe: 'readonly',
@@ -38,7 +37,7 @@ export default [
     settings: {
       'import/resolver': {
         typescript: {
-          // respektuje baseUrl/paths z tsconfig
+          // respects baseUrl/paths from tsconfig
           project: ['./tsconfig.eslint.json'],
           alwaysTryTypes: true,
         },
@@ -50,28 +49,29 @@ export default [
       'unused-imports': unusedImports,
     },
     rules: {
-      // nieużywane importy/zmienne
+      // unused imports/vars
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
         { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
       ],
 
-      // porządek importów
+      // imports sort
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
       'import/order': 'off',
 
-      // higiena
+      // higiene
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'warn',
+      'arrow-body-style': ['warn', 'as-needed'],
 
-      // TS – rozsądne luzowanie
+      // TS
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
     },
   }),
 
-  // Wyłącza konflikty z Prettierem
+  // Turns off Prettier conflicts
   eslintConfigPrettier,
 ];
