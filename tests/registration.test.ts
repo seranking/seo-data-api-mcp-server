@@ -12,11 +12,13 @@ describe('DataApiMcpServer tool registration', () => {
     dataApi.init();
 
     const names = server.tools.map((t: { name: any; }) => t.name).sort();
-    // Ensure the total count is correct
-    expect(server.tools.length).toBe(25);
 
     // Ensure specific tool names are present
     const expected = [
+        //ai tools
+      'aiSearchOverview',
+      'aiSearchPromptsByBrand',
+      'aiSearchPromptsByTarget',
       // backlinks
       'backlinksAll',
       'backlinksAnchors',

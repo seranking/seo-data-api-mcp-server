@@ -1,4 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { AiSearchOverview} from "./tools/ai-search/ai-search-overview.js";
+import { AiSearchPromptsByTarget } from "./tools/ai-search/ai-search-prompts-by-target.js";
 import { DomainAdsByDomain } from "./tools/domain/domain-ads-by-domain.js";
 import { DomainAdsByKeyword } from "./tools/domain/domain-ads-by-keyword.js";
 import { DomainAioDiscoverBrand } from "./tools/domain/domain-aio-discover-brand.js";
@@ -26,6 +28,7 @@ import { BacklinksAuthority } from "./tools/backlinks/backlinks-authority.js";
 import { BacklinksRefdomains } from "./tools/backlinks/backlinks-refdomains.js";
 import {setTokenProvider, TokenProvider} from "./tools/base-tool.js";
 import {SERANKING_API_TOKEN} from "./constants.js";
+import {AiSearchPromptsByBrand} from "./tools/ai-search/ai-search-prompts-by-brand.js";
 
 export class DataApiMcpServer {
     constructor(
@@ -41,6 +44,10 @@ export class DataApiMcpServer {
     }
 
     init(): void {
+        (new AiSearchOverview()).registerTool(this.server);
+        (new AiSearchPromptsByBrand()).registerTool(this.server);
+        (new AiSearchPromptsByTarget()).registerTool(this.server);
+
         (new BacklinksAll()).registerTool(this.server);
         (new BacklinksAnchors()).registerTool(this.server);
         (new BacklinksAuthority()).registerTool(this.server);
