@@ -1,6 +1,7 @@
-import {describe, expect, it} from 'vitest';
-import {buildZodObject}       from "../src/helpers/buildZodObject.js";
-import {getAllTools}          from "../src/helpers/getAllTools.js";
+import { describe, expect, it } from 'vitest';
+
+import { buildZodObject } from '../src/helpers/buildZodObject.js';
+import { getAllTools } from '../src/helpers/getAllTools.js';
 
 describe('All tools expose valid input schemas and handlers', () => {
   const tools = getAllTools();

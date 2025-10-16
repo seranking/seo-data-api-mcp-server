@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { DataApiMcpServer } from '../src/data-api-mcp-server.js';
-import { McpServerMock } from "../src/classes/McpServerMock.js";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { describe, expect, it } from 'vitest';
 
+import { McpServerMock } from '../src/classes/McpServerMock.js';
+import { DataApiMcpServer } from '../src/data-api-mcp-server.js';
 
 describe('DataApiMcpServer tool registration', () => {
   it('registers all expected tools with the MCP server', () => {
@@ -11,11 +11,11 @@ describe('DataApiMcpServer tool registration', () => {
 
     dataApi.init();
 
-    const names = server.tools.map((t: { name: any; }) => t.name).sort();
+    const names = server.tools.map((t: { name: any }) => t.name).sort();
 
     // Ensure specific tool names are present
     const expected = [
-        //ai tools
+      //ai tools
       'aiSearchOverview',
       'aiSearchPromptsByBrand',
       'aiSearchPromptsByTarget',
@@ -41,7 +41,7 @@ describe('DataApiMcpServer tool registration', () => {
       'domainAioDiscoverBrand',
       'domainAioKeywordsByTarget',
       'domainAioKeywordsByBrand',
-       // keywords
+      // keywords
       'keywordsSimilar',
       'keywordsRelated',
       'keywordsQuestions',

@@ -1,168 +1,174 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { SERANKING_API_BASE } from "./../constants.js";
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+import { SERANKING_API_BASE } from './../constants.js';
 
 export type TokenProvider = () => string | undefined;
 
 let tokenProvider: TokenProvider = () => undefined;
 
 export function setTokenProvider(fn: TokenProvider) {
-    tokenProvider = fn;
+  tokenProvider = fn;
 }
 
 export abstract class BaseTool {
-    private readonly MISSING_TOKEN_MESSAGE = "Missing SERANKING_API_TOKEN.";
+  private readonly MISSING_TOKEN_MESSAGE = 'Missing SERANKING_API_TOKEN.';
 
-    abstract registerTool(server: McpServer): void;
+  abstract registerTool(server: McpServer): void;
 
-    protected getToken(): string | undefined {
-        return tokenProvider?.();
+  protected getToken(): string | undefined {
+    return tokenProvider?.();
+  }
+
+  protected isValidCommaSeparatedList(list: readonly string[], val?: string | null): boolean {
+    if (!val) return true;
+
+    const allowed = new Set<string>(list as readonly string[]);
+
+    return val
+      .split(',')
+      .map((s) => s.trim())
+      .every((t) => allowed.has(t));
+  }
+
+  protected async makeGetRequest(path: string, params: Record<string, unknown>) {
+    const query = this.getUrlSearchParamsFromParams(params);
+
+    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+
+    const token = this.getToken();
+
+    if (!token) {
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: this.MISSING_TOKEN_MESSAGE,
+          },
+        ],
+      };
     }
 
-    protected isValidCommaSeparatedList(list: readonly string[], val?: string | null): boolean {
-        if (!val) return true;
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { Authorization: `Token ${token}` },
+      });
 
-        const allowed = new Set<string>(list as readonly string[]);
+      return await this.getJSONResponse(res, url);
+    } catch (err: any) {
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: `Request failed: ${err?.message || String(err)}\nURL: ${url}`,
+          },
+        ],
+      };
+    }
+  }
 
-        return val
-            .split(",")
-            .map((s) => s.trim())
-            .every((t) => allowed.has(t));
+  protected async makePostRequest(
+    path: string,
+    queryParams: Record<string, unknown>,
+    formParams: Record<string, unknown>,
+  ) {
+    const query = this.getUrlSearchParamsFromParams(queryParams);
+
+    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+
+    const token = this.getToken();
+
+    if (!token) {
+      return {
+        content: [{ type: 'text' as const, text: this.MISSING_TOKEN_MESSAGE }],
+      };
     }
 
-    protected async makeGetRequest(path: string, params: Record<string, unknown>) {
-        const query = this.getUrlSearchParamsFromParams(params);
+    const form = this.getFormDataFromParams(formParams);
 
-        const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { Authorization: `Token ${token}` },
+        body: form,
+      });
 
-        const token = this.getToken();
+      return await this.getJSONResponse(res, url);
+    } catch (err: any) {
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: `Request failed: ${err?.message || String(err)}\nURL: ${url}`,
+          },
+        ],
+      };
+    }
+  }
 
-        if (!token) {
-            return {
-                content: [
-                    {
-                        type: "text" as const,
-                        text: this.MISSING_TOKEN_MESSAGE,
-                    },
-                ],
-            };
-        }
+  private async getJSONResponse(res: Response, url: string) {
+    const text = await res.text();
 
-        try {
-            const res = await fetch(url, {
-                method: "GET",
-                headers: {Authorization: `Token ${token}`},
-            });
-
-            return await this.getJSONResponse(res, url);
-
-        } catch (err: any) {
-            return {
-                content: [{
-                    type: "text" as const,
-                    text: `Request failed: ${err?.message || String(err)}\nURL: ${url}`
-                }]
-            };
-        }
+    if (!res.ok) {
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: `API error (${res.status} ${res.statusText}). URL: ${url}\nBody: ${text}`,
+          },
+        ],
+      };
     }
 
-    protected async makePostRequest(
-        path: string,
-        queryParams: Record<string, unknown>,
-        formParams: Record<string, unknown>
-    ) {
-        const query = this.getUrlSearchParamsFromParams(queryParams);
+    let pretty = text;
 
-        const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
-
-        const token = this.getToken();
-
-        if (!token) {
-            return {
-                content: [
-                    {type: "text" as const, text: this.MISSING_TOKEN_MESSAGE},
-                ],
-            };
-        }
-
-        const form = this.getFormDataFromParams(formParams);
-
-        try {
-            const res = await fetch(url, {
-                method: "POST",
-                headers: {Authorization: `Token ${token}`},
-                body: form,
-            });
-
-            return await this.getJSONResponse(res, url);
-        } catch (err: any) {
-            return {
-                content: [{
-                    type: "text" as const,
-                    text: `Request failed: ${err?.message || String(err)}\nURL: ${url}`
-                }]
-            };
-        }
+    try {
+      pretty = JSON.stringify(JSON.parse(text), null, 2);
+    } catch (err: any) {
+      console.error(
+        'Failed to pretty-print JSON response:',
+        err?.message || String(err),
+        'Response text:',
+        text,
+      );
     }
 
-    private async getJSONResponse(res: Response, url: string) {
-        const text = await res.text();
+    return { content: [{ type: 'text' as const, text: pretty }] };
+  }
 
-        if (!res.ok) {
-            return {
-                content: [
-                    {
-                        type: "text" as const,
-                        text: `API error (${res.status} ${res.statusText}). URL: ${url}\nBody: ${text}`
-                    },
-                ],
-            };
+  private getUrlSearchParamsFromParams(queryParams: Record<string, unknown>) {
+    const query = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(queryParams || {})) {
+      if (value === undefined || value === null) continue;
+
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          if (v !== undefined && v !== null) query.append(key, String(v));
         }
-
-        let pretty = text;
-
-        try {
-            pretty = JSON.stringify(JSON.parse(text), null, 2);
-        } catch (err: any) {
-            console.error("Failed to pretty-print JSON response:", err?.message || String(err), "Response text:", text);
-        }
-
-        return {content: [{type: "text" as const, text: pretty}]};
+      } else {
+        query.append(key, String(value));
+      }
     }
 
+    return query;
+  }
 
-    private getUrlSearchParamsFromParams(queryParams: Record<string, unknown>) {
-        const query = new URLSearchParams();
+  private getFormDataFromParams(formParams: Record<string, unknown>) {
+    const form = new FormData();
 
-        for (const [key, value] of Object.entries(queryParams || {})) {
-            if (value === undefined || value === null) continue;
+    for (const [key, value] of Object.entries(formParams || {})) {
+      if (value === undefined || value === null) continue;
 
-            if (Array.isArray(value)) {
-                for (const v of value) {
-                    if (v !== undefined && v !== null) query.append(key, String(v));
-                }
-            } else {
-                query.append(key, String(value));
-            }
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          if (v !== undefined && v !== null) form.append(key, String(v));
         }
-
-        return query;
+      } else {
+        form.append(key, String(value));
+      }
     }
 
-    private getFormDataFromParams(formParams: Record<string, unknown>) {
-        const form = new FormData();
-
-        for (const [key, value] of Object.entries(formParams || {})) {
-            if (value === undefined || value === null) continue;
-
-            if (Array.isArray(value)) {
-                for (const v of value) {
-                    if (v !== undefined && v !== null) form.append(key, String(v));
-                }
-            } else {
-                form.append(key, String(value));
-            }
-        }
-
-        return form;
-    }
+    return form;
+  }
 }
