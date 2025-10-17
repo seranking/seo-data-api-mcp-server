@@ -147,7 +147,7 @@ Example of **Claude Desktop** configuration for MCP server
 
 ## Run as HTTP Server (Node)
 
-In order to run the local Node server, you need to have [Node.js 18+](https://nodejs.org/en/download) version installed on your machine.
+In order to run the local Node server, you need to have [Node.js 20+](https://nodejs.org/en/download) version installed on your machine.
 
 Run the following commands in your terminal:
 
