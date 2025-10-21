@@ -8,6 +8,8 @@ dist/
 
 # Other files and folders
 .settings/
+.idea/
+.DS_Store
 
 # Executables
 *.swf
