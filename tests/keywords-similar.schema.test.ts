@@ -1,20 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { KeywordsSimilar } from '../src/tools/keywords/keywords-similar.js';
+
+import captureSchema from '../src/helpers/captureSchema.js';
 import { SERP_FEATURE_CODES } from '../src/tools/keywords/constants.js';
+import { KeywordsSimilar } from '../src/tools/keywords/keywords-similar.js';
 
-// helper to get inputSchema defined inside registerTool
-function getSchema() {
-  let captured: any = null;
-
-  const mockServer = {
-    registerTool: (_name: string, def: any) => { captured = def?.inputSchema; }
-  } as any;
-
-  new KeywordsSimilar().registerTool(mockServer);
-
-  return captured as Record<string, any>;
-}
+const getSchema = () => captureSchema(new KeywordsSimilar());
 
 describe('KeywordsSimilar input schema (from tool definition)', () => {
   it('accepts a valid payload', () => {
@@ -48,10 +39,18 @@ describe('KeywordsSimilar input schema (from tool definition)', () => {
 
   it('rejects unsupported serp_features token', () => {
     const schema = z.object(getSchema());
-    const bad = { 'filter[serp_features]': 'sge,unknown_feature', source: 'us', keyword: 'x' } as const;
+    const bad = {
+      'filter[serp_features]': 'sge,unknown_feature',
+      source: 'us',
+      keyword: 'x',
+    } as const;
     expect(() => schema.parse(bad)).toThrow();
 
-    const ok = { 'filter[serp_features]': 'sge, images , top_stories', source: 'us', keyword: 'x' } as const;
+    const ok = {
+      'filter[serp_features]': 'sge, images , top_stories',
+      source: 'us',
+      keyword: 'x',
+    } as const;
     expect(schema.parse(ok)).toBeTruthy();
   });
 

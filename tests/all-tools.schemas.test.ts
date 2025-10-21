@@ -1,20 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
-import { DataApiMcpServer } from '../src/data-api-mcp-server.js';
-import { McpServerMock } from "../src/classes/McpServerMock.js";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { describe, expect, it } from 'vitest';
 
-function getAllTools() {
-  const server = new McpServerMock();
-  (new DataApiMcpServer(server as unknown as McpServer)).init();
-  return server.tools;
-}
-
-// Helper: try building a Zod schema from an inputSchema plain object
-function buildZodObject(inputSchema: Record<string, any> | undefined) {
-  const shape = inputSchema ?? {};
-  return z.object(shape as Record<string, z.ZodTypeAny>);
-}
+import { buildZodObject } from '../src/helpers/buildZodObject.js';
+import { getAllTools } from '../src/helpers/getAllTools.js';
 
 describe('All tools expose valid input schemas and handlers', () => {
   const tools = getAllTools();
@@ -26,11 +13,13 @@ describe('All tools expose valid input schemas and handlers', () => {
       });
 
       it('inputSchema compiles to Zod object', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const schema = buildZodObject(tool.def?.inputSchema);
         expect(schema).toBeTruthy();
       });
 
       it('inputSchema enforces required fields if any', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const schema = buildZodObject(tool.def?.inputSchema);
         const result = schema.safeParse({});
         // If parsing an empty object succeeds, we just accept that the schema has no required fields.

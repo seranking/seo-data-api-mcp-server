@@ -1,14 +1,14 @@
-import { MockServerTools } from "../types/MockServerTools.js";
+import { MockServerTools } from '../types/MockServerTools.js';
 
 export class McpServerMock {
-    public tools: Array<MockServerTools> = [];
+  public tools: Array<MockServerTools> = [];
 
-    registerTool(name: string, def: any, handler: any) {
-        this.tools.push({
-            inputSchema: {},
-            name,
-            def,
-            handler
-        });
-    }
+  registerTool(name: string, def: any, handler: any) {
+    this.tools.push({
+      inputSchema: {},
+      name,
+      def,
+      handler,
+    });
+  }
 }
