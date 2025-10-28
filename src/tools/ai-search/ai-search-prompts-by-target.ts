@@ -30,7 +30,7 @@ export class AiSearchPromptsByTarget extends BaseTool {
             .enum(['domain', 'base_domain', 'url'])
             .default('base_domain')
             .describe(
-              'Scope of analysis: base_domain (the root domain only), domain (the domain including all subdomains), or url (an exact URL).',
+              'The scope of the analysis. Can be base_domain (domain and all subdomains), domain (specific host), or url (exact URL).',
             ),
           sort: z
             .enum(['volume', 'type', 'snippet_length'])
