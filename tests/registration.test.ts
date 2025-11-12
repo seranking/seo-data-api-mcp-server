@@ -47,6 +47,12 @@ describe('DataApiMcpServer tool registration', () => {
       'keywordsQuestions',
       'keywordsLongtail',
       'keywordsExport',
+      // serp
+      'serpAddTasks',
+      'serpGetTasks',
+      'serpGetTaskResults',
+      'serpGetTaskAdvancedResults',
+      'serpGetLocations',
     ].sort();
 
     expect(names).toEqual(expected);

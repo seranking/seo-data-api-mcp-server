@@ -30,6 +30,11 @@ import { KeywordsLongtail } from './tools/keywords/keywords-longtail.js';
 import { KeywordsQuestions } from './tools/keywords/keywords-questions.js';
 import { KeywordsRelated } from './tools/keywords/keywords-related.js';
 import { KeywordsSimilar } from './tools/keywords/keywords-similar.js';
+import { SerpAddTasks } from './tools/serp/serp-add-tasks.js';
+import { SerpGetTasks } from './tools/serp/serp-get-tasks.js';
+import { SerpGetTaskResults } from './tools/serp/serp-get-task-results.js';
+import { SerpGetTaskAdvancedResults } from './tools/serp/serp-get-task-advanced-results.js';
+import { SerpGetLocations } from './tools/serp/serp-get-locations.js';
 
 export class DataApiMcpServer {
   constructor(
@@ -76,5 +81,11 @@ export class DataApiMcpServer {
     new KeywordsQuestions().registerTool(this.server);
     new KeywordsLongtail().registerTool(this.server);
     new KeywordsExport().registerTool(this.server);
+
+    new SerpAddTasks().registerTool(this.server);
+    new SerpGetTasks().registerTool(this.server);
+    new SerpGetTaskResults().registerTool(this.server);
+    new SerpGetTaskAdvancedResults().registerTool(this.server);
+    new SerpGetLocations().registerTool(this.server);
   }
 }
