@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
+import { commonSchemas } from '../schemas.js';
 import { BaseTool } from "../base-tool.js";
 
 /**
@@ -16,36 +17,33 @@ export class AiSearchOverview extends BaseTool {
       {
         title: 'AI Search Overview (SE Ranking)',
         description:
-          "Retrieve a high-level overview of a domain's performance in LLM: link presence, average position, AI traffic, and historical historical dynamics (trends over time).",
+          "Retrieves a high-level overview of a domain's performance in AI search engines. Returns aggregated data if no engine is specified, or engine-specific data if an engine is provided.",
         inputSchema: {
-          target: z
-            .string()
-            .min(1, 'target is required')
-            .describe(
-              'The target to analyze for LLM performance. Can be a root domain, subdomain, or a specific URL.',
-            ),
+          target: commonSchemas.target.describe(
+            'The target to analyze for LLM performance. Can be a root domain, subdomain, or a specific URL.',
+          ),
           scope: z
             .enum(['domain', 'base_domain', 'url'])
             .default('base_domain')
             .describe(
               'The scope of the analysis. Can be base_domain (domain and all subdomains), domain (specific host), or url (exact URL).',
             ),
-          source: z
-            .string()
-            .min(2, 'source is required and must be alpha-2 country code')
-            .max(2, 'source must be alpha-2 country code')
-            .describe(
-              'Alpha-2 country code for the regional prompt database (e.g., us for United States results).',
-            ),
-          engine: z
-            .string()
-            .min(1, 'engine is required')
-            .describe(
-              'The LLM to query (e.g., ai-overview, chatgpt, perplexity, gemini, ai-mode).',
-            ),
+          source: commonSchemas.source.describe(
+            'Alpha-2 country code for the regional prompt database (e.g., us for United States results).',
+          ),
+          engine: commonSchemas.engine.optional().describe(
+            'The LLM to query (e.g., ai-overview, chatgpt, perplexity, gemini, ai-mode). If omitted, returns aggregated data across all engines.',
+          ),
+          brand: z.string().optional().describe('Brand name to search for. If omitted, uses the internally determined brand for the domain.'),
         },
       },
-      async (params) => this.makeGetRequest('/v1/ai-search/overview', params),
+      async (params) => {
+        const { engine } = params;
+        const endpoint = engine
+          ? '/v1/ai-search/overview/by-engine/time-series'
+          : '/v1/ai-search/overview/aggregated/time-series';
+        return this.makeGetRequest(endpoint, params);
+      },
     );
   }
 }

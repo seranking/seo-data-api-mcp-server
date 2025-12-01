@@ -10,7 +10,7 @@ export class KeywordsRelated extends BaseTool {
       'keywordsRelated',
       {
         title: 'Related Keywords',
-        description: 'Fetch related keywords (v1/keywords/related)',
+        description: 'Retrieves a list of keywords semantically related to the seed keyword.',
         inputSchema: {
           source: z
             .string()

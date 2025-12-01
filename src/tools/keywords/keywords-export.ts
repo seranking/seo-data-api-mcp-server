@@ -11,8 +11,7 @@ export class KeywordsExport extends BaseTool {
       'keywordsExport',
       {
         title: 'Export Keywords Metrics',
-        description:
-          'Bulk retrieve metrics for a list of keywords (v1/keywords/export, POST form-data; source in query)',
+        description: 'Retrieves metrics for a bulk list of keywords.',
         inputSchema: {
           source: z
             .string()

@@ -11,7 +11,7 @@ export class BacklinksSummary extends BaseTool {
       {
         title: 'Backlinks Summary',
         description:
-          'Fetch extended backlink statistics for one or multiple targets. Optionally builds an analysis prompt comparing your domain vs a competitor for a given keyword (v1/backlinks/summary)',
+          'Retrieves a summary of backlink metrics for one or multiple targets (domains, subdomains, or URLs).',
         inputSchema: {
           target: z
             .union([

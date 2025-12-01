@@ -9,8 +9,7 @@ export class SerpGetLocations extends BaseTool {
       'serpGetLocations',
       {
         title: 'SERP locations',
-        description:
-          "Get locations for SERP task creation.",
+        description: 'Retrieves a list of available locations for SERP analysis.',
         inputSchema: {
           q: z
             .string()

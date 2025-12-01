@@ -13,14 +13,9 @@ import { BacklinksSummary } from './tools/backlinks/backlinks-summary.js';
 import { setTokenProvider, TokenProvider } from './tools/base-tool.js';
 import { DomainAdsByDomain } from './tools/domain/domain-ads-by-domain.js';
 import { DomainAdsByKeyword } from './tools/domain/domain-ads-by-keyword.js';
-import { DomainAioDiscoverBrand } from './tools/domain/domain-aio-discover-brand.js';
-import { DomainAioKeywordsByBrand } from './tools/domain/domain-aio-keywords-by-brand.js';
-import { DomainAioKeywordsByTarget } from './tools/domain/domain-aio-keywords-by-target.js';
-import { DomainAioOverview } from './tools/domain/domain-aio-overview.js';
 import { DomainCompetitors } from './tools/domain/domain-competitors.js';
 import { DomainKeywords } from './tools/domain/domain-keywords.js';
 import { DomainKeywordsComparison } from './tools/domain/domain-keywords-comparison.js';
-import { DomainKeywordsReverseComparison } from './tools/domain/domain-keywords-reverse-comparison.js';
 import { DomainOverview } from './tools/domain/domain-overview.js';
 import { DomainOverviewDb } from './tools/domain/domain-overview-db.js';
 import { DomainOverviewHistory } from './tools/domain/domain-overview-history.js';
@@ -35,6 +30,7 @@ import { SerpGetTasks } from './tools/serp/serp-get-tasks.js';
 import { SerpGetTaskResults } from './tools/serp/serp-get-task-results.js';
 import { SerpGetTaskAdvancedResults } from './tools/serp/serp-get-task-advanced-results.js';
 import { SerpGetLocations } from './tools/serp/serp-get-locations.js';
+import { Prompts } from './prompts.js';
 
 export class DataApiMcpServer {
   constructor(
@@ -50,42 +46,41 @@ export class DataApiMcpServer {
   }
 
   init(): void {
-    new AiSearchOverview().registerTool(this.server);
-    new AiSearchPromptsByBrand().registerTool(this.server);
-    new AiSearchPromptsByTarget().registerTool(this.server);
+    const tools = [
+      AiSearchOverview,
+      AiSearchPromptsByBrand,
+      AiSearchPromptsByTarget,
+      BacklinksAll,
+      BacklinksAnchors,
+      BacklinksAuthority,
+      BacklinksIndexedPages,
+      BacklinksRefdomains,
+      BacklinksSummary,
+      DomainOverview,
+      DomainOverviewDb,
+      DomainOverviewWorldwide,
+      DomainOverviewHistory,
+      DomainKeywords,
+      DomainAdsByKeyword,
+      DomainAdsByDomain,
+      DomainCompetitors,
+      DomainKeywordsComparison,
+      KeywordsSimilar,
+      KeywordsRelated,
+      KeywordsQuestions,
+      KeywordsLongtail,
+      KeywordsExport,
+      SerpAddTasks,
+      SerpGetTasks,
+      SerpGetTaskResults,
+      SerpGetTaskAdvancedResults,
+      SerpGetLocations,
+    ];
 
-    new BacklinksAll().registerTool(this.server);
-    new BacklinksAnchors().registerTool(this.server);
-    new BacklinksAuthority().registerTool(this.server);
-    new BacklinksIndexedPages().registerTool(this.server);
-    new BacklinksRefdomains().registerTool(this.server);
-    new BacklinksSummary().registerTool(this.server);
+    for (const Tool of tools) {
+      new Tool().register(this.server);
+    }
 
-    new DomainOverview().registerTool(this.server);
-    new DomainOverviewDb().registerTool(this.server);
-    new DomainOverviewWorldwide().registerTool(this.server);
-    new DomainOverviewHistory().registerTool(this.server);
-    new DomainKeywords().registerTool(this.server);
-    new DomainAdsByKeyword().registerTool(this.server);
-    new DomainAdsByDomain().registerTool(this.server);
-    new DomainCompetitors().registerTool(this.server);
-    new DomainKeywordsComparison().registerTool(this.server);
-    new DomainKeywordsReverseComparison().registerTool(this.server);
-    new DomainAioOverview().registerTool(this.server);
-    new DomainAioDiscoverBrand().registerTool(this.server);
-    new DomainAioKeywordsByTarget().registerTool(this.server);
-    new DomainAioKeywordsByBrand().registerTool(this.server);
-
-    new KeywordsSimilar().registerTool(this.server);
-    new KeywordsRelated().registerTool(this.server);
-    new KeywordsQuestions().registerTool(this.server);
-    new KeywordsLongtail().registerTool(this.server);
-    new KeywordsExport().registerTool(this.server);
-
-    new SerpAddTasks().registerTool(this.server);
-    new SerpGetTasks().registerTool(this.server);
-    new SerpGetTaskResults().registerTool(this.server);
-    new SerpGetTaskAdvancedResults().registerTool(this.server);
-    new SerpGetLocations().registerTool(this.server);
+    new Prompts().registerPrompts(this.server);
   }
 }

@@ -11,7 +11,7 @@ export class BacklinksRefdomains extends BaseTool {
       {
         title: 'Backlinks Referring Domains',
         description:
-          'Fetch referring domains pointing to a single target with sorting and limit controls (v1/backlinks/refdomains)',
+          'Retrieves a list of referring domains pointing to the specified target, with options for sorting and limiting results.',
         inputSchema: {
           target: z
             .string()

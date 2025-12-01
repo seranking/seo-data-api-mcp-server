@@ -36,11 +36,6 @@ describe('DataApiMcpServer tool registration', () => {
       'domainAdsByDomain',
       'domainCompetitors',
       'domainKeywordsComparison',
-      'domainKeywordsReverseComparison',
-      'domainAioOverview',
-      'domainAioDiscoverBrand',
-      'domainAioKeywordsByTarget',
-      'domainAioKeywordsByBrand',
       // keywords
       'keywordsSimilar',
       'keywordsRelated',
@@ -48,10 +43,10 @@ describe('DataApiMcpServer tool registration', () => {
       'keywordsLongtail',
       'keywordsExport',
       // serp
-      'serpAddTasks',
+      'serpCreateTasks',
       'serpGetTasks',
-      'serpGetTaskResults',
-      'serpGetTaskAdvancedResults',
+      'serpGetTaskResult',
+      'serpGetTaskAdvancedResult',
       'serpGetLocations',
     ].sort();
 
@@ -61,5 +56,24 @@ describe('DataApiMcpServer tool registration', () => {
     for (const t of server.tools) {
       expect(typeof t.inputSchema, `Server tool ${t.name} is not an object`).toBe('object');
     }
+  });
+
+  it('registers all expected prompts with the MCP server', () => {
+    const server = new McpServerMock();
+    const dataApi = new DataApiMcpServer(server as unknown as McpServer);
+
+    dataApi.init();
+
+    const names = server.prompts.map((p: { name: any }) => p.name).sort();
+
+    const expected = [
+      'serp-analysis',
+      'backlink-gap',
+      'domain-traffic-competitors',
+      'keyword-clusters',
+      'ai-share-of-voice',
+    ].sort();
+
+    expect(names).toEqual(expected);
   });
 });

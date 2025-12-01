@@ -9,8 +9,7 @@ export class SerpGetTaskResults extends BaseTool {
       'serpGetTaskResult',
       {
         title: 'Get SERP task status and results',
-        description:
-          "Retrieve the status or results of a SERP task previously added to the Add SERP tasks endpoint. If the SERP results have not yet been collected, the method returns the status.",
+        description: 'Retrieves the status or standard results of a specific SERP task. Note that SERP tasks usually take 60 seconds to finish. If the task is still running, returns {"status": "processing"}. If complete, returns the full JSON results including "items". This endpoint provides results for the following SERP item types only: organic, ads, and featured_snippet.',
         inputSchema: {
           task_id: z
             .number()

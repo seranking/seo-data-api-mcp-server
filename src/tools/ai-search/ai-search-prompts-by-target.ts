@@ -11,7 +11,7 @@ export class AiSearchPromptsByTarget extends BaseTool {
       {
         title: 'AI Search: Get Prompts by Target (SE Ranking)',
         description:
-          'Fetch the list of prompts (queries) that refer to or mention a given target (domain/URL) in the AI Search context. Corresponds to SE Ranking’s “Get Prompts by Target” API section.',
+          'Retrieves a list of prompts (queries) that mention the specified target in AI search results.',
         inputSchema: {
           engine: z
             .string()

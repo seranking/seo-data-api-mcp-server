@@ -10,7 +10,7 @@ export class KeywordsLongtail extends BaseTool {
       'keywordsLongtail',
       {
         title: 'Longtail Keywords',
-        description: 'Fetch longtail (low search volume) keywords (v1/keywords/longtail)',
+        description: 'Retrieves a list of long-tail variations for the seed keyword.',
         inputSchema: {
           source: z
             .string()

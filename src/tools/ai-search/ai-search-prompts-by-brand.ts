@@ -11,7 +11,7 @@ export class AiSearchPromptsByBrand extends BaseTool {
       {
         title: 'AI Search: Get Prompts by Brand (SE Ranking)',
         description:
-          'Fetch a paginated list of prompts where the specified brand is mentioned in LLM results. Maps to /v1/ai-search/prompts-by-brand.',
+          'Retrieves a list of prompts where the specified brand is mentioned in AI search results.',
         inputSchema: {
           engine: z
             .string()

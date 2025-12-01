@@ -9,7 +9,7 @@ export class DomainAdsByKeyword extends BaseTool {
       'domainAdsByKeyword',
       {
         title: 'Domain Ads by Keyword',
-        description: 'Fetch domain ads by keyword (v1/domain/ads)',
+        description: 'Retrieves paid ads for a specific keyword.',
         inputSchema: {
           source: z
             .string()

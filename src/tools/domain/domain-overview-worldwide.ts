@@ -11,7 +11,7 @@ export class DomainOverviewWorldwide extends BaseTool {
       'domainOverviewWorldwide',
       {
         title: 'Domain Overview Worldwide',
-        description: 'Fetch domain worldwide overview (v1/domain/overview/worldwide)',
+        description: 'Retrieves an aggregated worldwide overview of domain metrics.',
         inputSchema: {
           domain: z
             .string()

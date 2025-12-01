@@ -10,7 +10,7 @@ export class KeywordsSimilar extends BaseTool {
       'keywordsSimilar',
       {
         title: 'Similar Keywords',
-        description: 'Fetch similar keywords from SE Ranking Data API (v1/keywords/similar)',
+        description: 'Retrieves a list of keywords similar to the seed keyword.',
         inputSchema: {
           source: z
             .string()

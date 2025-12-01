@@ -7,11 +7,24 @@ import { AiSearchOverview } from '../src/tools/ai-search/ai-search-overview.js';
 const getSchema = () => captureSchema(new AiSearchOverview());
 
 describe('AiSearchOverview input schema (from tool definition)', () => {
-  it('accepts a valid payload', () => {
+  it('accepts a valid payload with engine', () => {
     const schemaObj = getSchema();
     const schema = z.object(schemaObj);
     const payload = {
       engine: 'chatgpt',
+      source: 'us',
+      target: 'seranking.com',
+      scope: 'domain',
+      brand: 'SE Ranking',
+    } as const;
+    const result = schema.safeParse(payload);
+    expect(result.success, result.error?.toString()).toBe(true);
+  });
+
+  it('accepts a valid payload without engine (aggregated)', () => {
+    const schemaObj = getSchema();
+    const schema = z.object(schemaObj);
+    const payload = {
       source: 'us',
       target: 'seranking.com',
       scope: 'domain',
@@ -44,14 +57,12 @@ describe('AiSearchOverview input schema (from tool definition)', () => {
     });
   });
 
-  it('requires engine, source, and target', () => {
+  it('requires source and target', () => {
     const schema = z.object(getSchema());
 
-    const missingEngine = { source: 'us', target: 'example.com' };
-    const missingSource = { engine: 'chatgpt', target: 'example.com' };
-    const missingTarget = { engine: 'chatgpt', source: 'us' };
+    const missingSource = { target: 'example.com' };
+    const missingTarget = { source: 'us' };
 
-    expect(() => schema.parse(missingEngine)).toThrow();
     expect(() => schema.parse(missingSource)).toThrow();
     expect(() => schema.parse(missingTarget)).toThrow();
   });
@@ -80,7 +91,7 @@ describe('AiSearchOverview input schema (from tool definition)', () => {
     expect(() => schema.parse(emptyTarget)).toThrow();
   });
 
-  it('validates engine is non-empty string', () => {
+  it('validates engine is non-empty string if provided', () => {
     const schema = z.object(getSchema());
 
     const validEngine = { engine: 'chatgpt', source: 'us', target: 'example.com' };
@@ -94,7 +105,6 @@ describe('AiSearchOverview input schema (from tool definition)', () => {
     const schema = z.object(getSchema());
 
     const minimalPayload = {
-      engine: 'chatgpt',
       source: 'us',
       target: 'example.com',
     };
@@ -102,9 +112,10 @@ describe('AiSearchOverview input schema (from tool definition)', () => {
     const result = schema.parse(minimalPayload);
 
     // Defaults should be applied by the schema
-    expect(result.engine).toBe('chatgpt');
     expect(result.source).toBe('us');
     expect(result.target).toBe('example.com');
-    expect(result.scope).toBe('domain'); // Default scope
+    expect(result.scope).toBe('base_domain'); // Default scope
+    expect(result.engine).toBeUndefined();
+    expect(result.brand).toBeUndefined();
   });
 });

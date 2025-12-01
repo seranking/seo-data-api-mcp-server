@@ -10,7 +10,7 @@ export class SerpGetTasks extends BaseTool {
       {
         title: 'List SERP tasks',
         description:
-          "Obtain a list of all user SERP queries that were added to the queue in the last 24 hours.",
+          'Retrieves a list of all SERP tasks added to the queue in the last 24 hours.',
         inputSchema: {
         },
       },

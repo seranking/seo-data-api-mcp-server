@@ -9,8 +9,7 @@ export class SerpAddTasks extends BaseTool {
       'serpCreateTasks',
       {
         title: 'Add SERP tasks',
-        description:
-          "Add one or more search queries to the queue to obtain SERP results.",
+        description: 'Adds one or more search queries to the queue for SERP analysis. Note that SERP tasks usually take 60 seconds to finish.',
         inputSchema: {
           search_engine: z
             .enum(['google'])
@@ -69,7 +68,7 @@ export class SerpAddTasks extends BaseTool {
         if (location_id) form.location_id = location_id;
         if (query) form.query = query;
         if (tag) form.tag = tag;
-        return this.makePostRequest('/v1/serp/classic/tasks', { }, form);
+        return this.makePostRequest('/v1/serp/classic/tasks', {}, form);
       },
     );
   }
