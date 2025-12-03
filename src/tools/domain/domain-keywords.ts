@@ -31,7 +31,7 @@ export class DomainKeywords extends BaseTool {
       'domainKeywords',
       {
         title: 'Domain Keywords',
-        description: 'Fetch domain keywords (v1/domain/keywords)',
+        description: 'Retrieves a list of keywords for which a domain ranks in organic or paid search.',
         inputSchema: {
           source: z
             .string()

@@ -11,7 +11,7 @@ export class BacklinksAll extends BaseTool {
       {
         title: 'Backlinks All',
         description:
-          'Fetch backlinks pointing to a single target with sorting, limits, rank filters, URL/anchor filters, and nofollow filter (v1/backlinks/all)',
+          'Retrieves a comprehensive list of backlinks for the specified target, with extensive filtering and sorting options.',
         inputSchema: {
           target: z
             .string()

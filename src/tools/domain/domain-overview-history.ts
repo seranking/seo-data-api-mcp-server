@@ -9,7 +9,7 @@ export class DomainOverviewHistory extends BaseTool {
       'domainOverviewHistory',
       {
         title: 'Domain Overview History',
-        description: 'Fetch domain historical overview (v1/domain/overview/history)',
+        description: 'Retrieves historical data for domain traffic and keyword rankings.',
         inputSchema: {
           source: z
             .string()

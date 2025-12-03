@@ -29,10 +29,8 @@ describe('All tools expose valid input schemas and handlers', () => {
         }
       });
 
-      it('handler returns a Missing Token message without SERANKING_API_TOKEN', async () => {
-        const res = await tool.handler({});
-        const text = res?.content?.[0]?.text || '';
-        expect(String(text)).toContain('Missing SERANKING_API_TOKEN');
+      it('handler throws McpError without SERANKING_API_TOKEN', async () => {
+        await expect(tool.handler({})).rejects.toThrow('Missing SERANKING_API_TOKEN');
       });
     });
   }

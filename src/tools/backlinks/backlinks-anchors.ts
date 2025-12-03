@@ -11,7 +11,7 @@ export class BacklinksAnchors extends BaseTool {
       {
         title: 'Backlinks Anchors',
         description:
-          'Fetch anchor texts of backlinks pointing to a single target with sorting and limit controls (v1/backlinks/anchors)',
+          'Retrieves a list of anchor texts for backlinks pointing to the specified target, with sorting and limit options.',
         inputSchema: {
           target: z
             .string()

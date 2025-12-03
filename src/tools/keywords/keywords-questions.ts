@@ -10,7 +10,7 @@ export class KeywordsQuestions extends BaseTool {
       'keywordsQuestions',
       {
         title: 'Keyword Questions',
-        description: 'Fetch keyword questions (v1/keywords/questions)',
+        description: 'Retrieves a list of question-based keywords containing the seed keyword.',
         inputSchema: {
           source: z
             .string()

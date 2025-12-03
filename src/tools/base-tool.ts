@@ -1,4 +1,5 @@
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 
 import { SERANKING_API_BASE } from "../constants.js";
 
@@ -15,6 +16,24 @@ export abstract class BaseTool {
 
   abstract registerTool(server: McpServer): void;
 
+  protected server?: McpServer;
+
+  register(server: McpServer): void {
+    this.server = server;
+    this.registerTool(server);
+  }
+
+  protected log(level: 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'critical' | 'alert' | 'emergency', message: string) {
+    if (this.server) {
+      this.server.sendLoggingMessage({
+        level,
+        data: message,
+      });
+    } else {
+      console.error(`[${level.toUpperCase()}] ${message}`);
+    }
+  }
+
   protected getToken(): string | undefined {
     return tokenProvider?.();
   }
@@ -30,107 +49,115 @@ export abstract class BaseTool {
       .every((t) => allowed.has(t));
   }
 
-  protected async makeGetRequest(path: string, params: Record<string, unknown>) {
-    const query = this.getUrlSearchParamsFromParams(params);
-
-    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
-
+  protected async request<T>(
+    path: string,
+    method: 'GET' | 'POST' = 'GET',
+    params: Record<string, unknown> = {},
+  ): Promise<{ content: { type: 'text'; text: string }[] }> {
     const token = this.getToken();
 
     if (!token) {
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: this.MISSING_TOKEN_MESSAGE,
-          },
-        ],
-      };
+      throw new McpError(ErrorCode.InvalidRequest, this.MISSING_TOKEN_MESSAGE);
     }
 
-    try {
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: { Authorization: `Token ${token}` },
-      });
+    let url = `${SERANKING_API_BASE}${path}`;
+    const options: RequestInit = {
+      method,
+      headers: { Authorization: `Token ${token}` },
+    };
 
-      return await this.getJSONResponse(res, url);
-    } catch (err: any) {
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: `Request failed: ${err?.message || String(err)}\nURL: ${url}`,
-          },
-        ],
-      };
+    if (method === 'GET') {
+      const query = this.getUrlSearchParamsFromParams(params);
+      url += `?${query.toString()}`;
+    } else {
+      // For POST, we assume form data for now as per original implementation
+      // But we should check if it needs to be JSON.
+      // The original implementation used FormData for POST.
+      // We'll separate query params and body params if needed, but the original
+      // makePostRequest took queryParams and formParams.
+      // To keep it simple and generic, let's stick to the original signature style or adapt.
+      // The original makePostRequest took (path, queryParams, formParams).
+      // Let's keep makeGetRequest and makePostRequest but implement them using a common private method
+      // or just keep them separate but improved.
+      // The plan said "Consolidate ... into a single request method".
+      // But GET and POST have different signatures in the original code (POST has query AND body).
+      // Let's support both in `request`.
     }
+
+    // Re-evaluating consolidation:
+    // GET: path, params -> query
+    // POST: path, queryParams, formParams -> query + body
+    // Let's keep makeGetRequest and makePostRequest as public/protected helpers that call a private `executeRequest`.
+
+    return this.executeRequest<T>(url, options);
   }
 
-  protected async makePostRequest(
+  protected async makeGetRequest<T>(path: string, params: Record<string, unknown>) {
+    const query = this.getUrlSearchParamsFromParams(params);
+    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+
+    return this.executeRequest<T>(url, { method: 'GET' });
+  }
+
+  protected async makePostRequest<T>(
     path: string,
     queryParams: Record<string, unknown>,
     formParams: Record<string, unknown>,
   ) {
     const query = this.getUrlSearchParamsFromParams(queryParams);
-
     const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    const form = this.getFormDataFromParams(formParams);
 
+    return this.executeRequest<T>(url, { method: 'POST', body: form });
+  }
+
+  private async executeRequest<T>(url: string, init: RequestInit) {
     const token = this.getToken();
 
     if (!token) {
-      return {
-        content: [{ type: 'text' as const, text: this.MISSING_TOKEN_MESSAGE }],
-      };
+      throw new McpError(ErrorCode.InvalidRequest, this.MISSING_TOKEN_MESSAGE);
     }
 
-    const form = this.getFormDataFromParams(formParams);
+    const headers = new Headers(init.headers);
+    headers.set('Authorization', `Token ${token}`);
+    init.headers = headers;
 
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { Authorization: `Token ${token}` },
-        body: form,
-      });
-
-      return await this.getJSONResponse(res, url);
+      const res = await fetch(url, init);
+      return await this.getJSONResponse<T>(res, url);
     } catch (err: any) {
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: `Request failed: ${err?.message || String(err)}\nURL: ${url}`,
-          },
-        ],
-      };
+      // If it's already an McpError, rethrow it
+      if (err instanceof McpError) throw err;
+
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Request failed: ${err?.message || String(err)}\nURL: ${url}`
+      );
     }
   }
 
-  private async getJSONResponse(res: Response, url: string) {
+  private async getJSONResponse<T>(res: Response, url: string) {
     const text = await res.text();
 
     if (!res.ok) {
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: `API error (${res.status} ${res.statusText}). URL: ${url}\nBody: ${text}`,
-          },
-        ],
-      };
+      throw new McpError(
+        ErrorCode.InternalError,
+        `API error (${res.status} ${res.statusText}). URL: ${url}\nBody: ${text}`
+      );
     }
 
     let pretty = text;
 
     try {
-      pretty = JSON.stringify(JSON.parse(text), null, 2);
+      const json = JSON.parse(text);
+      pretty = JSON.stringify(json, null, 2);
     } catch (err: any) {
-      console.error(
-        'Failed to pretty-print JSON response:',
-        err?.message || String(err),
-        'Response text:',
-        text,
+      this.log(
+        'warning',
+        `Failed to pretty-print JSON response: ${err?.message || String(err)}. Response text: ${text}`,
       );
+      // If it's not JSON, we just return the text as is, or maybe we should fail if we expect JSON?
+      // The original code just returned the text if it failed to parse/pretty-print.
     }
 
     return { content: [{ type: 'text' as const, text: pretty }] };

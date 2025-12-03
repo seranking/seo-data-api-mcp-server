@@ -9,7 +9,7 @@ export class DomainCompetitors extends BaseTool {
       'domainCompetitors',
       {
         title: 'Domain Competitors',
-        description: 'Fetch domain competitors (v1/domain/competitors)',
+        description: 'Retrieves a list of organic or paid competitors for a domain.',
         inputSchema: {
           source: z
             .string()
