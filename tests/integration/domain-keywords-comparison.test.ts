@@ -1,0 +1,48 @@
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { DomainKeywordsComparison } from '../../src/tools/domain/domain-keywords-comparison.js';
+import { setTokenProvider } from '../../src/tools/base-tool.js';
+import { z } from 'zod';
+
+// Mock McpServer
+const mockServer = {
+    registerTool: vi.fn(),
+} as unknown as McpServer;
+
+describe('DomainKeywordsComparison Tool Tests', () => {
+    beforeEach(() => {
+        setTokenProvider(() => 'test-token');
+        global.fetch = vi.fn();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('should register with correct schema excluding price and traffic', () => {
+        const tool = new DomainKeywordsComparison();
+
+        let schema: any;
+        (mockServer.registerTool as any).mockImplementation((name: string, s: any, cb: any) => {
+            if (name === 'domainKeywordsComparison') {
+                schema = s;
+            }
+        });
+
+        tool.registerTool(mockServer);
+
+        expect(schema).toBeDefined();
+        const orderFieldSchema = schema.inputSchema.order_field;
+
+        // Check that 'price' and 'traffic' are NOT allowed
+        const resultPrice = orderFieldSchema.safeParse('price');
+        expect(resultPrice.success).toBe(false);
+
+        const resultTraffic = orderFieldSchema.safeParse('traffic');
+        expect(resultTraffic.success).toBe(false);
+
+        // Check that 'volume' IS allowed
+        const resultVolume = orderFieldSchema.safeParse('volume');
+        expect(resultVolume.success).toBe(true);
+    });
+});

@@ -95,8 +95,6 @@ export class DomainKeywordsComparison extends BaseTool {
               'competition',
               'difficulty',
               'position',
-              'price',
-              'traffic',
             ])
             .optional()
             .default('keyword')
