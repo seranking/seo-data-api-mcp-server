@@ -42,7 +42,6 @@ describe('End-to-End Smoke Tests', () => {
         return JSON.stringify(res);
     };
 
-    /*
     // GetAiOverview fails with 400 Bad Request on live API
     runOrSkip('GetAiOverview should return data for openai.com', async () => {
         const tool = new GetAiOverview();
@@ -56,11 +55,11 @@ describe('End-to-End Smoke Tests', () => {
 
         const text = getText(result);
         console.log('GetAiOverview Result:', text.slice(0, 200) + '...');
-        
-        expect(result).toBeDefined();
-    });
 
-    // GetBacklinksSummary fails with API error
+        expect(result).toBeDefined();
+    }, 60000);
+
+    // GetBacklinksSummary
     runOrSkip('GetBacklinksSummary should return data for github.com', async () => {
         const tool = new GetBacklinksSummary();
         const handler = getHandler(tool);
@@ -73,8 +72,7 @@ describe('End-to-End Smoke Tests', () => {
         console.log('GetBacklinksSummary Result:', text.slice(0, 200) + '...');
 
         expect(result).toBeDefined();
-    });
-    */
+    }, 60000);
 
     runOrSkip('GetDomainOverviewWorldwide should return data for google.com', async () => {
         const tool = new GetDomainOverviewWorldwide();
