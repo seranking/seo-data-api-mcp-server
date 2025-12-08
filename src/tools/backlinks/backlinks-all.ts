@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { BaseTool } from "../base-tool.js";
+import { BaseTool } from '../base-tool.js';
 import { MODES, OUTPUT_FORMATS, URL_FILTER_MODES } from './constants.js';
 
 export class GetAllBacklinks extends BaseTool {

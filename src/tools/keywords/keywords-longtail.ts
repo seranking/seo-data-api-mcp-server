@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { BaseTool } from "../base-tool.js";
+import { BaseTool } from '../base-tool.js';
 import { SERP_FEATURE_CODES } from './constants.js';
 
 export class GetLongTailKeywords extends BaseTool {

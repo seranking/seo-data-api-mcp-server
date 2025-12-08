@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { BaseTool } from "../base-tool.js";
+import { BaseTool } from '../base-tool.js';
 
 export class GetDomainKeywordsComparison extends BaseTool {
   readonly COLS = [
@@ -88,14 +88,7 @@ export class GetDomainKeywordsComparison extends BaseTool {
               'Controls the comparison mode. `0` = Common keywords (intersection): keywords both domains rank for. `1` = Keyword gap (difference): keywords the `domain` ranks for, but `compare` does not.',
             ),
           order_field: z
-            .enum([
-              'keyword',
-              'volume',
-              'cpc',
-              'competition',
-              'difficulty',
-              'position',
-            ])
+            .enum(['keyword', 'volume', 'cpc', 'competition', 'difficulty', 'position'])
             .optional()
             .default('keyword')
             .describe('Specifies the field by which to sort the results.'),

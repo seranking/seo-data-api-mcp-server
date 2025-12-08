@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { BaseTool } from "../base-tool.js";
+import { BaseTool } from '../base-tool.js';
 import { INTENTS } from './constants.js';
 
 export class GetDomainKeywords extends BaseTool {
@@ -31,7 +31,8 @@ export class GetDomainKeywords extends BaseTool {
       'getDomainKeywords',
       {
         title: 'Domain Keywords',
-        description: 'Retrieves a list of keywords for which a domain ranks in organic or paid search.',
+        description:
+          'Retrieves a list of keywords for which a domain ranks in organic or paid search.',
         inputSchema: {
           source: z
             .string()

@@ -9,46 +9,25 @@ export class AddSerpTasks extends BaseTool {
       'addSerpTasks',
       {
         title: 'Add SERP tasks',
-        description: 'Adds one or more search queries to the queue for SERP analysis. Note that SERP tasks usually take 60 seconds to finish.',
+        description:
+          'Adds one or more search queries to the queue for SERP analysis. Note that SERP tasks usually take 60 seconds to finish.',
         inputSchema: {
-          search_engine: z
-            .enum(['google'])
-            .default('google')
-            .describe(
-              'Search engine',
-            ),
-          device: z
-            .enum(['desktop'])
-            .default('desktop')
-            .describe(
-              'Device type',
-            ),
+          search_engine: z.enum(['google']).default('google').describe('Search engine'),
+          device: z.enum(['desktop']).default('desktop').describe('Device type'),
           language_code: z
             .string()
             .min(2, 'language_code is required and must be alpha-2 language code')
             .max(2, 'language_code must be alpha-2 language code')
-            .describe(
-              'Language code',
-            ),
+            .describe('Language code'),
           location_id: z
             .number()
             .int()
             .positive()
-            .describe(
-              'Location ID from SERP locations method',
-            ),
+            .describe('Location ID from SERP locations method'),
           query: z
             .array(z.string().min(1, 'query is empty').max(1000, 'too many queries'))
-            .describe(
-              'List of queries',
-            ),
-          tag: z
-            .string()
-            .max(255, 'tag is too long (max 255 chars)')
-            .optional()
-            .describe(
-              'Tag',
-            ),
+            .describe('List of queries'),
+          tag: z.string().max(255, 'tag is too long (max 255 chars)').optional().describe('Tag'),
         },
       },
       async (params: {

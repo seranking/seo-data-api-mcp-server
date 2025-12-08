@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
 
-import { SERANKING_API_BASE } from "../constants.js";
+import { SERANKING_API_BASE } from '../constants.js';
 
 export type TokenProvider = () => string | undefined;
 
@@ -23,12 +23,19 @@ export abstract class BaseTool {
     this.registerTool(server);
   }
 
-  protected log(level: 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'critical' | 'alert' | 'emergency', message: string) {
+  protected log(
+    level: 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'critical' | 'alert' | 'emergency',
+    message: string,
+  ) {
     if (this.server) {
-      this.server.sendLoggingMessage({
-        level,
-        data: message,
-      });
+      this.server
+        .sendLoggingMessage({
+          level,
+          data: message,
+        })
+        .catch((err) => {
+          console.error('Failed to send logging message:', err);
+        });
     } else {
       console.error(`[${level.toUpperCase()}] ${message}`);
     }
@@ -49,7 +56,7 @@ export abstract class BaseTool {
       .every((t) => allowed.has(t));
   }
 
-  protected async request<T>(
+  protected async request(
     path: string,
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'GET',
     params: Record<string, unknown> = {},
@@ -107,17 +114,17 @@ export abstract class BaseTool {
     // POST: path, queryParams, formParams -> query + body
     // Let's keep makeGetRequest and makePostRequest as public/protected helpers that call a private `executeRequest`.
 
-    return this.executeRequest<T>(url, options);
+    return this.executeRequest(url, options);
   }
 
-  protected async makeGetRequest<T>(path: string, params: Record<string, unknown>) {
+  protected async makeGetRequest(path: string, params: Record<string, unknown>) {
     const query = this.getUrlSearchParamsFromParams(params);
     const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
 
-    return this.executeRequest<T>(url, { method: 'GET' });
+    return this.executeRequest(url, { method: 'GET' });
   }
 
-  protected async makePostRequest<T>(
+  protected async makePostRequest(
     path: string,
     queryParams: Record<string, unknown>,
     formParams: Record<string, unknown>,
@@ -126,35 +133,39 @@ export abstract class BaseTool {
     const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
     const form = this.getFormDataFromParams(formParams);
 
-    return this.executeRequest<T>(url, { method: 'POST', body: form });
+    return this.executeRequest(url, { method: 'POST', body: form });
   }
 
-  protected async makeJsonPostRequest<T>(path: string, body: Record<string, unknown>) {
+  protected async makeJsonPostRequest(path: string, body: Record<string, unknown>) {
     const url = `${SERANKING_API_BASE}${path}`;
-    return this.executeRequest<T>(url, {
+    return this.executeRequest(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
   }
 
-  protected async makePatchRequest<T>(path: string, queryParams: Record<string, unknown>, body: Record<string, unknown>) {
+  protected async makePatchRequest(
+    path: string,
+    queryParams: Record<string, unknown>,
+    body: Record<string, unknown>,
+  ) {
     const query = this.getUrlSearchParamsFromParams(queryParams);
     const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
-    return this.executeRequest<T>(url, {
+    return this.executeRequest(url, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
   }
 
-  protected async makeDeleteRequest<T>(path: string, params: Record<string, unknown>) {
+  protected async makeDeleteRequest(path: string, params: Record<string, unknown>) {
     const query = this.getUrlSearchParamsFromParams(params);
     const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
-    return this.executeRequest<T>(url, { method: 'DELETE' });
+    return this.executeRequest(url, { method: 'DELETE' });
   }
 
-  private async executeRequest<T>(url: string, init: RequestInit) {
+  private async executeRequest(url: string, init: RequestInit) {
     const token = this.getToken();
 
     if (!token) {
@@ -167,25 +178,25 @@ export abstract class BaseTool {
 
     try {
       const res = await fetch(url, init);
-      return await this.getJSONResponse<T>(res, url);
+      return await this.getJSONResponse(res, url);
     } catch (err: any) {
       // If it's already an McpError, rethrow it
       if (err instanceof McpError) throw err;
 
       throw new McpError(
         ErrorCode.InternalError,
-        `Request failed: ${err?.message || String(err)}\nURL: ${url}`
+        `Request failed: ${err?.message || String(err)}\nURL: ${url}`,
       );
     }
   }
 
-  private async getJSONResponse<T>(res: Response, url: string) {
+  private async getJSONResponse(res: Response, url: string) {
     const text = await res.text();
 
     if (!res.ok) {
       throw new McpError(
         ErrorCode.InternalError,
-        `API error (${res.status} ${res.statusText}). URL: ${url}\nBody: ${text}`
+        `API error (${res.status} ${res.statusText}). URL: ${url}\nBody: ${text}`,
       );
     }
 

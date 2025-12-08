@@ -1,8 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
+import { BaseTool } from '../base-tool.js';
 import { commonSchemas } from '../schemas.js';
-import { BaseTool } from "../base-tool.js";
 
 /**
  * AiSearchOverview
@@ -31,10 +31,17 @@ export class GetAiOverview extends BaseTool {
           source: commonSchemas.source.describe(
             'Alpha-2 country code for the regional prompt database (e.g., us for United States results).',
           ),
-          engine: commonSchemas.engine.optional().describe(
-            'The LLM to query (e.g., ai-overview, chatgpt, perplexity, gemini, ai-mode). If omitted, returns aggregated data across all engines.',
-          ),
-          brand: z.string().optional().describe('Brand name to search for. If omitted, uses the internally determined brand for the domain.'),
+          engine: commonSchemas.engine
+            .optional()
+            .describe(
+              'The LLM to query (e.g., ai-overview, chatgpt, perplexity, gemini, ai-mode). If omitted, returns aggregated data across all engines.',
+            ),
+          brand: z
+            .string()
+            .optional()
+            .describe(
+              'Brand name to search for. If omitted, uses the internally determined brand for the domain.',
+            ),
         },
       },
       async (params) => {

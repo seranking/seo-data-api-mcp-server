@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { BaseTool } from "../base-tool.js";
+import { BaseTool } from '../base-tool.js';
 
 export class GetDomainOverviewWorldwide extends BaseTool {
   readonly FIELDS = ['price', 'traffic', 'keywords', 'positions_diff', 'positions_tops'];
