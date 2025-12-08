@@ -10,10 +10,10 @@ import { BaseTool } from "../base-tool.js";
  * - Uses request parameters exactly as per docs (target, scope, source, engine).
  * - Returns high-level overview metrics and trend time series.
  */
-export class AiSearchOverview extends BaseTool {
+export class GetAiOverview extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'aiSearchOverview',
+      'getAiOverview',
       {
         title: 'AI Search Overview (SE Ranking)',
         description:

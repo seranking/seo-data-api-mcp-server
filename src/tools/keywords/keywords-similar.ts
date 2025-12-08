@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { BaseTool } from "../base-tool.js";
 import { SERP_FEATURE_CODES } from './constants.js';
 
-export class KeywordsSimilar extends BaseTool {
+export class GetSimilarKeywords extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'keywordsSimilar',
+      'getSimilarKeywords',
       {
         title: 'Similar Keywords',
         description: 'Retrieves a list of keywords similar to the seed keyword.',

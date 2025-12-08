@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class DomainKeywordsComparison extends BaseTool {
+export class GetDomainKeywordsComparison extends BaseTool {
   readonly COLS = [
     'keyword',
     'volume',
@@ -23,7 +23,7 @@ export class DomainKeywordsComparison extends BaseTool {
 
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainKeywordsComparison',
+      'getDomainKeywordsComparison',
       {
         title: 'Domain Keywords Comparison',
         description:

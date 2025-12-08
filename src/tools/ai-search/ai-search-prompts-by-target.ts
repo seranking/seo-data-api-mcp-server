@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { AISearchFilterObject } from '../../validation-partials/json-filters-partials.js';
 import { BaseTool } from "../base-tool.js";
 
-export class AiSearchPromptsByTarget extends BaseTool {
+export class GetAiPromptsByTarget extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'aiSearchPromptsByTarget',
+      'getAiPromptsByTarget',
       {
         title: 'AI Search: Get Prompts by Target (SE Ranking)',
         description:

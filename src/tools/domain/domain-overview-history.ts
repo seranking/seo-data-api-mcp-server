@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class DomainOverviewHistory extends BaseTool {
+export class GetDomainOverviewHistory extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainOverviewHistory',
+      'getDomainOverviewHistory',
       {
         title: 'Domain Overview History',
         description: 'Retrieves historical data for domain traffic and keyword rankings.',

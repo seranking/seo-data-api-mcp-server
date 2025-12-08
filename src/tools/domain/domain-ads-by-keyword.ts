@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class DomainAdsByKeyword extends BaseTool {
+export class GetDomainAdsByKeyword extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainAdsByKeyword',
+      'getDomainAdsByKeyword',
       {
         title: 'Domain Ads by Keyword',
         description: 'Retrieves paid ads for a specific keyword.',

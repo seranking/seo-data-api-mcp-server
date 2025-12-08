@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { commonSchemas } from '../schemas.js';
 import { BaseTool } from "../base-tool.js";
 
-export class DomainOverview extends BaseTool {
+export class GetDomainOverview extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainOverview',
+      'getDomainOverview',
       {
         title: 'Domain Overview',
         description: 'Retrieves an overview of domain metrics for a specific region.',

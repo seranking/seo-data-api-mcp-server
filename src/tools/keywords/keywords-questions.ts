@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { BaseTool } from "../base-tool.js";
 import { SERP_FEATURE_CODES } from './constants.js';
 
-export class KeywordsQuestions extends BaseTool {
+export class GetKeywordQuestions extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'keywordsQuestions',
+      'getKeywordQuestions',
       {
         title: 'Keyword Questions',
         description: 'Retrieves a list of question-based keywords containing the seed keyword.',

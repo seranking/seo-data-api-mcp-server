@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class DomainCompetitors extends BaseTool {
+export class GetDomainCompetitors extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainCompetitors',
+      'getDomainCompetitors',
       {
         title: 'Domain Competitors',
         description: 'Retrieves a list of organic or paid competitors for a domain.',

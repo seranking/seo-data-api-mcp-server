@@ -3,12 +3,12 @@ import { z } from 'zod';
 
 import { BaseTool } from '../base-tool.js';
 
-export class KeywordsExport extends BaseTool {
+export class ExportKeywords extends BaseTool {
   readonly COLS = ['keyword', 'volume', 'cpc', 'competition', 'difficulty', 'history_trend'];
 
   registerTool(server: McpServer): void {
     server.registerTool(
-      'keywordsExport',
+      'exportKeywords',
       {
         title: 'Export Keywords Metrics',
         description: 'Retrieves metrics for a bulk list of keywords.',

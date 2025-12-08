@@ -3,12 +3,12 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class DomainOverviewWorldwide extends BaseTool {
+export class GetDomainOverviewWorldwide extends BaseTool {
   readonly FIELDS = ['price', 'traffic', 'keywords', 'positions_diff', 'positions_tops'];
 
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainOverviewWorldwide',
+      'getDomainOverviewWorldwide',
       {
         title: 'Domain Overview Worldwide',
         description: 'Retrieves an aggregated worldwide overview of domain metrics.',

@@ -1,35 +1,47 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { SERANKING_API_TOKEN } from './constants.js';
-import { AiSearchOverview } from './tools/ai-search/ai-search-overview.js';
-import { AiSearchPromptsByBrand } from './tools/ai-search/ai-search-prompts-by-brand.js';
-import { AiSearchPromptsByTarget } from './tools/ai-search/ai-search-prompts-by-target.js';
-import { BacklinksAll } from './tools/backlinks/backlinks-all.js';
-import { BacklinksAnchors } from './tools/backlinks/backlinks-anchors.js';
-import { BacklinksAuthority } from './tools/backlinks/backlinks-authority.js';
-import { BacklinksIndexedPages } from './tools/backlinks/backlinks-indexed-pages.js';
-import { BacklinksRefdomains } from './tools/backlinks/backlinks-refdomains.js';
-import { BacklinksSummary } from './tools/backlinks/backlinks-summary.js';
+import { GetAiOverview } from './tools/ai-search/ai-search-overview.js';
+import { GetAiPromptsByBrand } from './tools/ai-search/ai-search-prompts-by-brand.js';
+import { GetAiPromptsByTarget } from './tools/ai-search/ai-search-prompts-by-target.js';
+import { GetAllBacklinks } from './tools/backlinks/backlinks-all.js';
+import { GetBacklinksAnchors } from './tools/backlinks/backlinks-anchors.js';
+import { GetBacklinksAuthority } from './tools/backlinks/backlinks-authority.js';
+import { GetBacklinksIndexedPages } from './tools/backlinks/backlinks-indexed-pages.js';
+import { GetBacklinksRefDomains } from './tools/backlinks/backlinks-refdomains.js';
+import { GetBacklinksSummary } from './tools/backlinks/backlinks-summary.js';
 import { setTokenProvider, TokenProvider } from './tools/base-tool.js';
-import { DomainAdsByDomain } from './tools/domain/domain-ads-by-domain.js';
-import { DomainAdsByKeyword } from './tools/domain/domain-ads-by-keyword.js';
-import { DomainCompetitors } from './tools/domain/domain-competitors.js';
-import { DomainKeywords } from './tools/domain/domain-keywords.js';
-import { DomainKeywordsComparison } from './tools/domain/domain-keywords-comparison.js';
-import { DomainOverview } from './tools/domain/domain-overview.js';
-import { DomainOverviewDb } from './tools/domain/domain-overview-db.js';
-import { DomainOverviewHistory } from './tools/domain/domain-overview-history.js';
-import { DomainOverviewWorldwide } from './tools/domain/domain-overview-worldwide.js';
-import { KeywordsExport } from './tools/keywords/keywords-export.js';
-import { KeywordsLongtail } from './tools/keywords/keywords-longtail.js';
-import { KeywordsQuestions } from './tools/keywords/keywords-questions.js';
-import { KeywordsRelated } from './tools/keywords/keywords-related.js';
-import { KeywordsSimilar } from './tools/keywords/keywords-similar.js';
-import { SerpAddTasks } from './tools/serp/serp-add-tasks.js';
-import { SerpGetTasks } from './tools/serp/serp-get-tasks.js';
-import { SerpGetTaskResults } from './tools/serp/serp-get-task-results.js';
-import { SerpGetTaskAdvancedResults } from './tools/serp/serp-get-task-advanced-results.js';
-import { SerpGetLocations } from './tools/serp/serp-get-locations.js';
+
+import { GetCumulativeBacklinksHistory } from './tools/backlinks/backlinks-history-cumulative.js';
+import { GetReferringIps } from './tools/backlinks/backlinks-referring-ips.js';
+import { GetReferringIpsCount } from './tools/backlinks/backlinks-referring-ips-count.js';
+import { GetReferringSubnetsCount } from './tools/backlinks/backlinks-referring-subnets-count.js';
+import { GetDistributionOfDomainAuthority } from './tools/backlinks/backlinks-authority-domain-distribution.js';
+import { GetPageAuthority } from './tools/backlinks/backlinks-authority-page.js';
+import { GetPageAuthorityHistory } from './tools/backlinks/backlinks-authority-page-history.js';
+import { GetDomainAuthority } from './tools/backlinks/backlinks-authority-domain.js';
+import { ListNewLostReferringDomains } from './tools/backlinks/backlinks-refdomains-history.js';
+import { GetNewLostRefDomainsCount } from './tools/backlinks/backlinks-refdomains-history-count.js';
+import { ExportBacklinksData } from './tools/backlinks/backlinks-export.js';
+import { GetDomainAdsByDomain } from './tools/domain/domain-ads-by-domain.js';
+import { GetDomainAdsByKeyword } from './tools/domain/domain-ads-by-keyword.js';
+import { GetDomainCompetitors } from './tools/domain/domain-competitors.js';
+import { GetDomainKeywords } from './tools/domain/domain-keywords.js';
+import { GetDomainKeywordsComparison } from './tools/domain/domain-keywords-comparison.js';
+import { GetDomainOverview } from './tools/domain/domain-overview.js';
+import { GetDomainOverviewDatabases } from './tools/domain/domain-overview-db.js';
+import { GetDomainOverviewHistory } from './tools/domain/domain-overview-history.js';
+import { GetDomainOverviewWorldwide } from './tools/domain/domain-overview-worldwide.js';
+import { ExportKeywords } from './tools/keywords/keywords-export.js';
+import { GetLongTailKeywords } from './tools/keywords/keywords-longtail.js';
+import { GetKeywordQuestions } from './tools/keywords/keywords-questions.js';
+import { GetRelatedKeywords } from './tools/keywords/keywords-related.js';
+import { GetSimilarKeywords } from './tools/keywords/keywords-similar.js';
+import { AddSerpTasks } from './tools/serp/serp-add-tasks.js';
+import { GetSerpTasks } from './tools/serp/serp-get-tasks.js';
+import { GetSerpTaskResults } from './tools/serp/serp-get-task-results.js';
+import { GetSerpTaskAdvancedResults } from './tools/serp/serp-get-task-advanced-results.js';
+import { GetSerpLocations } from './tools/serp/serp-get-locations.js';
 import { CreateStandardAudit } from './tools/website-audit/create-standard-audit.js';
 import { CreateAdvancedAudit } from './tools/website-audit/create-advanced-audit.js';
 import { ListAudits } from './tools/website-audit/list-audits.js';
@@ -60,34 +72,45 @@ export class DataApiMcpServer {
 
   init(): void {
     const tools = [
-      AiSearchOverview,
-      AiSearchPromptsByBrand,
-      AiSearchPromptsByTarget,
-      BacklinksAll,
-      BacklinksAnchors,
-      BacklinksAuthority,
-      BacklinksIndexedPages,
-      BacklinksRefdomains,
-      BacklinksSummary,
-      DomainOverview,
-      DomainOverviewDb,
-      DomainOverviewWorldwide,
-      DomainOverviewHistory,
-      DomainKeywords,
-      DomainAdsByKeyword,
-      DomainAdsByDomain,
-      DomainCompetitors,
-      DomainKeywordsComparison,
-      KeywordsSimilar,
-      KeywordsRelated,
-      KeywordsQuestions,
-      KeywordsLongtail,
-      KeywordsExport,
-      SerpAddTasks,
-      SerpGetTasks,
-      SerpGetTaskResults,
-      SerpGetTaskAdvancedResults,
-      SerpGetLocations,
+      GetAiOverview,
+      GetAiPromptsByBrand,
+      GetAiPromptsByTarget,
+      GetAllBacklinks,
+      GetBacklinksAnchors,
+      GetBacklinksAuthority,
+      GetBacklinksIndexedPages,
+      GetBacklinksRefDomains,
+      GetBacklinksSummary,
+      GetCumulativeBacklinksHistory,
+      GetReferringIps,
+      GetReferringIpsCount,
+      GetReferringSubnetsCount,
+      GetDistributionOfDomainAuthority,
+      GetPageAuthority,
+      GetPageAuthorityHistory,
+      GetDomainAuthority,
+      ListNewLostReferringDomains,
+      GetNewLostRefDomainsCount,
+      ExportBacklinksData,
+      GetDomainOverview,
+      GetDomainOverviewDatabases,
+      GetDomainOverviewWorldwide,
+      GetDomainOverviewHistory,
+      GetDomainKeywords,
+      GetDomainAdsByKeyword,
+      GetDomainAdsByDomain,
+      GetDomainCompetitors,
+      GetDomainKeywordsComparison,
+      GetSimilarKeywords,
+      GetRelatedKeywords,
+      GetKeywordQuestions,
+      GetLongTailKeywords,
+      ExportKeywords,
+      AddSerpTasks,
+      GetSerpTasks,
+      GetSerpTaskResults,
+      GetSerpTaskAdvancedResults,
+      GetSerpLocations,
       CreateStandardAudit,
       CreateAdvancedAudit,
       ListAudits,

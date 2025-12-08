@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { BaseTool } from "../base-tool.js";
 import { SERP_FEATURE_CODES } from './constants.js';
 
-export class KeywordsLongtail extends BaseTool {
+export class GetLongTailKeywords extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'keywordsLongtail',
+      'getLongTailKeywords',
       {
         title: 'Longtail Keywords',
         description: 'Retrieves a list of long-tail variations for the seed keyword.',

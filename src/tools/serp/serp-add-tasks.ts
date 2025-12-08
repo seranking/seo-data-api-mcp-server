@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { BaseTool } from '../base-tool.js';
 
-export class SerpAddTasks extends BaseTool {
+export class AddSerpTasks extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'serpCreateTasks',
+      'addSerpTasks',
       {
         title: 'Add SERP tasks',
         description: 'Adds one or more search queries to the queue for SERP analysis. Note that SERP tasks usually take 60 seconds to finish.',

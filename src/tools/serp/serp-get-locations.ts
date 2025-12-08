@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class SerpGetLocations extends BaseTool {
+export class GetSerpLocations extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'serpGetLocations',
+      'getSerpLocations',
       {
         title: 'SERP locations',
         description: 'Retrieves a list of available locations for SERP analysis.',

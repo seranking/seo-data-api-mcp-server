@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { BaseTool } from "../base-tool.js";
 import { MODES, OUTPUT_FORMATS, URL_FILTER_MODES } from './constants.js';
 
-export class BacklinksAll extends BaseTool {
+export class GetAllBacklinks extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'backlinksAll',
+      'getAllBacklinks',
       {
         title: 'Backlinks All',
         description:

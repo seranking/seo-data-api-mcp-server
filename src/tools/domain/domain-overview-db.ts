@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class DomainOverviewDb extends BaseTool {
+export class GetDomainOverviewDatabases extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainOverviewDb',
+      'getDomainOverviewDatabases',
       {
         title: 'Domain Overview DB',
         description: 'Fetch domain overview by database (v1/domain/overview/db)',

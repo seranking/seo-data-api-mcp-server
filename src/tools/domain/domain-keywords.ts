@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { BaseTool } from "../base-tool.js";
 import { INTENTS } from './constants.js';
 
-export class DomainKeywords extends BaseTool {
+export class GetDomainKeywords extends BaseTool {
   readonly COLS = [
     'keyword',
     'position',
@@ -28,7 +28,7 @@ export class DomainKeywords extends BaseTool {
 
   registerTool(server: McpServer): void {
     server.registerTool(
-      'domainKeywords',
+      'getDomainKeywords',
       {
         title: 'Domain Keywords',
         description: 'Retrieves a list of keywords for which a domain ranks in organic or paid search.',

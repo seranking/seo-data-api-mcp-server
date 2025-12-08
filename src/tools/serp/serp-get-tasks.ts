@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { BaseTool } from "../base-tool.js";
 
-export class SerpGetTasks extends BaseTool {
+export class GetSerpTasks extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'serpGetTasks',
+      'getSerpTasks',
       {
         title: 'List SERP tasks',
         description:

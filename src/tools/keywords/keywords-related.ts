@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { BaseTool } from "../base-tool.js";
 import { SERP_FEATURE_CODES } from './constants.js';
 
-export class KeywordsRelated extends BaseTool {
+export class GetRelatedKeywords extends BaseTool {
   registerTool(server: McpServer): void {
     server.registerTool(
-      'keywordsRelated',
+      'getRelatedKeywords',
       {
         title: 'Related Keywords',
         description: 'Retrieves a list of keywords semantically related to the seed keyword.',
