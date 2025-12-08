@@ -30,6 +30,19 @@ import { SerpGetTasks } from './tools/serp/serp-get-tasks.js';
 import { SerpGetTaskResults } from './tools/serp/serp-get-task-results.js';
 import { SerpGetTaskAdvancedResults } from './tools/serp/serp-get-task-advanced-results.js';
 import { SerpGetLocations } from './tools/serp/serp-get-locations.js';
+import { CreateStandardAudit } from './tools/website-audit/create-standard-audit.js';
+import { CreateAdvancedAudit } from './tools/website-audit/create-advanced-audit.js';
+import { ListAudits } from './tools/website-audit/list-audits.js';
+import { GetAuditStatus } from './tools/website-audit/get-audit-status.js';
+import { GetAuditReport } from './tools/website-audit/get-audit-report.js';
+import { GetCrawledPages } from './tools/website-audit/get-crawled-pages.js';
+import { GetAuditPagesByIssue } from './tools/website-audit/get-audit-pages-by-issue.js';
+import { GetIssuesByUrl } from './tools/website-audit/get-issues-by-url.js';
+import { GetFoundLinks } from './tools/website-audit/get-found-links.js';
+import { GetAuditHistory } from './tools/website-audit/get-audit-history.js';
+import { UpdateAuditTitle } from './tools/website-audit/update-audit-title.js';
+import { DeleteAudit } from './tools/website-audit/delete-audit.js';
+import { RecheckAudit } from './tools/website-audit/recheck-audit.js';
 import { Prompts } from './prompts.js';
 
 export class DataApiMcpServer {
@@ -75,6 +88,19 @@ export class DataApiMcpServer {
       SerpGetTaskResults,
       SerpGetTaskAdvancedResults,
       SerpGetLocations,
+      CreateStandardAudit,
+      CreateAdvancedAudit,
+      ListAudits,
+      GetAuditStatus,
+      GetAuditReport,
+      GetCrawledPages,
+      GetAuditPagesByIssue,
+      GetIssuesByUrl,
+      GetFoundLinks,
+      GetAuditHistory,
+      UpdateAuditTitle,
+      DeleteAudit,
+      RecheckAudit,
     ];
 
     for (const Tool of tools) {

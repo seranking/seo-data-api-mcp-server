@@ -51,7 +51,7 @@ export abstract class BaseTool {
 
   protected async request<T>(
     path: string,
-    method: 'GET' | 'POST' = 'GET',
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'GET',
     params: Record<string, unknown> = {},
   ): Promise<{ content: { type: 'text'; text: string }[] }> {
     const token = this.getToken();
@@ -69,7 +69,25 @@ export abstract class BaseTool {
     if (method === 'GET') {
       const query = this.getUrlSearchParamsFromParams(params);
       url += `?${query.toString()}`;
-    } else {
+    } else if (method === 'DELETE') {
+      const query = this.getUrlSearchParamsFromParams(params);
+      url += `?${query.toString()}`;
+    } else if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+      // Check if we want JSON or Form Data.
+      // The original implementation used FormData for POST by default in makePostRequest.
+      // But we just added makeJsonPostRequest.
+      // This generic `request` method is a bit ambiguous now.
+      // Tools using `request` directly (if any) need to be careful.
+      // Most tools use `makeGetRequest` or `makePostRequest`.
+      // Let's assume JSON for PATCH based on the prompt for UpdateAuditTitle.
+      // "Content-Type: application/json"
+      // DELETE usually has no body or just query params.
+      if (Object.keys(params).length > 0) {
+        if (method === 'PATCH' || method === 'PUT') {
+          options.headers = { ...options.headers, 'Content-Type': 'application/json' };
+          options.body = JSON.stringify(params);
+        }
+      }
       // For POST, we assume form data for now as per original implementation
       // But we should check if it needs to be JSON.
       // The original implementation used FormData for POST.
@@ -109,6 +127,31 @@ export abstract class BaseTool {
     const form = this.getFormDataFromParams(formParams);
 
     return this.executeRequest<T>(url, { method: 'POST', body: form });
+  }
+
+  protected async makeJsonPostRequest<T>(path: string, body: Record<string, unknown>) {
+    const url = `${SERANKING_API_BASE}${path}`;
+    return this.executeRequest<T>(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  }
+
+  protected async makePatchRequest<T>(path: string, queryParams: Record<string, unknown>, body: Record<string, unknown>) {
+    const query = this.getUrlSearchParamsFromParams(queryParams);
+    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    return this.executeRequest<T>(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  }
+
+  protected async makeDeleteRequest<T>(path: string, params: Record<string, unknown>) {
+    const query = this.getUrlSearchParamsFromParams(params);
+    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    return this.executeRequest<T>(url, { method: 'DELETE' });
   }
 
   private async executeRequest<T>(url: string, init: RequestInit) {
