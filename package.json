@@ -11,6 +11,7 @@
     "dev": "tsc && node dist/index.js",
     "dev-http": "tsc && node dist/http-server.js",
     "test": "tsc && vitest run",
+    "test:e2e": "tsc && vitest run tests/e2e",
     "test:watch": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
