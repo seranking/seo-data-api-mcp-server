@@ -28,7 +28,6 @@ import { GetDomainAdsByKeyword } from './tools/domain/domain-ads-by-keyword.js';
 import { GetDomainCompetitors } from './tools/domain/domain-competitors.js';
 import { GetDomainKeywords } from './tools/domain/domain-keywords.js';
 import { GetDomainKeywordsComparison } from './tools/domain/domain-keywords-comparison.js';
-import { GetDomainOverview } from './tools/domain/domain-overview.js';
 import { GetDomainOverviewDatabases } from './tools/domain/domain-overview-db.js';
 import { GetDomainOverviewHistory } from './tools/domain/domain-overview-history.js';
 import { GetDomainOverviewWorldwide } from './tools/domain/domain-overview-worldwide.js';
@@ -92,7 +91,6 @@ export class DataApiMcpServer {
       ListNewLostReferringDomains,
       GetNewLostRefDomainsCount,
       ExportBacklinksData,
-      GetDomainOverview,
       GetDomainOverviewDatabases,
       GetDomainOverviewWorldwide,
       GetDomainOverviewHistory,

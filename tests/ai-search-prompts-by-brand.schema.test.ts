@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 import captureSchema from '../src/helpers/captureSchema.js';
-import { AiSearchPromptsByBrand } from '../src/tools/ai-search/ai-search-prompts-by-brand.js';
+import { GetAiPromptsByBrand } from '../src/tools/ai-search/ai-search-prompts-by-brand.js';
 
-const getSchema = () => captureSchema(new AiSearchPromptsByBrand());
+const getSchema = () => captureSchema(new GetAiPromptsByBrand());
 
 describe('AiSearchPromptsByBrand input schema (from tool definition)', () => {
   it('accepts a valid payload', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { DomainKeywordsComparison } from '../../src/tools/domain/domain-keywords-comparison.js';
+import { GetDomainKeywordsComparison } from '../../src/tools/domain/domain-keywords-comparison.js';
 import { setTokenProvider } from '../../src/tools/base-tool.js';
 import { z } from 'zod';
 
@@ -9,7 +9,7 @@ const mockServer = {
     registerTool: vi.fn(),
 } as unknown as McpServer;
 
-describe('DomainKeywordsComparison Tool Tests', () => {
+describe('GetDomainKeywordsComparison Tool Tests', () => {
     beforeEach(() => {
         setTokenProvider(() => 'test-token');
         global.fetch = vi.fn();
@@ -20,11 +20,11 @@ describe('DomainKeywordsComparison Tool Tests', () => {
     });
 
     it('should register with correct schema excluding price and traffic', () => {
-        const tool = new DomainKeywordsComparison();
+        const tool = new GetDomainKeywordsComparison();
 
         let schema: any;
         (mockServer.registerTool as any).mockImplementation((name: string, s: any, cb: any) => {
-            if (name === 'domainKeywordsComparison') {
+            if (name === 'getDomainKeywordsComparison') {
                 schema = s;
             }
         });

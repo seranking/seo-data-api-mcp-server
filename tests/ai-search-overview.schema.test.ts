@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 import captureSchema from '../src/helpers/captureSchema.js';
-import { AiSearchOverview } from '../src/tools/ai-search/ai-search-overview.js';
+import { GetAiOverview } from '../src/tools/ai-search/ai-search-overview.js';
 
-const getSchema = () => captureSchema(new AiSearchOverview());
+const getSchema = () => captureSchema(new GetAiOverview());
 
 describe('AiSearchOverview input schema (from tool definition)', () => {
   it('accepts a valid payload with engine', () => {

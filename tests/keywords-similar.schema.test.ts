@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 import captureSchema from '../src/helpers/captureSchema.js';
 import { SERP_FEATURE_CODES } from '../src/tools/keywords/constants.js';
-import { KeywordsSimilar } from '../src/tools/keywords/keywords-similar.js';
+import { GetSimilarKeywords } from '../src/tools/keywords/keywords-similar.js';
 
-const getSchema = () => captureSchema(new KeywordsSimilar());
+const getSchema = () => captureSchema(new GetSimilarKeywords());
 
 describe('KeywordsSimilar input schema (from tool definition)', () => {
   it('accepts a valid payload', () => {
