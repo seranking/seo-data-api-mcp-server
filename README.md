@@ -158,6 +158,7 @@ Example of **Claude Desktop** configuration for MCP server
 | backlinks | `getBacklinksRefDomains` | Retrieves a list of referring domains pointing to the specified target, with options for sorting and limiting results. |
 | backlinks | `getBacklinksSummary` | Retrieves a summary of backlink metrics for one or multiple targets (domains, subdomains, or URLs). |
 | backlinks | `getCumulativeBacklinksHistory` | Returns a number of live backlinks for every day within the specified date range for the specified target. |
+| backlinks | `getDomainAuthority` | Returns information about the domain InLink Rank (Domain Authority) of the target page’s root domain. |
 | backlinks | `getDistributionOfDomainAuthority` | Returns information about the distribution of Domain InLink Rank (Domain Authority) of all the domains that reference a specific target. |
 | backlinks | `getNewLostRefDomainsCount` | Returns the number of referring domains, at least one backlink from which was newly found or lost in the specified date range, broken down by day. |
 | backlinks | `getPageAuthority` | Returns information about the InLink Rank (Page Authority) for a target URL. |
@@ -167,7 +168,7 @@ Example of **Claude Desktop** configuration for MCP server
 | backlinks | `getReferringSubnetsCount` | Returns the number of unique subnets/C-blocks linking to a target. |
 | backlinks | `listNewLostReferringDomains` | Returns a list of referring domains, at least one backlink from which was (newly) found or lost in the specified date range for the specified target. |
 | domain analysis | `getDomainAdsByDomain` | Retrieves paid ads for a specific domain. |
-| domain analysis | `getDomainAuthority` | Returns information about the domain InLink Rank (Domain Authority) of the target page’s root domain. |
+| domain analysis | `getDomainAdsByKeyword` | Retrieves paid ads for a specific keyword. |
 | domain analysis | `getDomainCompetitors` | Retrieves a list of organic or paid competitors for a domain. |
 | domain analysis | `getDomainKeywords` | Retrieves a list of keywords for which a domain ranks in organic or paid search. |
 | domain analysis | `getDomainKeywordsComparison` | Analyzes and compares the keyword rankings of two websites: `domain` and `compare`. It can find keywords they have in common (`diff=0`) or identify a 'keyword gap' (`diff=1`)—keywords for which the `domain` ranks, but the `compare` domain does not. To find keywords the `compare` domain has but `domain` misses, swap the values of `domain` and `compare`. |
@@ -175,7 +176,6 @@ Example of **Claude Desktop** configuration for MCP server
 | domain analysis | `getDomainOverviewHistory` | Retrieves historical data for domain traffic and keyword rankings. |
 | domain analysis | `getDomainOverviewWorldwide` | Retrieves an aggregated worldwide overview of domain metrics. |
 | keyword research | `exportKeywords` | Retrieves metrics for a bulk list of keywords. |
-| keyword research | `getDomainAdsByKeyword` | Retrieves paid ads for a specific keyword. |
 | keyword research | `getKeywordQuestions` | Retrieves a list of question-based keywords containing the seed keyword. |
 | keyword research | `getLongTailKeywords` | Retrieves a list of long-tail variations for the seed keyword. |
 | keyword research | `getRelatedKeywords` | Retrieves a list of keywords semantically related to the seed keyword. |
