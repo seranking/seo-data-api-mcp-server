@@ -9,7 +9,7 @@ Before you begin, please ensure you have the following software and accounts rea
 - **SE Ranking Account**: You will need an active SE Ranking account to generate an API token. If you don’t have one, you can [sign up here](https://online.seranking.com/admin.api.dashboard.html).
 - **Docker**: A platform for developing, shipping, and running applications in containers. If you don’t have it, you can [download it from the official Docker website](https://www.docker.com/get-started).
 - **Git**: A free and open-source distributed version control system. You can download it from the official Git website.
-- **AI Assistant**: You will need either the [Claude Desktop App](https://www.anthropic.com/claude) or the [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed and configured on your machine.
+- **AI Assistant**: You will need an MCP-compatible client, such as [Claude Desktop](https://claude.ai/download) or the [Gemini CLI](https://github.com/google-gemini/gemini-cli).
 
 ### Installation Steps
 
@@ -33,15 +33,9 @@ cd seo-data-api-mcp-server
 Make sure you're in the `seo-data-api-mcp-server` repository directory, and run:
 
 ```bash
-docker compose build
+docker build -t se-ranking/seo-data-api-mcp-server .
 # Check that the image is built and named `se-ranking/seo-data-api-mcp-server`:
 docker image ls
-```
-
-Note: don't worry about the warnings, this is normal when building the image:
-
-```
-WARN[0000] The "SERANKING_API_TOKEN" variable is not set. Defaulting to a blank string.
 ```
 
 #### How to Update SEO-MCP
@@ -199,6 +193,16 @@ Example of **Claude Desktop** configuration for MCP server
 | website audit | `listAudits` | Retrieves a list of all website audits associated with your account, providing key details and statistics for each. |
 | website audit | `recheckAudit` | Launches a new crawl of a previously completed audit, using the same settings. |
 | website audit | `updateAuditTitle` | Changes the title of an existing website audit report. |
+
+## Available Prompts
+
+| Prompt Name | Arguments | Description |
+| :--- | :--- | :--- |
+| `serp-analysis` | `keyword`, `location1`, `location2`, `language`, `device` | Create two SERP tasks for the query in two locations and compare top 10 organic domains, overlap, and unique competitors. |
+| `backlink-gap` | `my_domain`, `competitors`, `min_domain_trust` | Fetch backlinks for competitors with a minimum Domain Trust, compare against your domain, and find opportunities. |
+| `domain-traffic-competitors` | `domain` | Analyze a domain's global/country organic traffic, top competitors by shared keywords, and provide strategic recommendations. |
+| `keyword-clusters` | `market`, `seed_keywords` | Pull related/similar keywords for a market, clean/deduplicate, and cluster them by intent/theme with volume and H1/H2 ideas. |
+| `ai-share-of-voice` | `domain`, `competitors`, `country`, `llm_engines` | Estimate share of voice in AI search (e.g. ChatGPT, Perplexity) vs competitors, listing winning topics and gap-closing actions. |
 
 ## Run as HTTP Server (Node)
 
