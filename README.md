@@ -1,8 +1,6 @@
 # MCP Server
 
-## Installation
-
-### Prerequisites
+## Prerequisites
 
 Before you begin, please ensure you have the following software and accounts ready:
 
@@ -11,26 +9,29 @@ Before you begin, please ensure you have the following software and accounts rea
 - **Git**: A free and open-source distributed version control system. You can download it from the official Git website.
 - **AI Assistant**: You will need an MCP-compatible client, such as [Claude Desktop](https://claude.ai/download) or the [Gemini CLI](https://github.com/google-gemini/gemini-cli).
 
-### Installation Steps
+## Installation
 
-Follow these steps to install the SEO-MCP server on your local machine.
+Choose the installation method that best fits your needs:
 
-- Open your terminal (or Command Prompt/PowerShell on Windows).
-- Clone the project repository from GitHub. This command downloads the necessary files to your machine.
+- **Option 1: Docker (Recommended)** - Best for standard usage, stability, and ease of updates. Use this if you just want to run the tool without managing dependencies.
+- **Option 2: Local Node.js Server (For Developers)** - Best for development, debugging, or environments where Docker isn't available (like Replit). Use this if you need to modify the code or run a custom setup.
+
+### Option 1: Docker (Recommended)
+
+1. Open your terminal (or Command Prompt/PowerShell on Windows).
+2. Clone the project repository from GitHub:
 
 ```shell
 git clone https://github.com/seranking/seo-data-api-mcp-server.git
 ```
 
-- Navigate into the new directory in your terminal:
+3. Navigate into the new directory:
 
 ```shell
 cd seo-data-api-mcp-server
 ```
 
-### Build the Docker Image
-
-Make sure you're in the `seo-data-api-mcp-server` repository directory, and run:
+4. Build the Docker Image:
 
 ```bash
 docker build -t se-ranking/seo-data-api-mcp-server .
@@ -38,34 +39,32 @@ docker build -t se-ranking/seo-data-api-mcp-server .
 docker image ls
 ```
 
-#### How to Update SEO-MCP
+#### How to Update SEO-MCP (Docker)
 
-To ensure you have the latest features and improvements, you should update the tool periodically.
-
-- Navigate to your `seo-data-api-mcp-server` directory in the terminal.
-- Pull the latest changes from the GitHub repository.
+To ensure you have the latest features, pull the latest changes and rebuild:
 
 ```shell
 git pull origin main
+docker build -t se-ranking/seo-data-api-mcp-server .
 ```
 
-## Run as HTTP Server (Node)
+### Option 2: Local Node.js Server (For Developers)
 
 In order to run the local Node server, you need to have [Node.js 20+](https://nodejs.org/en/download) version installed on your machine.
 
-Run the following commands in your terminal:
+1. Install dependencies:
 
 ```shell
 npm install
 ```
 
-To build the project, use the following command:
+2. Build the project:
 
 ```shell
 npm run build
 ```
 
-To start the server use the command:
+3. Start the server:
 
 ```shell
 npm run start-http
@@ -80,20 +79,19 @@ HOST=127.0.0.1
 PORT=5555
 ```
 
-Additionally, when you're running the server in the external environments/tools like [Replit](https://replit.com/) and similar, you can set the `SERANKING_API_TOKEN` environment variable in the configuration panel, and the application will use it when you start the server.
+Additionally, when running in external environments like [Replit](https://replit.com/), you can set the `SERANKING_API_TOKEN` environment variable in the configuration panel.
 
-Note: If you change the `SERANKING_API_TOKEN` value when the server is running, you need to restart the server.
+**Note**: If you change the `SERANKING_API_TOKEN` value when the server is running, you need to restart the server.
 
-### Verifying the HTTP Server
+#### Verifying the HTTP Server
 
-To send the sample test request, which will verify if your server runs properly and has the correct setup,
-**open another terminal window**, and run the following command **with your SE Ranking API token provided** as an argument:
+To send a sample test request and verify your setup:
 
 ```shell
 ./test-http-server-curl-request.sh '<your-api-token-here>'
 ```
 
-For batch MCP Requests testing, you can use this script:
+For batch MCP Requests testing:
 
 ```shell
 ./test-batch-http-server-curl-request.sh '<your-api-token-here>'
