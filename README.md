@@ -49,6 +49,56 @@ To ensure you have the latest features and improvements, you should update the t
 git pull origin main
 ```
 
+## Run as HTTP Server (Node)
+
+In order to run the local Node server, you need to have [Node.js 20+](https://nodejs.org/en/download) version installed on your machine.
+
+Run the following commands in your terminal:
+
+```shell
+npm install
+```
+
+To build the project, use the following command:
+
+```shell
+npm run build
+```
+
+To start the server use the command:
+
+```shell
+npm run start-http
+```
+
+Then your HTTP server should be running at: http://0.0.0.0:5000/mcp.
+
+In case you'd like to modify the `HOST` and `PORT`, you can do so by creating a `.env` file in the root directory of the project with the settings you want to override, for example:
+
+```shell
+HOST=127.0.0.1
+PORT=5555
+```
+
+Additionally, when you're running the server in the external environments/tools like [Replit](https://replit.com/) and similar, you can set the `SERANKING_API_TOKEN` environment variable in the configuration panel, and the application will use it when you start the server.
+
+Note: If you change the `SERANKING_API_TOKEN` value when the server is running, you need to restart the server.
+
+### Verifying the HTTP Server
+
+To send the sample test request, which will verify if your server runs properly and has the correct setup,
+**open another terminal window**, and run the following command **with your SE Ranking API token provided** as an argument:
+
+```shell
+./test-http-server-curl-request.sh '<your-api-token-here>'
+```
+
+For batch MCP Requests testing, you can use this script:
+
+```shell
+./test-batch-http-server-curl-request.sh '<your-api-token-here>'
+```
+
 ## Connect to Claude Desktop
 
 Claude Desktop reads its configuration from `claude_desktop_config.json`.
@@ -204,40 +254,7 @@ Example of **Claude Desktop** configuration for MCP server
 | `keyword-clusters` | `market`, `seed_keywords` | Pull related/similar keywords for a market, clean/deduplicate, and cluster them by intent/theme with volume and H1/H2 ideas. |
 | `ai-share-of-voice` | `domain`, `competitors`, `country`, `llm_engines` | Estimate share of voice in AI search (e.g. ChatGPT, Perplexity) vs competitors, listing winning topics and gap-closing actions. |
 
-## Run as HTTP Server (Node)
 
-In order to run the local Node server, you need to have [Node.js 20+](https://nodejs.org/en/download) version installed on your machine.
-
-Run the following commands in your terminal:
-
-```shell
-npm install
-```
-
-To build the project, use the following command:
-
-```shell
-npm run build
-```
-
-To start the server use the command:
-
-```shell
-npm run start-http
-```
-
-Then your HTTP server should be running at: http://0.0.0.0:5000/mcp.
-
-In case you'd like to modify the `HOST` and `PORT`, you can do so by creating a `.env` file in the root directory of the project with the settings you want to override, for example:
-
-```shell
-HOST=127.0.0.1
-PORT=5555
-```
-
-Additionally, when you're running the server in the external environments/tools like [Replit](https://replit.com/) and similar, you can set the `SERANKING_API_TOKEN` environment variable in the configuration panel, and the application will use it when you start the server.
-
-Note: If you change the `SERANKING_API_TOKEN` value when the server is running, you need to restart the server.
 
 ## Usage Example: Finding Keyword Opportunities
 
@@ -270,18 +287,6 @@ This prompt instructs the model to perform a comprehensive competitive analysis 
 - **Uncovering Competitor-Ranked Keywords**: It compares seranking.com against its top competitors to find 30 high-volume keywords that they rank for, but seranking.com does not.
 - **Generating a Final Report**: Finally, it synthesizes all of this information into a concise report, highlighting the most promising opportunities for growth.
 
-To send the sample test request, which will verify if your server runs properly and has the correct setup,
-**open another terminal window**, and run the following command **with your SE Ranking API token provided** as an argument:
-
-```shell
-./test-http-server-curl-request.sh '<your-api-token-here>'
-```
-
-For batch MCP Requests testing, you can use this script:
-
-```shell
-./test-batch-http-server-curl-request.sh '<your-api-token-here>'
-```
 
 ## Troubleshooting
 
