@@ -15,6 +15,7 @@ export class CreateStandardAudit extends BaseTool {
           domain: z.string().describe('Domain to be audited (e.g., domain.com).'),
           title: z
             .string()
+            .max(300)
             .optional()
             .describe('Custom title for the audit report. Maximum 300 characters.'),
           settings: z
