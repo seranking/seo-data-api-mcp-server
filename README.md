@@ -1,4 +1,13 @@
-# MCP Server
+# SE Ranking MCP Server
+
+This Model Context Protocol (MCP) server connects AI assistants to [SE Ranking's](https://seranking.com) SEO data and project management APIs. It enables natural language queries for:
+
+- Keyword research and competitive analysis
+- Backlink analysis and monitoring
+- Domain traffic and ranking insights
+- Website audits and technical SEO
+- AI search visibility tracking
+- Project and rank tracking management
 
 ## Prerequisites
 
@@ -8,6 +17,28 @@ Before you begin, please ensure you have the following software and accounts rea
 - **Docker**: A platform for developing, shipping, and running applications in containers. If you don’t have it, you can [download it from the official Docker website](https://www.docker.com/get-started).
 - **Git**: A free and open-source distributed version control system. You can download it from the official Git website.
 - **AI Assistant**: You will need an MCP-compatible client, such as [Claude Desktop](https://claude.ai/download) or the [Gemini CLI](https://github.com/google-gemini/gemini-cli).
+
+## API Tokens
+
+This MCP server supports two types of API access:
+
+| Token | Environment Variable | Format | Purpose |
+|-------|---------------------|--------|---------|
+| Data API | `DATA_API_TOKEN` | UUID (e.g., `80cfee7d-xxxx-xxxx-xxxx-fc8500816bb3`) | Access to keyword research, domain analysis, backlinks data, SERP analysis, and website audits. Tools prefixed with `DATA_`. |
+| Project API | `PROJECT_API_TOKEN` | 40-char hex (e.g., `253a73adxxxxxxxxxxxx340aa0a939`) | Access to project management, rank tracking, backlink monitoring, and account management. Tools prefixed with `PROJECT_`. |
+
+Get your tokens from: https://online.seranking.com/admin.api.dashboard.html
+
+You can use one or both tokens depending on which tools you need. If you only use Data API tools, you can omit `PROJECT_API_TOKEN`, and vice versa.
+
+## Rate Limits
+
+| API | Default Rate Limit |
+|-----|-------------------|
+| Data API | 10 requests per second |
+| Project API | 5 requests per second |
+
+Rate limits are customizable. Contact [api@seranking.com](mailto:api@seranking.com) to request adjustments.
 
 ## Installation
 
@@ -79,9 +110,9 @@ HOST=127.0.0.1
 PORT=5555
 ```
 
-Additionally, when running in external environments like [Replit](https://replit.com/), you can set the `SERANKING_API_TOKEN` environment variable in the configuration panel.
+Additionally, when running in external environments like [Replit](https://replit.com/), you can set the `DATA_API_TOKEN` and `PROJECT_API_TOKEN` environment variables in the configuration panel.
 
-**Note**: If you change the `SERANKING_API_TOKEN` value when the server is running, you need to restart the server.
+**Note**: If you change the API token values when the server is running, you need to restart the server.
 
 #### Verifying the HTTP Server
 
@@ -139,8 +170,7 @@ Example of **Claude Desktop** configuration for MCP server
 }
 ```
 
-- You need to change the **DATA_API_TOKEN** and **PROJECT_API_TOKEN**, get yours from https://online.seranking.com/admin.api.dashboard.html.
-- If you only use Data API tools, you can omit `PROJECT_API_TOKEN`.
+- Replace the `DATA_API_TOKEN` and `PROJECT_API_TOKEN` placeholder values with your tokens (see [API Tokens](#api-tokens) section).
 
 - After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
 
@@ -155,7 +185,7 @@ Example of **Claude Desktop** configuration for MCP server
 ## Connect to Gemini CLI
 
 - Open the Gemini CLI settings file, which is typically located at: `~/.gemini/settings.json`
-- Add the following JSON configuration, making sure to **replace the SERANKING_API_TOKEN placeholder value.**
+- Add the following JSON configuration, making sure to **replace the API token placeholder values.**
 
 ```json
 {
@@ -181,8 +211,7 @@ Example of **Claude Desktop** configuration for MCP server
 }
 ```
 
-`"DATA_API_TOKEN"`: Use your personal Data API token, which you can generate from the [SE Ranking API Dashboard](https://online.seranking.com/admin.api.dashboard.html).
-`"PROJECT_API_TOKEN"`: Use your personal Project API token if you need access to project-specific tools.
+Replace the `DATA_API_TOKEN` and `PROJECT_API_TOKEN` placeholder values with your tokens (see [API Tokens](#api-tokens) section).
 
 - Save the configuration file.
 
@@ -196,59 +225,156 @@ Example of **Claude Desktop** configuration for MCP server
 
 ## Available Tools
 
+### Data API Tools
+
 | Module | Tool Name | Description |
 | :--- | :--- | :--- |
-| SERP | `DATA_addSerpTasks` | Adds one or more search queries to the queue for SERP analysis. Note that SERP tasks usually take 60 seconds to finish. |
+| SERP | `DATA_getSerpHtmlDump` | Retrieves the raw HTML dump of a completed SERP task as a ZIP file. |
 | SERP | `DATA_getSerpLocations` | Retrieves a list of available locations for SERP analysis. |
-| SERP | `DATA_getSerpTaskAdvancedResults` | Retrieves the status or advanced results of a specific SERP task. Note that SERP tasks usually take 60 seconds to finish. If the task is still running, returns {"status": "processing"}. If complete, returns the full JSON results including "items". |
-| SERP | `DATA_getSerpTaskResults` | Retrieves the status or standard results of a specific SERP task. Note that SERP tasks usually take 60 seconds to finish. If the task is still running, returns {"status": "processing"}. If complete, returns the full JSON results including "items". This endpoint provides results for the following SERP item types only: organic, ads, and featured_snippet. |
+| SERP | `DATA_getSerpResults` | Runs a SERP query and returns results. Creates task, polls until complete, and returns organic/ads/featured snippets (standard) or all SERP types including AI Overview, Maps, Reviews (advanced). |
+| SERP | `DATA_getSerpTaskAdvancedResults` | Retrieves the status or advanced results of a specific SERP task. |
+| SERP | `DATA_getSerpTaskResults` | Retrieves the status or standard results of a specific SERP task. Returns organic, ads, and featured_snippet types only. |
 | SERP | `DATA_getSerpTasks` | Retrieves a list of all SERP tasks added to the queue in the last 24 hours. |
-| ai search | `DATA_getAiOverview` | Retrieves a high-level overview of a domain's performance in AI search engines. Returns aggregated data if no engine is specified, or engine-specific data if an engine is provided. |
+| ai search | `DATA_getAiDiscoverBrand` | Identifies and returns the brand name associated with a given target domain, subdomain, or URL. |
+| ai search | `DATA_getAiOverview` | Retrieves a high-level overview of a domain's performance in AI search engines. |
 | ai search | `DATA_getAiPromptsByBrand` | Retrieves a list of prompts where the specified brand is mentioned in AI search results. |
 | ai search | `DATA_getAiPromptsByTarget` | Retrieves a list of prompts (queries) that mention the specified target in AI search results. |
 | backlinks | `DATA_exportBacklinksData` | Retrieves large-scale backlinks asynchronously, returning a task ID to check status later. |
 | backlinks | `DATA_getAllBacklinks` | Retrieves a comprehensive list of backlinks for the specified target, with extensive filtering and sorting options. |
-| backlinks | `DATA_getBacklinksAnchors` | Retrieves a list of anchor texts for backlinks pointing to the specified target, with sorting and limit options. |
-| backlinks | `DATA_getBacklinksAuthority` | Fetch authority metrics for a target (domain, host or URL) (v1/backlinks/authority) |
-| backlinks | `DATA_getBacklinksIndexedPages` | Fetch site pages that have backlinks, with sorting and limit controls (v1/backlinks/indexed-pages) |
-| backlinks | `DATA_getBacklinksRefDomains` | Retrieves a list of referring domains pointing to the specified target, with options for sorting and limiting results. |
-| backlinks | `DATA_getBacklinksSummary` | Retrieves a summary of backlink metrics for one or multiple targets (domains, subdomains, or URLs). |
-| backlinks | `DATA_getCumulativeBacklinksHistory` | Returns a number of live backlinks for every day within the specified date range for the specified target. |
-| backlinks | `DATA_getDomainAuthority` | Returns information about the domain InLink Rank (Domain Authority) of the target page’s root domain. |
-| backlinks | `DATA_getDistributionOfDomainAuthority` | Returns information about the distribution of Domain InLink Rank (Domain Authority) of all the domains that reference a specific target. |
-| backlinks | `DATA_getNewLostRefDomainsCount` | Returns the number of referring domains, at least one backlink from which was newly found or lost in the specified date range, broken down by day. |
-| backlinks | `DATA_getPageAuthority` | Returns information about the InLink Rank (Page Authority) for a target URL. |
-| backlinks | `DATA_getPageAuthorityHistory` | Returns information about the historical values of InLink Rank for a specific target page. |
-| backlinks | `DATA_getReferringIps` | Returns information about IPv4 addresses that belong to backlinks that point to a target. |
+| backlinks | `DATA_getBacklinksAnchors` | Retrieves a list of anchor texts for backlinks pointing to the specified target. |
+| backlinks | `DATA_getBacklinksAuthority` | Fetch authority metrics for a target (domain, host or URL). |
+| backlinks | `DATA_getBacklinksCount` | Returns the total number of backlinks for the target. Supports batch requests. |
+| backlinks | `DATA_getBacklinksExportStatus` | Checks the status of an asynchronous backlinks export task. Returns download URL when complete. |
+| backlinks | `DATA_getBacklinksIndexedPages` | Fetch site pages that have backlinks, with sorting and limit controls. |
+| backlinks | `DATA_getBacklinksMetrics` | Returns key statistics for a target (backlinks count, referring domains, etc.). Supports batch requests. |
+| backlinks | `DATA_getBacklinksRaw` | Returns all backlinks pointing to a target using cursor-based pagination for large datasets. |
+| backlinks | `DATA_getBacklinksRefDomains` | Retrieves a list of referring domains pointing to the specified target. |
+| backlinks | `DATA_getBacklinksSummary` | Retrieves a summary of backlink metrics for one or multiple targets. |
+| backlinks | `DATA_getCumulativeBacklinksHistory` | Returns live backlinks count for every day within the specified date range. |
+| backlinks | `DATA_getDistributionOfDomainAuthority` | Returns distribution of Domain InLink Rank of all domains referencing a target. |
+| backlinks | `DATA_getDomainAuthority` | Returns the domain InLink Rank (Domain Authority) of the target page's root domain. |
+| backlinks | `DATA_getNewLostBacklinksCount` | Returns count of (newly) found or lost backlinks for every day in the date range. |
+| backlinks | `DATA_getNewLostRefDomainsCount` | Returns count of referring domains found or lost in the date range, by day. |
+| backlinks | `DATA_getPageAuthority` | Returns the InLink Rank (Page Authority) for a target URL. |
+| backlinks | `DATA_getPageAuthorityHistory` | Returns historical values of InLink Rank for a specific target page. |
+| backlinks | `DATA_getReferringIps` | Returns IPv4 addresses that belong to backlinks pointing to a target. |
 | backlinks | `DATA_getReferringIpsCount` | Returns the number of unique IPs linking to a target. |
 | backlinks | `DATA_getReferringSubnetsCount` | Returns the number of unique subnets/C-blocks linking to a target. |
-| backlinks | `DATA_listNewLostReferringDomains` | Returns a list of referring domains, at least one backlink from which was (newly) found or lost in the specified date range for the specified target. |
+| backlinks | `DATA_getTotalRefDomainsCount` | Returns the number of unique domains linking to a target. Supports batch requests. |
+| backlinks | `DATA_listNewLostBacklinks` | Returns a list of backlinks found or lost within the specified date range. |
+| backlinks | `DATA_listNewLostReferringDomains` | Returns referring domains found or lost in the specified date range. |
 | domain analysis | `DATA_getDomainAdsByDomain` | Retrieves paid ads for a specific domain. |
 | domain analysis | `DATA_getDomainAdsByKeyword` | Retrieves paid ads for a specific keyword. |
 | domain analysis | `DATA_getDomainCompetitors` | Retrieves a list of organic or paid competitors for a domain. |
-| domain analysis | `DATA_getDomainKeywords` | Retrieves a list of keywords for which a domain ranks in organic or paid search. |
-| domain analysis | `DATA_getDomainKeywordsComparison` | Analyzes and compares the keyword rankings of two websites: `domain` and `compare`. It can find keywords they have in common (`diff=0`) or identify a 'keyword gap' (`diff=1`)—keywords for which the `domain` ranks, but the `compare` domain does not. To find keywords the `compare` domain has but `domain` misses, swap the values of `domain` and `compare`. |
-| domain analysis | `DATA_getDomainOverviewDatabases` | Fetch domain overview by database (v1/domain/overview/db) |
+| domain analysis | `DATA_getDomainKeywords` | Retrieves keywords for which a domain ranks in organic or paid search. |
+| domain analysis | `DATA_getDomainKeywordsComparison` | Compares keyword rankings of two websites. Find common keywords or keyword gaps. |
+| domain analysis | `DATA_getDomainOverviewDatabases` | Fetch domain overview by database. |
 | domain analysis | `DATA_getDomainOverviewHistory` | Retrieves historical data for domain traffic and keyword rankings. |
 | domain analysis | `DATA_getDomainOverviewWorldwide` | Retrieves an aggregated worldwide overview of domain metrics. |
+| domain analysis | `DATA_getDomainPages` | Retrieves a list of individual pages ranking within a specified domain. |
+| domain analysis | `DATA_getDomainSubdomains` | Retrieves a list of subdomains for a domain with search performance metrics. |
+| domain analysis | `DATA_getUrlOverviewWorldwide` | Retrieves worldwide overview of organic and paid traffic metrics for a specific URL. |
 | keyword research | `DATA_exportKeywords` | Retrieves metrics for a bulk list of keywords. |
-| keyword research | `DATA_getKeywordQuestions` | Retrieves a list of question-based keywords containing the seed keyword. |
-| keyword research | `DATA_getLongTailKeywords` | Retrieves a list of long-tail variations for the seed keyword. |
-| keyword research | `DATA_getRelatedKeywords` | Retrieves a list of keywords semantically related to the seed keyword. |
-| keyword research | `DATA_getSimilarKeywords` | Retrieves a list of keywords similar to the seed keyword. |
-| website audit | `DATA_createAdvancedAudit` | Launches an advanced website audit that renders JavaScript before analyzing the page. Suitable for Single-Page Applications (SPAs) or dynamic content. |
-| website audit | `DATA_createStandardAudit` | Launches a standard website audit that crawls the HTML of a website. Suitable for most static and server-side rendered sites. |
-| website audit | `DATA_deleteAudit` | Permanently deletes a specified website audit report and all of its associated data. |
-| website audit | `DATA_getAuditHistory` | Retrieves a historical snapshot of a specific audit run, providing the full context of that audit. |
-| website audit | `DATA_getAuditPagesByIssue` | Retrieves a paginated list of all URLs affected by a specific issue within a given audit. |
-| website audit | `DATA_getAuditReport` | Retrieves the full, detailed report for a completed website audit. Includes health score, domain properties, and broken down checks. |
-| website audit | `DATA_getAuditStatus` | Checks the real-time status of a specific website audit, whether it’s queued, currently processing, or already finished. |
-| website audit | `DATA_getCrawledPages` | Returns a paginated list of all URLs found during an audit, providing a complete sitemap as discovered by the crawler. |
-| website audit | `DATA_getFoundLinks` | Returns a paginated list of every hyperlink discovered across the entire site during the audit. |
-| website audit | `DATA_getIssuesByUrl` | Retrieves a detailed list of all issues (errors, warnings, and notices) that were found on a single, specific page within an audit. |
-| website audit | `DATA_listAudits` | Retrieves a list of all website audits associated with your account, providing key details and statistics for each. |
-| website audit | `DATA_recheckAudit` | Launches a new crawl of a previously completed audit, using the same settings. |
+| keyword research | `DATA_getKeywordQuestions` | Retrieves question-based keywords containing the seed keyword. |
+| keyword research | `DATA_getLongTailKeywords` | Retrieves long-tail variations for the seed keyword. |
+| keyword research | `DATA_getRelatedKeywords` | Retrieves keywords semantically related to the seed keyword. |
+| keyword research | `DATA_getSimilarKeywords` | Retrieves keywords similar to the seed keyword. |
+| website audit | `DATA_createAdvancedAudit` | Launches an advanced website audit that renders JavaScript. Suitable for SPAs. |
+| website audit | `DATA_createStandardAudit` | Launches a standard website audit that crawls HTML. Suitable for static sites. |
+| website audit | `DATA_deleteAudit` | Permanently deletes a website audit report and all associated data. |
+| website audit | `DATA_getAuditHistory` | Retrieves a historical snapshot of a specific audit run. |
+| website audit | `DATA_getAuditPagesByIssue` | Retrieves URLs affected by a specific issue within an audit. |
+| website audit | `DATA_getAuditReport` | Retrieves the full detailed report for a completed website audit. |
+| website audit | `DATA_getAuditStatus` | Checks the real-time status of a specific website audit. |
+| website audit | `DATA_getCrawledPages` | Returns all URLs found during an audit. |
+| website audit | `DATA_getFoundLinks` | Returns every hyperlink discovered during the audit. |
+| website audit | `DATA_getIssuesByUrl` | Retrieves all issues found on a specific page within an audit. |
+| website audit | `DATA_listAudits` | Retrieves all website audits associated with your account. |
+| website audit | `DATA_recheckAudit` | Launches a new crawl of a previously completed audit. |
 | website audit | `DATA_updateAuditTitle` | Changes the title of an existing website audit report. |
+
+### Project API Tools
+
+| Module | Tool Name | Description |
+| :--- | :--- | :--- |
+| account | `PROJECT_getAccountBalance` | Get the current account balance including currency and currency code. |
+| account | `PROJECT_getSubscription` | Get information about the current user subscription. |
+| account | `PROJECT_getUserProfile` | Get information about the currently logged in user. |
+| analytics | `PROJECT_getGoogleSearchConsole` | Get popular queries from Google Search Console for a website. |
+| analytics | `PROJECT_getSeoPotential` | Assess potential traffic volume, traffic cost, and potential customers for a website. |
+| backlink checker | `PROJECT_addDisavowedBacklinks` | Add a list of URLs to the disavowed backlinks list. |
+| backlink checker | `PROJECT_addProjectBacklink` | Add a single backlink to the backlink monitor for a website. |
+| backlink checker | `PROJECT_createBacklinkGroup` | Create a new group for organizing backlinks. |
+| backlink checker | `PROJECT_deleteBacklinkGroup` | Delete a backlink group. |
+| backlink checker | `PROJECT_deleteDisavowedBacklink` | Remove a backlink from the disavowed backlinks list. |
+| backlink checker | `PROJECT_deleteProjectBacklinks` | Delete a list of backlinks from the backlink monitor. |
+| backlink checker | `PROJECT_getBacklinkGscImportStatus` | Get the status of a backlink import from Google Search Console. |
+| backlink checker | `PROJECT_getBacklinkStats` | Get backlink statistics for a website. |
+| backlink checker | `PROJECT_importProjectBacklinks` | Import a list of backlinks to the backlink monitor. |
+| backlink checker | `PROJECT_listBacklinkGroups` | Get a list and count of backlink groups for a website. |
+| backlink checker | `PROJECT_listDisavowedBacklinks` | Get a list and count of disavowed backlinks for a website. |
+| backlink checker | `PROJECT_listProjectBacklinks` | Get a list of backlinks from the backlink monitor. |
+| backlink checker | `PROJECT_moveBacklinksToGroup` | Move backlinks from one group to another. |
+| backlink checker | `PROJECT_recheckProjectBacklinks` | Run an index or status check for a list of backlinks. |
+| backlink checker | `PROJECT_renameBacklinkGroup` | Change the name of a backlink group. |
+| backlink checker | `PROJECT_runBacklinkGscImport` | Start a backlink import from Google Search Console. |
+| backlink checker | `PROJECT_updateBacklinkImportSettings` | Update settings for automatic backlink import from GSC. |
+| competitors | `PROJECT_addCompetitor` | Add a competitor website to a project for position tracking. |
+| competitors | `PROJECT_deleteCompetitor` | Remove a competitor website from a project. |
+| competitors | `PROJECT_getAllCompetitorsMetrics` | Get data on sites ranked in TOP 10 for tracked queries (14-day history). |
+| competitors | `PROJECT_getCompetitorPositions` | Get statistics on competitor keyword positions. |
+| competitors | `PROJECT_getCompetitorTop10` | Get TOP 10 results for tracked keywords in a project. |
+| competitors | `PROJECT_getCompetitorTop100` | Get top 100 results for tracked keywords in a project. |
+| competitors | `PROJECT_listCompetitors` | Get a list of all competitors added to a project with statistics. |
+| keyword groups | `PROJECT_createKeywordGroup` | Add a group for project keywords. |
+| keyword groups | `PROJECT_deleteKeywordGroup` | Delete a project keyword group. |
+| keyword groups | `PROJECT_listKeywordGroups` | Get a list of keyword groups for a project. |
+| keyword groups | `PROJECT_moveKeywordsToGroup` | Transfer project keywords from one group to another. |
+| keyword groups | `PROJECT_updateKeywordGroup` | Update the name of a project keyword group. |
+| marketing plan | `PROJECT_addPlanTask` | Add a new task to the marketing plan for a website. |
+| marketing plan | `PROJECT_deletePlanTask` | Delete a task from the marketing plan. |
+| marketing plan | `PROJECT_listPlanItems` | Get all marketing plan sections, items, and notes for a website. |
+| marketing plan | `PROJECT_setPlanTaskStatus` | Set the completion status of a marketing plan task. |
+| marketing plan | `PROJECT_updatePlanTask` | Update an existing marketing plan task. |
+| project groups | `PROJECT_createProjectGroup` | Add a new project group to a user account. |
+| project groups | `PROJECT_deleteProjectGroup` | Delete a project group. |
+| project groups | `PROJECT_listProjectGroups` | Get a list of all project groups from a user account. |
+| project groups | `PROJECT_moveProjectsToGroup` | Transfer projects from one group to another. |
+| project groups | `PROJECT_updateProjectGroup` | Rename a project group. |
+| project management | `PROJECT_addKeywords` | Add new keywords to a project. |
+| project management | `PROJECT_addSearchEngine` | Add a new search engine to a project. |
+| project management | `PROJECT_createProject` | Add a new project to the user account. |
+| project management | `PROJECT_deleteKeywords` | Delete keywords from a project. |
+| project management | `PROJECT_deleteProject` | Delete a project from the user account. |
+| project management | `PROJECT_deleteSearchEngine` | Delete a search engine from a project. |
+| project management | `PROJECT_getAdsStats` | Get total number of top and bottom advertisements by day. |
+| project management | `PROJECT_getHistoricalDates` | Returns standard comparison dates available for reporting. |
+| project management | `PROJECT_getKeywordStats` | Get keyword ranking statistics for a specified time period. |
+| project management | `PROJECT_getSearchEngines` | Get a list of search engines employed by a project. |
+| project management | `PROJECT_getSummary` | Get a project's summary statistics. |
+| project management | `PROJECT_listKeywords` | Get a list of keywords with target pages for a project. |
+| project management | `PROJECT_listProjects` | Get a list of all user projects. |
+| project management | `PROJECT_runPositionCheck` | Run a ranking position check for keywords or entire project. |
+| project management | `PROJECT_setKeywordPosition` | Manually set position for a project's keyword. |
+| project management | `PROJECT_updateProject` | Change/update project settings. |
+| project management | `PROJECT_updateSearchEngine` | Update an existing search engine in a project. |
+| sub-accounts | `PROJECT_createSubAccount` | Create a new sub-account. |
+| sub-accounts | `PROJECT_deleteSubAccount` | Delete a user sub-account. |
+| sub-accounts | `PROJECT_getSubAccountDetails` | Get extended information about a sub-account. |
+| sub-accounts | `PROJECT_listOwnedProjects` | Get website IDs that belong to a sub-account. |
+| sub-accounts | `PROJECT_listSharedProjects` | Get website IDs shared with a sub-account. |
+| sub-accounts | `PROJECT_listSubAccounts` | Get a list of all sub-accounts of the current user. |
+| sub-accounts | `PROJECT_shareProject` | Share one or more websites with a sub-account. |
+| sub-accounts | `PROJECT_updateSubAccount` | Edit sub-account settings, limits, and permissions. |
+| system | `PROJECT_getAvailableRegions` | Get the list of all available regions supported by Google. |
+| system | `PROJECT_getAvailableSearchEngines` | Get the list of all available search engines. |
+| system | `PROJECT_getGoogleLanguages` | Get a complete list of possible languages for Google search engine. |
+| system | `PROJECT_getSearchVolume` | Get search volume data for a region and keyword list (max 10 keywords). |
+| system | `PROJECT_getVolumeRegions` | Get regions where SE Ranking can run keyword search volume checks. |
+| url tags | `PROJECT_addTag` | Add a tag to the site and attach it to a link and/or domain. |
+| url tags | `PROJECT_deleteTag` | Delete a tag. |
+| url tags | `PROJECT_listTags` | Get a list of landing page tags added to domains and/or links. |
+| url tags | `PROJECT_updateTag` | Add tags to a domain and/or link, replacing previously added tags. |
 
 ## Available Prompts
 
@@ -355,7 +481,8 @@ This will show you the big JSON output, where particularly important is the "Con
     "OpenStdin": true,
     "StdinOnce": true,
     "Env": [
-      "SERANKING_API_TOKEN=8abcdef-6fdd-a981-3ad5-123456",
+      "DATA_API_TOKEN=80cfee7d-xxxx-xxxx-xxxx-fc8500816bb3",
+      "PROJECT_API_TOKEN=253a73adxxxxxxxxxxxxxx340aa0a939",
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
       "NODE_VERSION=20.19.5",
       "YARN_VERSION=1.22.22",
