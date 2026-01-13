@@ -125,18 +125,22 @@ Example of **Claude Desktop** configuration for MCP server
         "-i",
         "--rm",
         "-e",
-        "SERANKING_API_TOKEN",
+        "DATA_API_TOKEN",
+        "-e",
+        "PROJECT_API_TOKEN",
         "se-ranking/seo-data-api-mcp-server"
       ],
       "env": {
-        "SERANKING_API_TOKEN": "<your-api-token-here>"
+        "DATA_API_TOKEN": "<your-data-api-token-here>",
+        "PROJECT_API_TOKEN": "<your-project-api-token-here>"
       }
     }
   }
 }
 ```
 
-- You need to change the **SERANKING_API_TOKEN**, get yours from https://online.seranking.com/admin.api.dashboard.html
+- You need to change the **DATA_API_TOKEN** and **PROJECT_API_TOKEN**, get yours from https://online.seranking.com/admin.api.dashboard.html.
+- If you only use Data API tools, you can omit `PROJECT_API_TOKEN`.
 
 - After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
 
@@ -163,18 +167,22 @@ Example of **Claude Desktop** configuration for MCP server
         "-i",
         "--rm",
         "-e",
-        "SERANKING_API_TOKEN",
+        "DATA_API_TOKEN",
+        "-e",
+        "PROJECT_API_TOKEN",
         "se-ranking/seo-data-api-mcp-server"
       ],
       "env": {
-        "SERANKING_API_TOKEN": "<your-api-token-here>"
+        "DATA_API_TOKEN": "<your-data-api-token-here>",
+        "PROJECT_API_TOKEN": "<your-project-api-token-here>"
       }
     }
   }
 }
 ```
 
-`"SERANKING_API_TOKEN"`: Use your personal API token, which you can generate from the [SE Ranking API Dashboard](https://online.seranking.com/admin.api.dashboard.html).
+`"DATA_API_TOKEN"`: Use your personal Data API token, which you can generate from the [SE Ranking API Dashboard](https://online.seranking.com/admin.api.dashboard.html).
+`"PROJECT_API_TOKEN"`: Use your personal Project API token if you need access to project-specific tools.
 
 - Save the configuration file.
 
@@ -190,57 +198,57 @@ Example of **Claude Desktop** configuration for MCP server
 
 | Module | Tool Name | Description |
 | :--- | :--- | :--- |
-| SERP | `addSerpTasks` | Adds one or more search queries to the queue for SERP analysis. Note that SERP tasks usually take 60 seconds to finish. |
-| SERP | `getSerpLocations` | Retrieves a list of available locations for SERP analysis. |
-| SERP | `getSerpTaskAdvancedResults` | Retrieves the status or advanced results of a specific SERP task. Note that SERP tasks usually take 60 seconds to finish. If the task is still running, returns {"status": "processing"}. If complete, returns the full JSON results including "items". |
-| SERP | `getSerpTaskResults` | Retrieves the status or standard results of a specific SERP task. Note that SERP tasks usually take 60 seconds to finish. If the task is still running, returns {"status": "processing"}. If complete, returns the full JSON results including "items". This endpoint provides results for the following SERP item types only: organic, ads, and featured_snippet. |
-| SERP | `getSerpTasks` | Retrieves a list of all SERP tasks added to the queue in the last 24 hours. |
-| ai search | `getAiOverview` | Retrieves a high-level overview of a domain's performance in AI search engines. Returns aggregated data if no engine is specified, or engine-specific data if an engine is provided. |
-| ai search | `getAiPromptsByBrand` | Retrieves a list of prompts where the specified brand is mentioned in AI search results. |
-| ai search | `getAiPromptsByTarget` | Retrieves a list of prompts (queries) that mention the specified target in AI search results. |
-| backlinks | `exportBacklinksData` | Retrieves large-scale backlinks asynchronously, returning a task ID to check status later. |
-| backlinks | `getAllBacklinks` | Retrieves a comprehensive list of backlinks for the specified target, with extensive filtering and sorting options. |
-| backlinks | `getBacklinksAnchors` | Retrieves a list of anchor texts for backlinks pointing to the specified target, with sorting and limit options. |
-| backlinks | `getBacklinksAuthority` | Fetch authority metrics for a target (domain, host or URL) (v1/backlinks/authority) |
-| backlinks | `getBacklinksIndexedPages` | Fetch site pages that have backlinks, with sorting and limit controls (v1/backlinks/indexed-pages) |
-| backlinks | `getBacklinksRefDomains` | Retrieves a list of referring domains pointing to the specified target, with options for sorting and limiting results. |
-| backlinks | `getBacklinksSummary` | Retrieves a summary of backlink metrics for one or multiple targets (domains, subdomains, or URLs). |
-| backlinks | `getCumulativeBacklinksHistory` | Returns a number of live backlinks for every day within the specified date range for the specified target. |
-| backlinks | `getDomainAuthority` | Returns information about the domain InLink Rank (Domain Authority) of the target page’s root domain. |
-| backlinks | `getDistributionOfDomainAuthority` | Returns information about the distribution of Domain InLink Rank (Domain Authority) of all the domains that reference a specific target. |
-| backlinks | `getNewLostRefDomainsCount` | Returns the number of referring domains, at least one backlink from which was newly found or lost in the specified date range, broken down by day. |
-| backlinks | `getPageAuthority` | Returns information about the InLink Rank (Page Authority) for a target URL. |
-| backlinks | `getPageAuthorityHistory` | Returns information about the historical values of InLink Rank for a specific target page. |
-| backlinks | `getReferringIps` | Returns information about IPv4 addresses that belong to backlinks that point to a target. |
-| backlinks | `getReferringIpsCount` | Returns the number of unique IPs linking to a target. |
-| backlinks | `getReferringSubnetsCount` | Returns the number of unique subnets/C-blocks linking to a target. |
-| backlinks | `listNewLostReferringDomains` | Returns a list of referring domains, at least one backlink from which was (newly) found or lost in the specified date range for the specified target. |
-| domain analysis | `getDomainAdsByDomain` | Retrieves paid ads for a specific domain. |
-| domain analysis | `getDomainAdsByKeyword` | Retrieves paid ads for a specific keyword. |
-| domain analysis | `getDomainCompetitors` | Retrieves a list of organic or paid competitors for a domain. |
-| domain analysis | `getDomainKeywords` | Retrieves a list of keywords for which a domain ranks in organic or paid search. |
-| domain analysis | `getDomainKeywordsComparison` | Analyzes and compares the keyword rankings of two websites: `domain` and `compare`. It can find keywords they have in common (`diff=0`) or identify a 'keyword gap' (`diff=1`)—keywords for which the `domain` ranks, but the `compare` domain does not. To find keywords the `compare` domain has but `domain` misses, swap the values of `domain` and `compare`. |
-| domain analysis | `getDomainOverviewDatabases` | Fetch domain overview by database (v1/domain/overview/db) |
-| domain analysis | `getDomainOverviewHistory` | Retrieves historical data for domain traffic and keyword rankings. |
-| domain analysis | `getDomainOverviewWorldwide` | Retrieves an aggregated worldwide overview of domain metrics. |
-| keyword research | `exportKeywords` | Retrieves metrics for a bulk list of keywords. |
-| keyword research | `getKeywordQuestions` | Retrieves a list of question-based keywords containing the seed keyword. |
-| keyword research | `getLongTailKeywords` | Retrieves a list of long-tail variations for the seed keyword. |
-| keyword research | `getRelatedKeywords` | Retrieves a list of keywords semantically related to the seed keyword. |
-| keyword research | `getSimilarKeywords` | Retrieves a list of keywords similar to the seed keyword. |
-| website audit | `createAdvancedAudit` | Launches an advanced website audit that renders JavaScript before analyzing the page. Suitable for Single-Page Applications (SPAs) or dynamic content. |
-| website audit | `createStandardAudit` | Launches a standard website audit that crawls the HTML of a website. Suitable for most static and server-side rendered sites. |
-| website audit | `deleteAudit` | Permanently deletes a specified website audit report and all of its associated data. |
-| website audit | `getAuditHistory` | Retrieves a historical snapshot of a specific audit run, providing the full context of that audit. |
-| website audit | `getAuditPagesByIssue` | Retrieves a paginated list of all URLs affected by a specific issue within a given audit. |
-| website audit | `getAuditReport` | Retrieves the full, detailed report for a completed website audit. Includes health score, domain properties, and broken down checks. |
-| website audit | `getAuditStatus` | Checks the real-time status of a specific website audit, whether it’s queued, currently processing, or already finished. |
-| website audit | `getCrawledPages` | Returns a paginated list of all URLs found during an audit, providing a complete sitemap as discovered by the crawler. |
-| website audit | `getFoundLinks` | Returns a paginated list of every hyperlink discovered across the entire site during the audit. |
-| website audit | `getIssuesByUrl` | Retrieves a detailed list of all issues (errors, warnings, and notices) that were found on a single, specific page within an audit. |
-| website audit | `listAudits` | Retrieves a list of all website audits associated with your account, providing key details and statistics for each. |
-| website audit | `recheckAudit` | Launches a new crawl of a previously completed audit, using the same settings. |
-| website audit | `updateAuditTitle` | Changes the title of an existing website audit report. |
+| SERP | `DATA_addSerpTasks` | Adds one or more search queries to the queue for SERP analysis. Note that SERP tasks usually take 60 seconds to finish. |
+| SERP | `DATA_getSerpLocations` | Retrieves a list of available locations for SERP analysis. |
+| SERP | `DATA_getSerpTaskAdvancedResults` | Retrieves the status or advanced results of a specific SERP task. Note that SERP tasks usually take 60 seconds to finish. If the task is still running, returns {"status": "processing"}. If complete, returns the full JSON results including "items". |
+| SERP | `DATA_getSerpTaskResults` | Retrieves the status or standard results of a specific SERP task. Note that SERP tasks usually take 60 seconds to finish. If the task is still running, returns {"status": "processing"}. If complete, returns the full JSON results including "items". This endpoint provides results for the following SERP item types only: organic, ads, and featured_snippet. |
+| SERP | `DATA_getSerpTasks` | Retrieves a list of all SERP tasks added to the queue in the last 24 hours. |
+| ai search | `DATA_getAiOverview` | Retrieves a high-level overview of a domain's performance in AI search engines. Returns aggregated data if no engine is specified, or engine-specific data if an engine is provided. |
+| ai search | `DATA_getAiPromptsByBrand` | Retrieves a list of prompts where the specified brand is mentioned in AI search results. |
+| ai search | `DATA_getAiPromptsByTarget` | Retrieves a list of prompts (queries) that mention the specified target in AI search results. |
+| backlinks | `DATA_exportBacklinksData` | Retrieves large-scale backlinks asynchronously, returning a task ID to check status later. |
+| backlinks | `DATA_getAllBacklinks` | Retrieves a comprehensive list of backlinks for the specified target, with extensive filtering and sorting options. |
+| backlinks | `DATA_getBacklinksAnchors` | Retrieves a list of anchor texts for backlinks pointing to the specified target, with sorting and limit options. |
+| backlinks | `DATA_getBacklinksAuthority` | Fetch authority metrics for a target (domain, host or URL) (v1/backlinks/authority) |
+| backlinks | `DATA_getBacklinksIndexedPages` | Fetch site pages that have backlinks, with sorting and limit controls (v1/backlinks/indexed-pages) |
+| backlinks | `DATA_getBacklinksRefDomains` | Retrieves a list of referring domains pointing to the specified target, with options for sorting and limiting results. |
+| backlinks | `DATA_getBacklinksSummary` | Retrieves a summary of backlink metrics for one or multiple targets (domains, subdomains, or URLs). |
+| backlinks | `DATA_getCumulativeBacklinksHistory` | Returns a number of live backlinks for every day within the specified date range for the specified target. |
+| backlinks | `DATA_getDomainAuthority` | Returns information about the domain InLink Rank (Domain Authority) of the target page’s root domain. |
+| backlinks | `DATA_getDistributionOfDomainAuthority` | Returns information about the distribution of Domain InLink Rank (Domain Authority) of all the domains that reference a specific target. |
+| backlinks | `DATA_getNewLostRefDomainsCount` | Returns the number of referring domains, at least one backlink from which was newly found or lost in the specified date range, broken down by day. |
+| backlinks | `DATA_getPageAuthority` | Returns information about the InLink Rank (Page Authority) for a target URL. |
+| backlinks | `DATA_getPageAuthorityHistory` | Returns information about the historical values of InLink Rank for a specific target page. |
+| backlinks | `DATA_getReferringIps` | Returns information about IPv4 addresses that belong to backlinks that point to a target. |
+| backlinks | `DATA_getReferringIpsCount` | Returns the number of unique IPs linking to a target. |
+| backlinks | `DATA_getReferringSubnetsCount` | Returns the number of unique subnets/C-blocks linking to a target. |
+| backlinks | `DATA_listNewLostReferringDomains` | Returns a list of referring domains, at least one backlink from which was (newly) found or lost in the specified date range for the specified target. |
+| domain analysis | `DATA_getDomainAdsByDomain` | Retrieves paid ads for a specific domain. |
+| domain analysis | `DATA_getDomainAdsByKeyword` | Retrieves paid ads for a specific keyword. |
+| domain analysis | `DATA_getDomainCompetitors` | Retrieves a list of organic or paid competitors for a domain. |
+| domain analysis | `DATA_getDomainKeywords` | Retrieves a list of keywords for which a domain ranks in organic or paid search. |
+| domain analysis | `DATA_getDomainKeywordsComparison` | Analyzes and compares the keyword rankings of two websites: `domain` and `compare`. It can find keywords they have in common (`diff=0`) or identify a 'keyword gap' (`diff=1`)—keywords for which the `domain` ranks, but the `compare` domain does not. To find keywords the `compare` domain has but `domain` misses, swap the values of `domain` and `compare`. |
+| domain analysis | `DATA_getDomainOverviewDatabases` | Fetch domain overview by database (v1/domain/overview/db) |
+| domain analysis | `DATA_getDomainOverviewHistory` | Retrieves historical data for domain traffic and keyword rankings. |
+| domain analysis | `DATA_getDomainOverviewWorldwide` | Retrieves an aggregated worldwide overview of domain metrics. |
+| keyword research | `DATA_exportKeywords` | Retrieves metrics for a bulk list of keywords. |
+| keyword research | `DATA_getKeywordQuestions` | Retrieves a list of question-based keywords containing the seed keyword. |
+| keyword research | `DATA_getLongTailKeywords` | Retrieves a list of long-tail variations for the seed keyword. |
+| keyword research | `DATA_getRelatedKeywords` | Retrieves a list of keywords semantically related to the seed keyword. |
+| keyword research | `DATA_getSimilarKeywords` | Retrieves a list of keywords similar to the seed keyword. |
+| website audit | `DATA_createAdvancedAudit` | Launches an advanced website audit that renders JavaScript before analyzing the page. Suitable for Single-Page Applications (SPAs) or dynamic content. |
+| website audit | `DATA_createStandardAudit` | Launches a standard website audit that crawls the HTML of a website. Suitable for most static and server-side rendered sites. |
+| website audit | `DATA_deleteAudit` | Permanently deletes a specified website audit report and all of its associated data. |
+| website audit | `DATA_getAuditHistory` | Retrieves a historical snapshot of a specific audit run, providing the full context of that audit. |
+| website audit | `DATA_getAuditPagesByIssue` | Retrieves a paginated list of all URLs affected by a specific issue within a given audit. |
+| website audit | `DATA_getAuditReport` | Retrieves the full, detailed report for a completed website audit. Includes health score, domain properties, and broken down checks. |
+| website audit | `DATA_getAuditStatus` | Checks the real-time status of a specific website audit, whether it’s queued, currently processing, or already finished. |
+| website audit | `DATA_getCrawledPages` | Returns a paginated list of all URLs found during an audit, providing a complete sitemap as discovered by the crawler. |
+| website audit | `DATA_getFoundLinks` | Returns a paginated list of every hyperlink discovered across the entire site during the audit. |
+| website audit | `DATA_getIssuesByUrl` | Retrieves a detailed list of all issues (errors, warnings, and notices) that were found on a single, specific page within an audit. |
+| website audit | `DATA_listAudits` | Retrieves a list of all website audits associated with your account, providing key details and statistics for each. |
+| website audit | `DATA_recheckAudit` | Launches a new crawl of a previously completed audit, using the same settings. |
+| website audit | `DATA_updateAuditTitle` | Changes the title of an existing website audit report. |
 
 ## Available Prompts
 

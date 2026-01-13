@@ -4,8 +4,8 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import express from 'express';
 
-import { SERANKING_API_TOKEN } from './constants.js';
-import { DataApiMcpServer } from './data-api-mcp-server.js';
+import { DATA_API_TOKEN, PROJECT_API_TOKEN } from './constants.js';
+import { SeoApiMcpServer } from './seo-api-mcp-server.js';
 
 function extractTokenFromHeader(authorization?: string) {
   const m = authorization?.match(/^Bearer\s+(.+)$/i);
@@ -31,17 +31,17 @@ app.use((req, _res, next) => {
 // catch all requests for MCP requests
 app.all('/mcp', async (req, res) => {
   const bearer = extractTokenFromHeader(req.headers.authorization);
-  const token = bearer || SERANKING_API_TOKEN;
+  const token = bearer || DATA_API_TOKEN || PROJECT_API_TOKEN;
 
   if (isAuthenticationRequired(req) && !token) {
     console.warn('Empty token! MCP request received:', req.method, req.url);
-    return res.status(401).json({ error: 'Missing SERANKING_API_TOKEN (Bearer or env)' });
+    return res.status(401).json({ error: 'Missing API Token (Bearer of DATA/PROJECT env)' });
   }
 
   const server = new McpServer({ name: 'ser-data-api-mcp-server', version: '1.0.0' });
 
-  // here we set up the token provider for the DataApiMcpServer, which is fetched from the request
-  new DataApiMcpServer(server, { getToken: () => token }).init();
+  // here we set up the token provider for the SeoApiMcpServer, which is fetched from the request
+  new SeoApiMcpServer(server).init();
 
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
 
@@ -52,10 +52,10 @@ app.all('/mcp', async (req, res) => {
     cleaned = true;
     try {
       await transport.close();
-    } catch {}
+    } catch { }
     try {
       await server.close();
-    } catch {}
+    } catch { }
   };
 
   res.on('close', () => {

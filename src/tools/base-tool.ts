@@ -1,26 +1,43 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
 
-import { SERANKING_API_BASE } from '../constants.js';
+import {
+  DATA_API_BASE,
+  PROJECT_API_BASE,
+} from '../constants.js';
 
-export type TokenProvider = () => string | undefined;
+export enum ApiType {
+  DATA = 'DATA',
+  PROJECT = 'PROJECT',
+}
 
-let tokenProvider: TokenProvider = () => undefined;
+let tokenProvider: (() => string) | null = null;
 
-export function setTokenProvider(fn: TokenProvider) {
-  tokenProvider = fn;
+export function setTokenProvider(provider: (() => string) | null) {
+  tokenProvider = provider;
 }
 
 export abstract class BaseTool {
-  private readonly MISSING_TOKEN_MESSAGE = 'Missing SERANKING_API_TOKEN.';
+  private readonly MISSING_TOKEN_MESSAGE = (type: ApiType) =>
+    `Missing ${type === ApiType.DATA ? 'DATA_API_TOKEN' : 'PROJECT_API_TOKEN'}.`;
 
   abstract registerTool(server: McpServer): void;
+
+  /**
+   * Defines which API this tool interacts with.
+   * Defaults to DATA API for backward compatibility.
+   */
+  protected apiType: ApiType = ApiType.DATA;
 
   protected server?: McpServer;
 
   register(server: McpServer): void {
     this.server = server;
     this.registerTool(server);
+  }
+
+  protected toolName(name: string): string {
+    return `${this.apiType}_${name}`;
   }
 
   protected log(
@@ -42,7 +59,22 @@ export abstract class BaseTool {
   }
 
   protected getToken(): string | undefined {
-    return tokenProvider?.();
+    if (tokenProvider) {
+      return tokenProvider();
+    }
+    if (this.apiType === ApiType.DATA) {
+      return (
+        process.env.DATA_API_TOKEN ||
+        process.env.SERANKING_DATA_API_TOKEN ||
+        process.env.SERANKING_API_TOKEN ||
+        ''
+      );
+    }
+    return process.env.PROJECT_API_TOKEN || process.env.SERANKING_PROJECT_API_TOKEN || '';
+  }
+
+  protected getBaseUrl(): string {
+    return this.apiType === ApiType.DATA ? DATA_API_BASE : PROJECT_API_BASE;
   }
 
   protected isValidCommaSeparatedList(list: readonly string[], val?: string | null): boolean {
@@ -64,10 +96,10 @@ export abstract class BaseTool {
     const token = this.getToken();
 
     if (!token) {
-      throw new McpError(ErrorCode.InvalidRequest, this.MISSING_TOKEN_MESSAGE);
+      throw new McpError(ErrorCode.InvalidRequest, this.MISSING_TOKEN_MESSAGE(this.apiType));
     }
 
-    let url = `${SERANKING_API_BASE}${path}`;
+    let url = `${this.getBaseUrl()}${path}`;
     const options: RequestInit = {
       method,
       headers: { Authorization: `Token ${token}` },
@@ -80,46 +112,20 @@ export abstract class BaseTool {
       const query = this.getUrlSearchParamsFromParams(params);
       url += `?${query.toString()}`;
     } else if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
-      // Check if we want JSON or Form Data.
-      // The original implementation used FormData for POST by default in makePostRequest.
-      // But we just added makeJsonPostRequest.
-      // This generic `request` method is a bit ambiguous now.
-      // Tools using `request` directly (if any) need to be careful.
-      // Most tools use `makeGetRequest` or `makePostRequest`.
-      // Let's assume JSON for PATCH based on the prompt for UpdateAuditTitle.
-      // "Content-Type: application/json"
-      // DELETE usually has no body or just query params.
       if (Object.keys(params).length > 0) {
         if (method === 'PATCH' || method === 'PUT') {
           options.headers = { ...options.headers, 'Content-Type': 'application/json' };
           options.body = JSON.stringify(params);
         }
       }
-      // For POST, we assume form data for now as per original implementation
-      // But we should check if it needs to be JSON.
-      // The original implementation used FormData for POST.
-      // We'll separate query params and body params if needed, but the original
-      // makePostRequest took queryParams and formParams.
-      // To keep it simple and generic, let's stick to the original signature style or adapt.
-      // The original makePostRequest took (path, queryParams, formParams).
-      // Let's keep makeGetRequest and makePostRequest but implement them using a common private method
-      // or just keep them separate but improved.
-      // The plan said "Consolidate ... into a single request method".
-      // But GET and POST have different signatures in the original code (POST has query AND body).
-      // Let's support both in `request`.
     }
-
-    // Re-evaluating consolidation:
-    // GET: path, params -> query
-    // POST: path, queryParams, formParams -> query + body
-    // Let's keep makeGetRequest and makePostRequest as public/protected helpers that call a private `executeRequest`.
 
     return this.executeRequest(url, options);
   }
 
   protected async makeGetRequest(path: string, params: Record<string, unknown>) {
     const query = this.getUrlSearchParamsFromParams(params);
-    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    const url = `${this.getBaseUrl()}${path}?${query.toString()}`;
 
     return this.executeRequest(url, { method: 'GET' });
   }
@@ -130,14 +136,23 @@ export abstract class BaseTool {
     formParams: Record<string, unknown>,
   ) {
     const query = this.getUrlSearchParamsFromParams(queryParams);
-    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    const url = `${this.getBaseUrl()}${path}?${query.toString()}`;
     const form = this.getFormDataFromParams(formParams);
 
     return this.executeRequest(url, { method: 'POST', body: form });
   }
 
-  protected async makeJsonPostRequest(path: string, body: Record<string, unknown>) {
-    const url = `${SERANKING_API_BASE}${path}`;
+  protected async makePutRequest(path: string, body: Record<string, unknown>) {
+    const url = `${this.getBaseUrl()}${path}`;
+    return this.executeRequest(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  }
+
+  protected async makeJsonPostRequest(path: string, body: Record<string, unknown> | unknown[]) {
+    const url = `${this.getBaseUrl()}${path}`;
     return this.executeRequest(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -148,10 +163,10 @@ export abstract class BaseTool {
   protected async makePatchRequest(
     path: string,
     queryParams: Record<string, unknown>,
-    body: Record<string, unknown>,
+    body: Record<string, unknown> | unknown[],
   ) {
     const query = this.getUrlSearchParamsFromParams(queryParams);
-    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    const url = `${this.getBaseUrl()}${path}?${query.toString()}`;
     return this.executeRequest(url, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -161,7 +176,7 @@ export abstract class BaseTool {
 
   protected async makeDeleteRequest(path: string, params: Record<string, unknown>) {
     const query = this.getUrlSearchParamsFromParams(params);
-    const url = `${SERANKING_API_BASE}${path}?${query.toString()}`;
+    const url = `${this.getBaseUrl()}${path}?${query.toString()}`;
     return this.executeRequest(url, { method: 'DELETE' });
   }
 
@@ -169,7 +184,7 @@ export abstract class BaseTool {
     const token = this.getToken();
 
     if (!token) {
-      throw new McpError(ErrorCode.InvalidRequest, this.MISSING_TOKEN_MESSAGE);
+      throw new McpError(ErrorCode.InvalidRequest, this.MISSING_TOKEN_MESSAGE(this.apiType));
     }
 
     const headers = new Headers(init.headers);

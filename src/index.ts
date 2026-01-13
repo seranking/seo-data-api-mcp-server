@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
-import { DataApiMcpServer } from './data-api-mcp-server.js';
+import { SeoApiMcpServer } from './seo-api-mcp-server.js';
 
 const server = new McpServer({
   name: 'ser-data-api-mcp-server',
@@ -14,7 +14,7 @@ async function runServer() {
   console.error('SER Data API MCP Server running on stdio');
 }
 
-new DataApiMcpServer(server).init();
+new SeoApiMcpServer(server).init();
 
 runServer().catch((error) => {
   console.error('Fatal error running server:', error);
