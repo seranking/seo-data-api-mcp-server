@@ -218,8 +218,8 @@ export class GetSerpResults extends BaseTool {
     );
   }
 
-  private async addSerpTask(form: Record<string, unknown>): Promise<SerpTask[]> {
-    const response = await this.makePostRequest('/v1/serp/classic/tasks', {}, form);
+  private async addSerpTask(body: Record<string, unknown>): Promise<SerpTask[]> {
+    const response = await this.makeJsonPostRequest('/v1/serp/classic/tasks', body);
     return JSON.parse(response.content[0].text);
   }
 
@@ -229,7 +229,7 @@ export class GetSerpResults extends BaseTool {
   }
 
   private async getSerpTaskAdvancedResults(taskId: number): Promise<SerpTask> {
-    const response = await this.makeGetRequest('/v1/serp/classic/tasks/advanced', {
+    const response = await this.makeGetRequest('/v1/serp/classic/tasks/results_advanced', {
       task_id: taskId,
     });
     return JSON.parse(response.content[0].text);
