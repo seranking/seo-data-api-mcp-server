@@ -36,71 +36,71 @@ export class KeywordsLongtail extends BaseTool {
             .enum(['asc', 'desc'])
             .optional()
             .describe('The order of sorting for the sort field.'),
-          'filter[volume][from]': z
+          'filter.volume.from': z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Minimum monthly search volume.'),
-          'filter[volume][to]': z
+          'filter.volume.to': z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Maximum monthly search volume.'),
-          'filter[difficulty][from]': z
+          'filter.difficulty.from': z
             .number()
             .int()
             .min(0)
             .max(100)
             .optional()
             .describe('Minimum keyword difficulty score (0-100).'),
-          'filter[difficulty][to]': z
+          'filter.difficulty.to': z
             .number()
             .int()
             .min(0)
             .max(100)
             .optional()
             .describe('Maximum keyword difficulty score (0-100).'),
-          'filter[cpc][from]': z.number().min(0).optional().describe('Minimum Cost Per Click.'),
-          'filter[cpc][to]': z.number().min(0).optional().describe('Maximum Cost Per Click.'),
-          'filter[competition][from]': z
+          'filter.cpc.from': z.number().min(0).optional().describe('Minimum Cost Per Click.'),
+          'filter.cpc.to': z.number().min(0).optional().describe('Maximum Cost Per Click.'),
+          'filter.competition.from': z
             .number()
             .min(0)
             .max(1)
             .optional()
             .describe('Minimum competition score (0.0-1.0).'),
-          'filter[competition][to]': z
+          'filter.competition.to': z
             .number()
             .min(0)
             .max(1)
             .optional()
             .describe('Maximum competition score (0.0-1.0).'),
-          'filter[keyword_count][from]': z
+          'filter.keyword_count.from': z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Minimum number of words in the keyword.'),
-          'filter[keyword_count][to]': z
+          'filter.keyword_count.to': z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Maximum number of words in the keyword.'),
-          'filter[characters_count][from]': z
+          'filter.characters_count.from': z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Minimum character length of the keyword.'),
-          'filter[characters_count][to]': z
+          'filter.characters_count.to': z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Maximum character length of the keyword.'),
-          'filter[serp_features]': z
+          'filter.serp_features': z
             .string()
             .optional()
             .refine(

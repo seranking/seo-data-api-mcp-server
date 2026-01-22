@@ -89,19 +89,19 @@ export class DomainKeywords extends BaseTool {
             .describe(
               'Filters keywords based on changes in their ranking positions compared to the previous period.',
             ),
-          'filter[volume][from]': z
+          'filter.volume.from': z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the minimum monthly search volume for keywords to be included.'),
-          'filter[volume][to]': z
+          'filter.volume.to': z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the maximum monthly search volume for keywords to be included.'),
-          'filter[difficulty][from]': z
+          'filter.difficulty.from': z
             .number()
             .int()
             .min(0)
@@ -109,7 +109,7 @@ export class DomainKeywords extends BaseTool {
             .describe(
               'Specifies the minimum keyword difficulty score (typically 0-100) for keywords to be included.',
             ),
-          'filter[difficulty][to]': z
+          'filter.difficulty.to': z
             .number()
             .int()
             .min(0)
@@ -117,26 +117,26 @@ export class DomainKeywords extends BaseTool {
             .describe(
               'Specifies the maximum keyword difficulty score for keywords to be included.',
             ),
-          'filter[keyword_count][from]': z
+          'filter.keyword_count.from': z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Specifies the minimum number of words in a keyword phrase.'),
-          'filter[keyword_count][to]': z
+          'filter.keyword_count.to': z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Specifies the maximum number of words in a keyword phrase.'),
-          'filter[intents]': z
+          'filter.intents': z
             .string()
             .optional()
             .refine((val?: string | null) => this.isValidCommaSeparatedList(INTENTS, val), {
               message: 'filter[intents] must be a comma-separated list of supported intents',
             })
             .describe('A comma-separated list of search intent codes to filter keywords.'),
-          'filter[competition][from]': z
+          'filter.competition.from': z
             .number()
             .min(0)
             .max(100)
@@ -144,51 +144,51 @@ export class DomainKeywords extends BaseTool {
             .describe(
               'Specifies the minimum competition score (typically 0-1 or 0-100, depending on the metric scale) for keywords.',
             ),
-          'filter[competition][to]': z
+          'filter.competition.to': z
             .number()
             .optional()
             .describe('Specifies the maximum competition score for keywords.'),
-          'filter[cpc][from]': z
+          'filter.cpc.from': z
             .number()
             .min(0)
             .optional()
             .describe('Specifies the minimum Cost Per Click (CPC) value for keywords.'),
-          'filter[cpc][to]': z
+          'filter.cpc.to': z
             .number()
             .min(0)
             .optional()
             .describe('Specifies the maximum Cost Per Click (CPC) value for keywords.'),
-          'filter[traffic][from]': z
+          'filter.traffic.from': z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the minimum estimated monthly traffic for keywords.'),
-          'filter[traffic][to]': z
+          'filter.traffic.to': z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the maximum estimated monthly traffic for keywords.'),
-          'filter[position][from]': z
+          'filter.position.from': z
             .number()
             .int()
             .positive()
             .optional()
             .describe('Specifies the minimum ranking position for keywords.'),
-          'filter[position][to]': z
+          'filter.position.to': z
             .number()
             .int()
             .positive()
             .optional()
             .describe('Specifies the maximum ranking position for keywords.'),
-          'filter[characters_count][from]': z
+          'filter.characters_count.from': z
             .number()
             .int()
             .positive()
             .optional()
             .describe('Specifies the minimum character length for keyword phrases.'),
-          'filter[characters_count][to]': z
+          'filter.characters_count.to': z
             .number()
             .int()
             .positive()

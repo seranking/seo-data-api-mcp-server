@@ -169,12 +169,19 @@ export abstract class BaseTool {
     for (const [key, value] of Object.entries(queryParams || {})) {
       if (value === undefined || value === null) continue;
 
+      // Transform dot notation back to bracket notation for SE Ranking API
+      // filter.volume.from -> filter[volume][from]
+      // filter.keyword_count.from -> filter[keyword_count][from]
+      // filter.multi_keyword_excluded -> filter[multi_keyword_excluded]
+      const apiKey = key.replace(/^filter\.([^.]+)\.([^.]+)$/, 'filter[$1][$2]')
+                        .replace(/^filter\.([^.]+)$/, 'filter[$1]');
+
       if (Array.isArray(value)) {
         for (const v of value) {
-          if (v !== undefined && v !== null) query.append(key, String(v));
+          if (v !== undefined && v !== null) query.append(apiKey, String(v));
         }
       } else {
-        query.append(key, String(value));
+        query.append(apiKey, String(value));
       }
     }
 
@@ -187,12 +194,19 @@ export abstract class BaseTool {
     for (const [key, value] of Object.entries(formParams || {})) {
       if (value === undefined || value === null) continue;
 
+      // Transform dot notation back to bracket notation for SE Ranking API
+      // filter.volume.from -> filter[volume][from]
+      // filter.keyword_count.from -> filter[keyword_count][from]
+      // filter.multi_keyword_excluded -> filter[multi_keyword_excluded]
+      const apiKey = key.replace(/^filter\.([^.]+)\.([^.]+)$/, 'filter[$1][$2]')
+                        .replace(/^filter\.([^.]+)$/, 'filter[$1]');
+
       if (Array.isArray(value)) {
         for (const v of value) {
-          if (v !== undefined && v !== null) form.append(key, String(v));
+          if (v !== undefined && v !== null) form.append(apiKey, String(v));
         }
       } else {
-        form.append(key, String(value));
+        form.append(apiKey, String(value));
       }
     }
 

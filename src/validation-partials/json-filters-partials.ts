@@ -26,50 +26,50 @@ export const FilterGroupRefineCallback = (input: string | undefined) => {
 };
 
 export const AISearchFilterObject = {
-  'filter[volume][from]': z
+  'filter.volume.from': z
     .number()
     .int()
     .min(0)
     .optional()
     .describe('Specifies the minimum volume of searches to be included in the results.'),
-  'filter[volume][to]': z
+  'filter.volume.to': z
     .number()
     .int()
     .min(1)
     .optional()
     .describe('Specifies the maximum volume of searches to be included in the results.'),
-  'filter[keyword_count][from]': z
+  'filter.keyword_count.from': z
     .number()
     .int()
     .min(0)
     .optional()
     .describe('Specifies the minimum number of words in prompts.'),
-  'filter[keyword_count][to]': z
+  'filter.keyword_count.to': z
     .number()
     .int()
     .min(1)
     .optional()
     .describe('Specifies the maximum number of words in prompts.'),
-  'filter[characters_count][from]': z
+  'filter.characters_count.from': z
     .number()
     .int()
     .min(0)
     .optional()
     .describe('Specifies the minimum prompt length in characters.'),
-  'filter[characters_count][to]': z
+  'filter.characters_count.to': z
     .number()
     .int()
     .min(1)
     .optional()
     .describe('Specifies the maximum prompt length in characters.'),
-  'filter[multi_keyword_included]': z
+  'filter.multi_keyword_included': z
     .string()
     .optional()
     .describe(
       `A URL-encoded JSON string specifying keywords that must be present in the prompt. For example: filter[multi_keyword_included]=${ExampleJsonFilter}`,
     )
     .refine(FilterGroupRefineCallback, { message: InvalidFilterMessage }),
-  'filter[multi_keyword_excluded]': z
+  'filter.multi_keyword_excluded': z
     .string()
     .optional()
     .describe(
