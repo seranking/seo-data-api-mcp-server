@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { hostHeaderValidation } from '@modelcontextprotocol/sdk/server/middleware/hostHeaderValidation.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import express from 'express';
 
@@ -19,6 +20,15 @@ function isAuthenticationRequired(req: express.Request) {
 const app = express();
 
 app.use(express.json());
+
+// DNS rebinding protection for localhost
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = parseInt(process.env.PORT || '5000', 10);
+const allowedHosts = ['localhost', '127.0.0.1', '[::1]', `localhost:${PORT}`, `127.0.0.1:${PORT}`];
+if (HOST !== '0.0.0.0') {
+  allowedHosts.push(HOST, `${HOST}:${PORT}`);
+}
+app.use(hostHeaderValidation(allowedHosts));
 
 // logger
 app.use((req, _res, next) => {
@@ -95,9 +105,6 @@ app.get('/', (_req, res) => {
     status: 'running',
   });
 });
-
-const PORT = parseInt(process.env.PORT || '5000', 10);
-const HOST = process.env.HOST || '0.0.0.0';
 
 app.listen(PORT, HOST, () => {
   /* eslint-disable no-console */
