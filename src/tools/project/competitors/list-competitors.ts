@@ -12,9 +12,9 @@ export class ListCompetitors extends BaseTool {
             {
                 title: 'List Competitors',
                 description: 'Project Tool: Requires a project ID (site_id). Get a list of all competitors added to the project together with statistics.',
-                inputSchema: z.object({
+                inputSchema: {
                     site_id: z.number().describe('Unique project ID'),
-                }),
+                },
             },
             async (args: { site_id: number }) => this.makeGetRequest(`/competitors/site/${args.site_id}`, {}),
         );

@@ -44,7 +44,7 @@ export abstract class BaseTool {
     level: 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'critical' | 'alert' | 'emergency',
     message: string,
   ) {
-    if (this.server) {
+    if (this.server && typeof this.server.sendLoggingMessage === 'function') {
       this.server
         .sendLoggingMessage({
           level,
@@ -86,6 +86,38 @@ export abstract class BaseTool {
       .split(',')
       .map((s) => s.trim())
       .every((t) => allowed.has(t));
+  }
+
+  /**
+   * Transforms underscore-notation filter params back to bracket notation for API calls.
+   * E.g., filter_volume_from -> filter[volume][from]
+   *       filter_intents -> filter[intents]
+   */
+  protected transformFilterParams(params: Record<string, unknown>): Record<string, unknown> {
+    const transformed: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === null) continue;
+
+      let newKey = key;
+
+      // Match filter_X_Y pattern (two-level bracket: filter[X][Y])
+      // Handle underscores in the middle part by matching the last underscore as the separator
+      const twoLevelMatch = key.match(/^filter_(.+)_(from|to)$/);
+      if (twoLevelMatch) {
+        newKey = `filter[${twoLevelMatch[1]}][${twoLevelMatch[2]}]`;
+      } else {
+        // Match filter_X pattern (single-level bracket: filter[X])
+        const oneLevelMatch = key.match(/^filter_(.+)$/);
+        if (oneLevelMatch) {
+          newKey = `filter[${oneLevelMatch[1]}]`;
+        }
+      }
+
+      transformed[newKey] = value;
+    }
+
+    return transformed;
   }
 
   protected async request(

@@ -9,7 +9,7 @@ import { CreateKeywordGroup } from '../../../src/tools/project/keyword-groups/cr
 import { DeleteKeywordGroup } from '../../../src/tools/project/keyword-groups/delete-keyword-group.js';
 import { ListKeywordGroups } from '../../../src/tools/project/keyword-groups/list-keyword-groups.js';
 import { MoveKeywordsToGroup } from '../../../src/tools/project/keyword-groups/move-keywords-to-group.js';
-import { RenameKeywordGroup } from '../../../src/tools/project/keyword-groups/rename-keyword-group.js';
+import { UpdateKeywordGroup } from '../../../src/tools/project/keyword-groups/update-keyword-group.js';
 import { ListProjects } from '../../../src/tools/project/project-management/list-projects.js';
 
 dotenv.config();
@@ -77,20 +77,20 @@ describe('End-to-End Keyword Groups (v4) Coverage', () => {
         expect(foundGroup.name).toBe(testGroupName);
         console.log('✅ Verified keyword group exists in list');
 
-        // 3. Rename Keyword Group
-        const renameTool = new RenameKeywordGroup();
-        const renameHandler = getHandler(renameTool);
+        // 3. Update Keyword Group
+        const updateTool = new UpdateKeywordGroup();
+        const updateHandler = getHandler(updateTool);
         const newName = `${testGroupName} Renamed`;
 
         console.log(`Renaming keyword group to: ${newName}`);
-        await renameHandler({ group_id: groupId, name: newName });
+        await updateHandler({ group_id: groupId, name: newName });
 
-        // Verify rename
-        const listResultAfterRename = await listHandler({ site_id: siteId });
-        const groupsAfterRename = JSON.parse(listResultAfterRename.content[0].text);
-        const updatedGroup = groupsAfterRename.find((g: any) => g.id === groupId);
+        // Verify update
+        const listResultAfterUpdate = await listHandler({ site_id: siteId });
+        const groupsAfterUpdate = JSON.parse(listResultAfterUpdate.content[0].text);
+        const updatedGroup = groupsAfterUpdate.find((g: any) => g.id === groupId);
         expect(updatedGroup.name).toBe(newName);
-        console.log('✅ Verified keyword group renamed');
+        console.log('✅ Verified keyword group updated');
 
         // 4. Move Keywords (Optional / Requires Keywords)
         // We can instantiate the tool but failing to actually move without keyword IDs is expected.

@@ -12,9 +12,9 @@ export class DeleteCompetitor extends BaseTool {
             {
                 title: 'Delete Competitor',
                 description: 'Project Tool: Requires a competitor ID. Remove a competitor website from a user project.',
-                inputSchema: z.object({
+                inputSchema: {
                     competitor_id: z.number().describe('Incorrect competitor id'),
-                }),
+                },
             },
             async (args: { competitor_id: number }) => this.makeDeleteRequest(`/competitors/${args.competitor_id}`, {}),
         );

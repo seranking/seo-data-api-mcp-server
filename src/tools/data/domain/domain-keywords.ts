@@ -90,19 +90,19 @@ export class GetDomainKeywords extends BaseTool {
             .describe(
               'Filters keywords based on changes in their ranking positions compared to the previous period.',
             ),
-          'filter[volume][from]': z
+          filter_volume_from: z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the minimum monthly search volume for keywords to be included.'),
-          'filter[volume][to]': z
+          filter_volume_to: z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the maximum monthly search volume for keywords to be included.'),
-          'filter[difficulty][from]': z
+          filter_difficulty_from: z
             .number()
             .int()
             .min(0)
@@ -110,7 +110,7 @@ export class GetDomainKeywords extends BaseTool {
             .describe(
               'Specifies the minimum keyword difficulty score (typically 0-100) for keywords to be included.',
             ),
-          'filter[difficulty][to]': z
+          filter_difficulty_to: z
             .number()
             .int()
             .min(0)
@@ -118,26 +118,26 @@ export class GetDomainKeywords extends BaseTool {
             .describe(
               'Specifies the maximum keyword difficulty score for keywords to be included.',
             ),
-          'filter[keyword_count][from]': z
+          filter_keyword_count_from: z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Specifies the minimum number of words in a keyword phrase.'),
-          'filter[keyword_count][to]': z
+          filter_keyword_count_to: z
             .number()
             .int()
             .min(1)
             .optional()
             .describe('Specifies the maximum number of words in a keyword phrase.'),
-          'filter[intents]': z
+          filter_intents: z
             .string()
             .optional()
             .refine((val?: string | null) => this.isValidCommaSeparatedList(INTENTS, val), {
-              message: 'filter[intents] must be a comma-separated list of supported intents',
+              message: 'filter_intents must be a comma-separated list of supported intents',
             })
             .describe('A comma-separated list of search intent codes to filter keywords.'),
-          'filter[competition][from]': z
+          filter_competition_from: z
             .number()
             .min(0)
             .max(100)
@@ -145,51 +145,51 @@ export class GetDomainKeywords extends BaseTool {
             .describe(
               'Specifies the minimum competition score (typically 0-1 or 0-100, depending on the metric scale) for keywords.',
             ),
-          'filter[competition][to]': z
+          filter_competition_to: z
             .number()
             .optional()
             .describe('Specifies the maximum competition score for keywords.'),
-          'filter[cpc][from]': z
+          filter_cpc_from: z
             .number()
             .min(0)
             .optional()
             .describe('Specifies the minimum Cost Per Click (CPC) value for keywords.'),
-          'filter[cpc][to]': z
+          filter_cpc_to: z
             .number()
             .min(0)
             .optional()
             .describe('Specifies the maximum Cost Per Click (CPC) value for keywords.'),
-          'filter[traffic][from]': z
+          filter_traffic_from: z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the minimum estimated monthly traffic for keywords.'),
-          'filter[traffic][to]': z
+          filter_traffic_to: z
             .number()
             .int()
             .min(0)
             .optional()
             .describe('Specifies the maximum estimated monthly traffic for keywords.'),
-          'filter[position][from]': z
+          filter_position_from: z
             .number()
             .int()
             .positive()
             .optional()
             .describe('Specifies the minimum ranking position for keywords.'),
-          'filter[position][to]': z
+          filter_position_to: z
             .number()
             .int()
             .positive()
             .optional()
             .describe('Specifies the maximum ranking position for keywords.'),
-          'filter[characters_count][from]': z
+          filter_characters_count_from: z
             .number()
             .int()
             .positive()
             .optional()
             .describe('Specifies the minimum character length for keyword phrases.'),
-          'filter[characters_count][to]': z
+          filter_characters_count_to: z
             .number()
             .int()
             .positive()
@@ -206,43 +206,43 @@ export class GetDomainKeywords extends BaseTool {
             .describe(
               'If set to true, includes keywords ranking for the specified domain or URL and all its subdomains.',
             ),
-          'filter[keyword]': z
+          filter_keyword: z
             .string()
             .optional()
             .describe('JSON string specifying keyword text to match.'),
-          'filter[multi_keyword_included]': z
+          filter_multi_keyword_included: z
             .string()
             .optional()
             .describe('JSON string specifying keyword text that must be included.'),
-          'filter[multi_keyword_excluded]': z
+          filter_multi_keyword_excluded: z
             .string()
             .optional()
             .describe('JSON string specifying keyword text that must be excluded.'),
-          'filter[url]': z
+          filter_url: z
             .string()
             .optional()
             .describe('JSON string to filter keywords by ranking URL.'),
-          'filter[traffic_percent][from]': z
+          filter_traffic_percent_from: z
             .number()
             .min(0)
             .optional()
             .describe('Minimum traffic share percentage for keywords.'),
-          'filter[traffic_percent][to]': z
+          filter_traffic_percent_to: z
             .number()
             .min(0)
             .optional()
             .describe('Maximum traffic share percentage for keywords.'),
-          'filter[price][from]': z
+          filter_price_from: z
             .number()
             .min(0)
             .optional()
             .describe('Minimum keyword price value.'),
-          'filter[price][to]': z
+          filter_price_to: z
             .number()
             .min(0)
             .optional()
             .describe('Maximum keyword price value.'),
-          'filter[serp_features]': z
+          filter_serp_features: z
             .string()
             .optional()
             .describe(
@@ -250,7 +250,7 @@ export class GetDomainKeywords extends BaseTool {
             ),
         },
       },
-      async (params) => this.makeGetRequest('/v1/domain/keywords', params),
+      async (params) => this.makeGetRequest('/v1/domain/keywords', this.transformFilterParams(params)),
     );
   }
 }

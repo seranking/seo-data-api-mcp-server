@@ -494,6 +494,60 @@ This will show you the big JSON output, where particularly important is the "Con
 
 Which shows you if you have the correct environment variables set.
 
+## Contributing
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Running Tests
+
+```bash
+# Run all tests (compiles TypeScript first)
+npm test
+
+# Run only E2E tests
+npm run test:e2e
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+### Environment Variables for Testing
+
+Create a `.env` file in the project root with the following variables:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATA_API_TOKEN` | Yes | API token for Data API tools |
+| `PROJECT_API_TOKEN` | Yes | API token for Project API tools |
+| `E2E_ENABLED` | No | Set to `true` to enable E2E tests |
+| `GEMINI_E2E_ENABLED` | No | Set to `true` to enable Gemini assistant tests |
+
+### E2E Tests
+
+E2E tests make **real API calls** to SE Ranking services. They are disabled by default to avoid unnecessary API usage during development.
+
+- When `E2E_ENABLED=false` or unset, E2E tests are skipped
+- Set `E2E_ENABLED=true` to run the full test suite with live API calls
+- Ensure you have valid API tokens before enabling E2E tests
+
+### Other Development Commands
+
+```bash
+# Lint code
+npm run lint
+npm run lint:fix
+
+# Format code
+npm run format
+npm run format:check
+
+# Type check
+npm run typecheck
+```
+
 ## Support
 
 SE Ranking API documentation: https://seranking.com/api/integrations/mcp/.

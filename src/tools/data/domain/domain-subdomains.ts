@@ -57,27 +57,27 @@ export class GetDomainSubdomains extends BaseTool {
                         .optional()
                         .default(100)
                         .describe('The maximum number of subdomains to return per page.'),
-                    'filter[domain_url]': z
+                    filter_domain_url: z
                         .string()
                         .optional()
                         .describe(
                             'JSON string specifying the subdomain or host text that must be included.',
                         ),
-                    'filter[domain_traffic_percent][from]': z
+                    filter_domain_traffic_percent_from: z
                         .number()
                         .min(0)
                         .optional()
                         .describe(
                             'Minimum percentage of the total domain traffic contributed by the subdomain to be included in the results.',
                         ),
-                    'filter[domain_traffic_percent][to]': z
+                    filter_domain_traffic_percent_to: z
                         .number()
                         .min(0)
                         .optional()
                         .describe(
                             'Maximum percentage of the total domain traffic contributed by the subdomain to be included in the results.',
                         ),
-                    'filter[keywords_count][from]': z
+                    filter_keywords_count_from: z
                         .number()
                         .int()
                         .min(0)
@@ -85,7 +85,7 @@ export class GetDomainSubdomains extends BaseTool {
                         .describe(
                             'Minimum number of ranking keywords for the subdomain to be included in the results.',
                         ),
-                    'filter[keywords_count][to]': z
+                    filter_keywords_count_to: z
                         .number()
                         .int()
                         .min(0)
@@ -93,7 +93,7 @@ export class GetDomainSubdomains extends BaseTool {
                         .describe(
                             'Maximum number of ranking keywords for the subdomain to be included in the results.',
                         ),
-                    'filter[traffic_sum][from]': z
+                    filter_traffic_sum_from: z
                         .number()
                         .int()
                         .min(0)
@@ -101,7 +101,7 @@ export class GetDomainSubdomains extends BaseTool {
                         .describe(
                             'Minimum estimated monthly traffic for the subdomain to be included in the results.',
                         ),
-                    'filter[traffic_sum][to]': z
+                    filter_traffic_sum_to: z
                         .number()
                         .int()
                         .min(0)
@@ -109,14 +109,14 @@ export class GetDomainSubdomains extends BaseTool {
                         .describe(
                             'Maximum estimated monthly traffic for the subdomain to be included in the results.',
                         ),
-                    'filter[price_sum][from]': z
+                    filter_price_sum_from: z
                         .number()
                         .min(0)
                         .optional()
                         .describe(
                             'Minimum estimated traffic value (PPC equivalent) for the subdomain to be included in the results.',
                         ),
-                    'filter[price_sum][to]': z
+                    filter_price_sum_to: z
                         .number()
                         .min(0)
                         .optional()
@@ -125,7 +125,7 @@ export class GetDomainSubdomains extends BaseTool {
                         ),
                 },
             },
-            async (params) => this.makeGetRequest('/v1/domain/subdomains', params),
+            async (params) => this.makeGetRequest('/v1/domain/subdomains', this.transformFilterParams(params)),
         );
     }
 }

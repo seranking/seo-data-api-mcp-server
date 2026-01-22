@@ -62,7 +62,7 @@ export class GetAiPromptsByTarget extends BaseTool {
           ...AISearchFilterObject,
         },
       },
-      async (params) => this.makeGetRequest('/v1/ai-search/prompts-by-target', params),
+      async (params) => this.makeGetRequest('/v1/ai-search/prompts-by-target', this.transformFilterParams(params)),
     );
   }
 }
