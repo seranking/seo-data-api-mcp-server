@@ -3,6 +3,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { Prompts } from './prompts.js';
 import { GetAiDiscoverBrand } from './tools/data/ai-search/ai-search-discover-brand.js';
 import { GetAiOverview } from './tools/data/ai-search/ai-search-overview.js';
+import { GetAiOverviewLeaderboard } from './tools/data/ai-search/ai-search-overview-leaderboard.js';
 import { GetAiPromptsByBrand } from './tools/data/ai-search/ai-search-prompts-by-brand.js';
 import { GetAiPromptsByTarget } from './tools/data/ai-search/ai-search-prompts-by-target.js';
 import { GetAllBacklinks } from './tools/data/backlinks/backlinks-all.js';
@@ -158,6 +159,7 @@ export class SeoApiMcpServer {
   private dataTools = [
     GetAiDiscoverBrand,
     GetAiOverview,
+    GetAiOverviewLeaderboard,
     GetAiPromptsByBrand,
     GetAiPromptsByTarget,
     GetAllBacklinks,
