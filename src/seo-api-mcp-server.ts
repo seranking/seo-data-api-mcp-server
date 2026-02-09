@@ -11,6 +11,8 @@ import { GetBacklinksAnchors } from './tools/data/backlinks/backlinks-anchors.js
 import { GetBacklinksAuthority } from './tools/data/backlinks/backlinks-authority.js';
 import { GetDomainAuthority } from './tools/data/backlinks/backlinks-authority-domain.js';
 import { GetDistributionOfDomainAuthority } from './tools/data/backlinks/backlinks-authority-domain-distribution.js';
+import { GetDomainAuthorityHistory } from './tools/data/backlinks/backlinks-authority-domain-history.js';
+import { GetDomainAuthorityHistogram } from './tools/data/backlinks/backlinks-authority-domain-histogram.js';
 import { GetPageAuthority } from './tools/data/backlinks/backlinks-authority-page.js';
 import { GetPageAuthorityHistory } from './tools/data/backlinks/backlinks-authority-page-history.js';
 import { GetBacklinksCount } from './tools/data/backlinks/backlinks-count.js';
@@ -182,6 +184,8 @@ export class SeoApiMcpServer {
     GetPageAuthority,
     GetPageAuthorityHistory,
     GetDomainAuthority,
+    GetDomainAuthorityHistory,
+    GetDomainAuthorityHistogram,
     ListNewLostReferringDomains,
     GetNewLostRefDomainsCount,
     ExportBacklinksData,
