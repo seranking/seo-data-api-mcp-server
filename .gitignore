@@ -20,6 +20,10 @@ dist/
 # .env file
 .env
 
+# Temporary/working folders
+temp-files/
+new-endpoints/
+
 # Claude Code guidance
 CLAUDE.md
 task.md

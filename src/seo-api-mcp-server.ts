@@ -12,7 +12,6 @@ import { GetBacklinksAuthority } from './tools/data/backlinks/backlinks-authorit
 import { GetDomainAuthority } from './tools/data/backlinks/backlinks-authority-domain.js';
 import { GetDistributionOfDomainAuthority } from './tools/data/backlinks/backlinks-authority-domain-distribution.js';
 import { GetDomainAuthorityHistory } from './tools/data/backlinks/backlinks-authority-domain-history.js';
-import { GetDomainAuthorityHistogram } from './tools/data/backlinks/backlinks-authority-domain-histogram.js';
 import { GetPageAuthority } from './tools/data/backlinks/backlinks-authority-page.js';
 import { GetPageAuthorityHistory } from './tools/data/backlinks/backlinks-authority-page-history.js';
 import { GetBacklinksCount } from './tools/data/backlinks/backlinks-count.js';
@@ -68,6 +67,20 @@ import { UpdateAuditTitle } from './tools/data/website-audit/update-audit-title.
 import { GetAccountBalance } from './tools/project/account/get-account-balance.js';
 import { GetSubscription } from './tools/project/account/get-subscription.js';
 import { GetUserProfile } from './tools/project/account/get-user-profile.js';
+// AIRT (AI Result Tracker)
+import { GetSiteBrand } from './tools/project/airt/brands/get-site-brand.js';
+import { SaveSiteBrand } from './tools/project/airt/brands/save-site-brand.js';
+import { CreateLlmEngine } from './tools/project/airt/llm/create-llm-engine.js';
+import { DeleteLlmEngine } from './tools/project/airt/llm/delete-llm-engine.js';
+import { GetLlmEngine } from './tools/project/airt/llm/get-llm-engine.js';
+import { GetLlmStatistics } from './tools/project/airt/llm/get-llm-statistics.js';
+import { GetLlmStatus } from './tools/project/airt/llm/get-llm-status.js';
+import { ListLlmEngines } from './tools/project/airt/llm/list-llm-engines.js';
+import { UpdateLlmEngine } from './tools/project/airt/llm/update-llm-engine.js';
+import { AddPrompts } from './tools/project/airt/prompts/add-prompts.js';
+import { DeletePrompts } from './tools/project/airt/prompts/delete-prompts.js';
+import { GetPromptsRankings } from './tools/project/airt/prompts/get-prompts-rankings.js';
+import { ListPrompts } from './tools/project/airt/prompts/list-prompts.js';
 // Analytics Tools
 import { GetGoogleSearchConsole } from './tools/project/analytics/get-google-search-console.js';
 import { GetSeoPotential } from './tools/project/analytics/get-seo-potential.js';
@@ -185,7 +198,6 @@ export class SeoApiMcpServer {
     GetPageAuthorityHistory,
     GetDomainAuthority,
     GetDomainAuthorityHistory,
-    GetDomainAuthorityHistogram,
     ListNewLostReferringDomains,
     GetNewLostRefDomainsCount,
     ExportBacklinksData,
@@ -309,6 +321,20 @@ export class SeoApiMcpServer {
     DeleteBacklinkGroup,
     RenameBacklinkGroup,
     MoveBacklinksToGroup,
+    // AIRT (AI Result Tracker)
+    GetSiteBrand,
+    SaveSiteBrand,
+    ListLlmEngines,
+    CreateLlmEngine,
+    GetLlmEngine,
+    UpdateLlmEngine,
+    DeleteLlmEngine,
+    GetLlmStatus,
+    GetLlmStatistics,
+    GetPromptsRankings,
+    ListPrompts,
+    AddPrompts,
+    DeletePrompts,
   ];
 
   init(): void {

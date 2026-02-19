@@ -1,0 +1,33 @@
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
+
+import { ApiType, BaseTool } from '../../../base-tool.js';
+
+export class ListPrompts extends BaseTool {
+    protected apiType = ApiType.PROJECT;
+
+    registerTool(server: McpServer): void {
+        server.registerTool(
+            this.toolName('listPrompts'),
+            {
+                title: 'List Prompts',
+                description: 'Project Tool: Retrieve list of prompts (keywords) for a specific LLM engine in AI Result Tracker with pagination.',
+                inputSchema: {
+                    site_id: z.number().int().describe('Site ID'),
+                    llm_id: z.number().int().describe('LLM Engine ID'),
+                    limit: z.number().int().min(1).max(1000).optional().describe('Number of items per page (1-1000, default 100)'),
+                    offset: z.number().int().min(0).optional().describe('Offset from the beginning of the list'),
+                },
+            },
+            async (params: {
+                site_id: number;
+                llm_id: number;
+                limit?: number;
+                offset?: number;
+            }) => {
+                const { site_id, llm_id, ...queryParams } = params;
+                return this.makeGetRequest(`/sites/${site_id}/airt/llm/${llm_id}/prompts`, queryParams);
+            },
+        );
+    }
+}

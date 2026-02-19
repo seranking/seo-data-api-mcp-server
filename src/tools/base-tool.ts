@@ -212,6 +212,15 @@ export abstract class BaseTool {
     return this.executeRequest(url, { method: 'DELETE' });
   }
 
+  protected async makeJsonDeleteRequest(path: string, body: Record<string, unknown> | unknown[]) {
+    const url = `${this.getBaseUrl()}${path}`;
+    return this.executeRequest(url, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  }
+
   private async executeRequest(url: string, init: RequestInit) {
     const token = this.getToken();
 
