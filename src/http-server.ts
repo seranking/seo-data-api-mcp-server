@@ -15,6 +15,8 @@ function extractTokenFromHeader(authorization?: string) {
 }
 
 function isAuthenticationRequired(req: express.Request) {
+  // GET /mcp has no body (event-stream); only POST has JSON-RPC body
+  if (!req.body || typeof req.body !== 'object') return false;
   return req.body.method !== 'tools/list';
 }
 
