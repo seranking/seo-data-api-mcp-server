@@ -8,21 +8,49 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import express from 'express';
 
 import { DATA_API_TOKEN, PROJECT_API_TOKEN } from './constants.js';
-import { runWithRequestTokens } from './request-token-context.js';
+import {
+  runWithRequestTokens,
+  setSessionTokenProvider,
+  type RequestTokens,
+} from './request-token-context.js';
 import { SeoApiMcpServer } from './seo-api-mcp-server.js';
 
 interface SessionEntry {
   server: McpServer;
   transport: StreamableHTTPServerTransport;
+  lastTokens: RequestTokens;
 }
 
 const sessions = new Map<string, SessionEntry>();
 
 const SESSION_HEADER = 'mcp-session-id';
 
+setSessionTokenProvider((sessionId) => sessions.get(sessionId)?.lastTokens);
+
 function extractTokenFromHeader(authorization?: string) {
   const m = authorization?.match(/^Bearer\s+(.+)$/i);
   return m?.[1]?.trim();
+}
+
+/** Read token from header (Node lowercases header names) */
+function headerToken(req: express.Request, name: string): string | undefined {
+  const v = req.headers[name];
+  if (typeof v === 'string') return v.trim() || undefined;
+  if (Array.isArray(v)) return v[0]?.trim() || undefined;
+  return undefined;
+}
+
+/** Build request tokens: headers (X-Data-Api-Token / X-Project-Api-Token) > Bearer > server env */
+function getRequestTokensFromReq(req: express.Request): RequestTokens {
+  const bearer = extractTokenFromHeader(req.headers.authorization);
+  const dataFromHeader = headerToken(req, 'x-data-api-token');
+  const projectFromHeader = headerToken(req, 'x-project-api-token');
+  return {
+    dataApiToken:
+      dataFromHeader ?? bearer ?? DATA_API_TOKEN || undefined,
+    projectApiToken:
+      projectFromHeader ?? bearer ?? PROJECT_API_TOKEN || undefined,
+  };
 }
 
 function isAuthenticationRequired(req: express.Request) {
@@ -78,12 +106,17 @@ async function closeSession(entry: SessionEntry): Promise<void> {
 
 // catch all requests for MCP requests
 app.all('/mcp', async (req, res) => {
-  const bearer = extractTokenFromHeader(req.headers.authorization);
-  const token = bearer || DATA_API_TOKEN || PROJECT_API_TOKEN;
+  const requestTokens = getRequestTokensFromReq(req);
+  const hasToken =
+    requestTokens.dataApiToken ||
+    requestTokens.projectApiToken;
 
-  if (isAuthenticationRequired(req) && !token) {
+  if (isAuthenticationRequired(req) && !hasToken) {
     console.warn('Empty token! MCP request received:', req.method, req.url);
-    return res.status(401).json({ error: 'Missing API Token (Bearer of DATA/PROJECT env)' });
+    return res.status(401).json({
+      error:
+        'Missing API token. Set DATA_API_TOKEN and/or PROJECT_API_TOKEN (env or headers X-Data-Api-Token / X-Project-Api-Token).',
+    });
   }
 
   const sessionId = getSessionId(req);
@@ -102,11 +135,9 @@ app.all('/mcp', async (req, res) => {
     if (!entry) {
       return res.status(404).json({ error: 'Session not found or expired' });
     }
-    const requestTokens = {
-      dataApiToken: bearer || DATA_API_TOKEN || undefined,
-      projectApiToken: bearer || PROJECT_API_TOKEN || undefined,
-    };
-    return runWithRequestTokens(requestTokens, async () => {
+    const tokensWithSession: RequestTokens = { ...requestTokens, sessionId };
+    entry.lastTokens = tokensWithSession;
+    return runWithRequestTokens(tokensWithSession, async () => {
       try {
         await entry.transport.handleRequest(req, res, req.body);
       } catch (err) {
@@ -117,11 +148,6 @@ app.all('/mcp', async (req, res) => {
   }
 
   // New session: initialize (first POST without session id)
-  const requestTokens = {
-    dataApiToken: bearer || DATA_API_TOKEN || undefined,
-    projectApiToken: bearer || PROJECT_API_TOKEN || undefined,
-  };
-
   await runWithRequestTokens(requestTokens, async () => {
     const server = new McpServer({ name: 'ser-data-api-mcp-server', version: '1.0.0' });
     new SeoApiMcpServer(server).init();
@@ -135,7 +161,7 @@ app.all('/mcp', async (req, res) => {
     res.setHeader = function (name: string, value: string | number | string[]) {
       const v = Array.isArray(value) ? value[0] : String(value);
       if (name.toLowerCase() === SESSION_HEADER && v) {
-        sessions.set(v, { server, transport });
+        sessions.set(v, { server, transport, lastTokens: requestTokens });
       }
       return originalSetHeader(name, value);
     };

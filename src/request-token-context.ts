@@ -5,6 +5,16 @@ export type ApiType = 'DATA' | 'PROJECT';
 export interface RequestTokens {
   dataApiToken?: string;
   projectApiToken?: string;
+  sessionId?: string;
+}
+
+/** Set by HTTP server so tools can fall back to session-stored tokens if async context is lost */
+let sessionTokenProvider: ((sessionId: string) => RequestTokens | undefined) | null = null;
+
+export function setSessionTokenProvider(
+  fn: ((sessionId: string) => RequestTokens | undefined) | null,
+): void {
+  sessionTokenProvider = fn;
 }
 
 const requestTokenStorage = new AsyncLocalStorage<RequestTokens>();
@@ -19,10 +29,23 @@ export function runWithRequestTokens<T>(tokens: RequestTokens, fn: () => T): T {
 
 /**
  * Get the token for the current request context (DATA or PROJECT API).
- * Returns undefined if not in a request context or token not set.
+ * Falls back to session-stored tokens if async context was lost (e.g. deferred tool execution).
  */
 export function getRequestToken(apiType: ApiType): string | undefined {
   const store = requestTokenStorage.getStore();
-  if (!store) return undefined;
-  return apiType === 'DATA' ? store.dataApiToken : store.projectApiToken;
+  const fromStore = store
+    ? apiType === 'DATA'
+      ? store.dataApiToken
+      : store.projectApiToken
+    : undefined;
+  if (fromStore) return fromStore;
+  if (store?.sessionId && sessionTokenProvider) {
+    const sessionTokens = sessionTokenProvider(store.sessionId);
+    return sessionTokens
+      ? apiType === 'DATA'
+        ? sessionTokens.dataApiToken
+        : sessionTokens.projectApiToken
+      : undefined;
+  }
+  return undefined;
 }

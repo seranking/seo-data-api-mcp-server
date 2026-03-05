@@ -128,29 +128,34 @@ For batch MCP Requests testing:
 ./test-batch-http-server-curl-request.sh '<your-api-token-here>'
 ```
 
-### Passing API tokens in the client config (HTTP/remote)
+### API tokens: Docker (env) vs HTTP (headers)
 
-When you connect to the MCP server over HTTP (e.g. a remote Docker container or `npm run start-http`), you can pass **DATA_API_TOKEN** and **PROJECT_API_TOKEN** from your Claude Desktop or Gemini CLI config instead of setting them on the server. The client sends the token with each request using the `Authorization: Bearer <token>` header, and the server uses it for API calls.
+Like the [official SE Ranking MCP guide](https://seranking.com/api/integrations/mcp/), tokens are passed as **DATA_API_TOKEN** and **PROJECT_API_TOKEN**:
 
-- **One token:** If you only use one token (e.g. Data API), set it as Bearer in your client; the server will use it for both APIs if needed.
-- **Two tokens:** Set **DATA_API_TOKEN** in the server environment (e.g. Docker) and pass **PROJECT_API_TOKEN** via Bearer, or run the server without env and pass one Bearer token (used for both APIs).
+| Transport | How to pass tokens | Where to set |
+| ---------- | ------------------ | ------------ |
+| **Docker / stdio** | Environment variables | Client config `env`: `DATA_API_TOKEN`, `PROJECT_API_TOKEN` (see Connect to Claude Desktop / Gemini CLI below). |
+| **HTTP (remote server)** | HTTP headers (env is not sent to remote servers) | Client config `headers`: `X-Data-Api-Token`, `X-Project-Api-Token` — same names as env, passed as headers. Optionally `Authorization: Bearer <token>` for a single token used for both APIs. |
 
-Example for a client that supports URL + headers (exact keys may differ by client):
+**Gemini CLI with HTTP** (`httpUrl`): Use `headers` with the token names below. You can use one token (Bearer) or both (X-Data-Api-Token and X-Project-Api-Token):
 
 ```json
 {
   "mcpServers": {
     "seo-data-api-mcp": {
-      "url": "http://your-server:5000/mcp",
+      "httpUrl": "http://your-server:5000/mcp",
       "headers": {
-        "Authorization": "Bearer <your-data-api-token-here>"
-      }
+        "X-Data-Api-Token": "your-data-api-token-uuid",
+        "X-Project-Api-Token": "your-project-api-token-40char-hex"
+      },
+      "timeout": 30000,
+      "trust": true
     }
   }
 }
 ```
 
-If your client does not support custom headers for MCP URLs, set the tokens in the server environment (e.g. Docker `env` or `.env` when running locally).
+If you only have one token, use `Authorization: Bearer <token>` and the server will use it for both APIs. If the model looks for tokens in shell env, tell it: *"The SE Ranking tokens are in the MCP client config (Gemini settings). Use the MCP tools directly."*
 
 ## Connect to Claude Desktop
 
@@ -208,8 +213,9 @@ Example of **Claude Desktop** configuration for MCP server
 
 ## Connect to Gemini CLI
 
-- Open the Gemini CLI settings file, which is typically located at: `~/.gemini/settings.json`
-- Add the following JSON configuration, making sure to **replace the API token placeholder values.**
+Open the Gemini CLI settings file: `~/.gemini/settings.json`.
+
+**Option A — Docker (recommended in [SE Ranking MCP docs](https://seranking.com/api/integrations/mcp/)):** Tokens via `env`; same shape as Claude Desktop.
 
 ```json
 {
@@ -227,15 +233,33 @@ Example of **Claude Desktop** configuration for MCP server
         "se-ranking/seo-data-api-mcp-server"
       ],
       "env": {
-        "DATA_API_TOKEN": "<your-data-api-token-here>",
-        "PROJECT_API_TOKEN": "<your-project-api-token-here>"
+        "DATA_API_TOKEN": "your-data-api-token",
+        "PROJECT_API_TOKEN": "your-project-api-token"
       }
     }
   }
 }
 ```
 
-Replace the `DATA_API_TOKEN` and `PROJECT_API_TOKEN` placeholder values with your tokens (see [API Tokens](#api-tokens) section).
+**Option B — HTTP (remote server):** Use `httpUrl` and pass tokens as headers (env is not sent to remote servers). Same token names as env, as headers:
+
+```json
+{
+  "mcpServers": {
+    "seo-data-api-mcp": {
+      "httpUrl": "http://192.168.13.19:5000/mcp",
+      "headers": {
+        "X-Data-Api-Token": "your-data-api-token",
+        "X-Project-Api-Token": "your-project-api-token"
+      },
+      "timeout": 30000,
+      "trust": true
+    }
+  }
+}
+```
+
+Replace the token placeholder values with your tokens (see [API Tokens](#api-tokens) section).
 
 - Save the configuration file.
 

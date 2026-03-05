@@ -20,7 +20,7 @@ export function setTokenProvider(provider: (() => string) | null) {
 
 export abstract class BaseTool {
   private readonly MISSING_TOKEN_MESSAGE = (type: ApiType) =>
-    `Missing ${type === ApiType.DATA ? 'DATA_API_TOKEN' : 'PROJECT_API_TOKEN'}.`;
+    `Missing ${type === ApiType.DATA ? 'DATA_API_TOKEN' : 'PROJECT_API_TOKEN'}. When using HTTP/MCP client, set it in your client config (e.g. Gemini settings.json) as headers.Authorization: "Bearer <token>".`;
 
   abstract registerTool(server: McpServer): void;
 
