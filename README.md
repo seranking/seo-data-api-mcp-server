@@ -136,8 +136,10 @@ Like the [official SE Ranking MCP guide](https://seranking.com/api/integrations/
 
 | Transport | How to pass tokens | Where to set |
 | ---------- | ------------------ | ------------ |
-| **Docker / stdio** | Environment variables | Client config `env`: `SERANKING_DATA_API_TOKEN`, `SERANKING_PROJECT_API_TOKEN` (see Connect to Claude Desktop / Gemini CLI below). |
-| **HTTP (remote server)** | HTTP headers (env is not sent to remote servers) | Client config `headers`: `X-Seranking-Data-Api-Token`, `X-Seranking-Project-Api-Token` (or `X-Data-Api-Token` / `X-Project-Api-Token`). Optionally `Authorization: Bearer <token>` for a single token used for both APIs. |
+| **Docker / stdio** | Environment variables | Client config `env`: `SERANKING_DATA_API_TOKEN`, `SERANKING_PROJECT_API_TOKEN` (see [Connect to Claude Desktop](#connect-to-claude-desktop) / [Connect to Gemini CLI](#connect-to-gemini-cli) below). |
+| **HTTP (remote server)** | HTTP headers (env is not sent to remote servers) | **Claude Desktop:** `npx mcp-remote` with `--header X-Seranking-Data-Api-Token: ...` (see Option B in Claude Desktop). **Gemini CLI:** `headers` in `settings.json`: `X-Seranking-Data-Api-Token`, `X-Seranking-Project-Api-Token`, or `Authorization: Bearer <token>`. |
+
+**Claude Desktop with HTTP:** Use `mcp-remote` and pass tokens with `--header` (see [Connect to Claude Desktop](#connect-to-claude-desktop), Option B).
 
 **Gemini CLI with HTTP** (`httpUrl`): Use `headers` with the token names below. Prefer **env vars** so keys stay out of the config: put tokens in a `.env` file and reference them in `settings.json` with `${SERANKING_DATA_API_TOKEN}` / `${SERANKING_PROJECT_API_TOKEN}`. Gemini loads `.env` (from project dir or `~/.gemini/`) before parsing `settings.json`.
 
@@ -221,6 +223,25 @@ Example of **Claude Desktop** configuration for MCP server
 - Your setup is complete! You can now run complex SEO queries using natural language.
 
 ![Claude Desktop: List MCP Servers](docs-img/claude-desktop-2.png)
+
+**Option B — HTTP (remote server):** To connect Claude Desktop to the MCP server over HTTP (e.g. a server running in Docker on another machine), use `mcp-remote` and pass tokens via headers:
+
+```json
+"seo-data-api-mcp": {
+  "command": "npx",
+  "args": [
+    "-y",
+    "mcp-remote",
+    "http://your-server:5000/mcp",
+    "--header",
+    "X-Seranking-Data-Api-Token: your-data-api-token",
+    "--header",
+    "X-Seranking-Project-Api-Token: your-project-api-token"
+  ]
+}
+```
+
+Only one token? Use a single header, e.g. `"--header", "Authorization: Bearer your-token"`. The server uses it for both APIs. Replace `your-server` and the token values with your setup.
 
 ## Connect to Gemini CLI
 

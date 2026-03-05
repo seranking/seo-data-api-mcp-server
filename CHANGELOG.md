@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Session handling**: MCP Streamable HTTP sessions are kept so that GET (event stream) and subsequent POSTs use the same server/transport. Session ID is captured from the first response and reused.
 - **Single-token fallback**: If only one token is configured (Data or Project), it is used for both APIs so the model does not search for a second token.
 - **SERANKING\_\* env names**: Primary env vars are `SERANKING_DATA_API_TOKEN` and `SERANKING_PROJECT_API_TOKEN`; `DATA_API_TOKEN` and `PROJECT_API_TOKEN` remain supported as legacy.
+- **Claude Desktop**: README documents HTTP (remote) setup with `mcp-remote` and `--header` for token passing (Option B).
 - **Gemini CLI**: README documents HTTP setup with `httpUrl` and `headers`, and using `.env` with `${SERANKING_DATA_API_TOKEN}` / `${SERANKING_PROJECT_API_TOKEN}` so tokens stay out of `settings.json`.
 
 ### Fixed
