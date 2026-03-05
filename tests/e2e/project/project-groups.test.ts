@@ -13,7 +13,7 @@ import { UpdateProjectGroup } from '../../../src/tools/project/project-groups/up
 dotenv.config();
 
 const E2E_ENABLED = process.env.E2E_ENABLED === 'true';
-const HAS_PROJECT_TOKEN = !!process.env.PROJECT_API_TOKEN;
+const HAS_PROJECT_TOKEN = !!(process.env.SERANKING_PROJECT_API_TOKEN || process.env.PROJECT_API_TOKEN);
 
 describe('End-to-End Project Groups (v4) Coverage', () => {
     const runOrSkip = E2E_ENABLED && HAS_PROJECT_TOKEN ? it : it.skip;
@@ -21,7 +21,7 @@ describe('End-to-End Project Groups (v4) Coverage', () => {
     if (!E2E_ENABLED) {
         console.warn('⚠️ E2E tests are skipped. Set E2E_ENABLED=true to run them.');
     } else if (!HAS_PROJECT_TOKEN) {
-        console.warn('⚠️ Project API tests are skipped. Set PROJECT_API_TOKEN to run them.');
+        console.warn('⚠️ Project API tests are skipped. Set SERANKING_PROJECT_API_TOKEN (or PROJECT_API_TOKEN) to run them.');
     }
 
     const getHandler = (tool: any) => {

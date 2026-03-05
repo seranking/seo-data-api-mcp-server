@@ -9,9 +9,9 @@ import express from 'express';
 
 import { DATA_API_TOKEN, PROJECT_API_TOKEN } from './constants.js';
 import {
+  type RequestTokens,
   runWithRequestTokens,
   setSessionTokenProvider,
-  type RequestTokens,
 } from './request-token-context.js';
 import { SeoApiMcpServer } from './seo-api-mcp-server.js';
 
@@ -32,23 +32,33 @@ function extractTokenFromHeader(authorization?: string) {
   return m?.[1]?.trim();
 }
 
-/** Read token from header (Node lowercases header names) */
-function headerToken(req: express.Request, name: string): string | undefined {
-  const v = req.headers[name];
-  if (typeof v === 'string') return v.trim() || undefined;
-  if (Array.isArray(v)) return v[0]?.trim() || undefined;
+/** Read token from header (Node lowercases header names). Supports both X-Seranking-* and X-Data-Api-Token / X-Project-Api-Token. */
+function headerToken(req: express.Request, ...names: string[]): string | undefined {
+  for (const name of names) {
+    const v = req.headers[name];
+    if (typeof v === 'string') {
+      const t = v.trim();
+      if (t) return t;
+    }
+    if (Array.isArray(v) && v[0]) {
+      const t = String(v[0]).trim();
+      if (t) return t;
+    }
+  }
   return undefined;
 }
 
 /** Build request tokens: headers > Bearer > server env. If only one token is set, use it for both APIs (one token is enough for many setups). */
 function getRequestTokensFromReq(req: express.Request): RequestTokens {
   const bearer = extractTokenFromHeader(req.headers.authorization);
-  const dataFromHeader = headerToken(req, 'x-data-api-token');
-  const projectFromHeader = headerToken(req, 'x-project-api-token');
-  let dataApiToken =
-    dataFromHeader ?? bearer ?? (DATA_API_TOKEN || undefined);
-  let projectApiToken =
-    projectFromHeader ?? bearer ?? (PROJECT_API_TOKEN || undefined);
+  const dataFromHeader = headerToken(req, 'x-seranking-data-api-token', 'x-data-api-token');
+  const projectFromHeader = headerToken(
+    req,
+    'x-seranking-project-api-token',
+    'x-project-api-token',
+  );
+  let dataApiToken = dataFromHeader ?? bearer ?? (DATA_API_TOKEN || undefined);
+  let projectApiToken = projectFromHeader ?? bearer ?? (PROJECT_API_TOKEN || undefined);
   if (dataApiToken && !projectApiToken) projectApiToken = dataApiToken;
   if (projectApiToken && !dataApiToken) dataApiToken = projectApiToken;
   return { dataApiToken, projectApiToken };
@@ -74,9 +84,15 @@ if (HOST !== '0.0.0.0') {
 const allowedHostsEnv = process.env.ALLOWED_HOSTS?.trim();
 if (allowedHostsEnv === '*') {
   // Allow any Host (e.g. for LAN access); DNS rebinding risk only if server is on public IP
-  app.use((_req, _res, next) => next());
+  app.use((_req, _res, next) => {
+    next();
+  });
 } else {
-  const extraHosts = allowedHostsEnv?.split(',').map((h) => h.trim()).filter(Boolean) ?? [];
+  const extraHosts =
+    allowedHostsEnv
+      ?.split(',')
+      .map((h) => h.trim())
+      .filter(Boolean) ?? [];
   for (const h of extraHosts) {
     allowedHosts.push(h, `${h}:${PORT}`);
   }
@@ -99,24 +115,22 @@ function getSessionId(req: express.Request): string | undefined {
 async function closeSession(entry: SessionEntry): Promise<void> {
   try {
     await entry.transport.close();
-  } catch { }
+  } catch {}
   try {
     await entry.server.close();
-  } catch { }
+  } catch {}
 }
 
 // catch all requests for MCP requests
 app.all('/mcp', async (req, res) => {
   const requestTokens = getRequestTokensFromReq(req);
-  const hasToken =
-    requestTokens.dataApiToken ||
-    requestTokens.projectApiToken;
+  const hasToken = requestTokens.dataApiToken || requestTokens.projectApiToken;
 
   if (isAuthenticationRequired(req) && !hasToken) {
     console.warn('Empty token! MCP request received:', req.method, req.url);
     return res.status(401).json({
       error:
-        'Missing API token. Set DATA_API_TOKEN and/or PROJECT_API_TOKEN (env or headers X-Data-Api-Token / X-Project-Api-Token).',
+        'Missing API token. Set SERANKING_DATA_API_TOKEN and/or SERANKING_PROJECT_API_TOKEN (env or headers X-Seranking-Data-Api-Token / X-Seranking-Project-Api-Token).',
     });
   }
 

@@ -17,8 +17,21 @@ dist/
 *.ipa
 *.apk
 
-# .env file
+# .env and local overrides
 .env
+.env.local
+.env.*.local
+
+# Logs and debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Test coverage
+coverage/
+
+# Local Gemini config (if copied into project)
+.gemini/
 
 # Temporary/working folders
 temp-files/

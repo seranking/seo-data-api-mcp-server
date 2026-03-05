@@ -9,6 +9,8 @@ This Model Context Protocol (MCP) server connects AI assistants to [SE Ranking's
 - AI search visibility tracking
 - Project and rank tracking management
 
+For recent changes (Docker HTTP mode, remote access, token headers, Gemini CLI), see [CHANGELOG.md](CHANGELOG.md).
+
 ## Prerequisites
 
 Before you begin, please ensure you have the following software and accounts ready:
@@ -24,12 +26,12 @@ This MCP server supports two types of API access:
 
 | Token | Environment Variable | Format | Purpose |
 |-------|---------------------|--------|---------|
-| Data API | `DATA_API_TOKEN` | UUID (e.g., `80cfee7d-xxxx-xxxx-xxxx-fc8500816bb3`) | Access to keyword research, domain analysis, backlinks data, SERP analysis, and website audits. Tools prefixed with `DATA_`. |
-| Project API | `PROJECT_API_TOKEN` | 40-char hex (e.g., `253a73adxxxxxxxxxxxx340aa0a939`) | Access to project management, rank tracking, backlink monitoring, and account management. Tools prefixed with `PROJECT_`. |
+| Data API | `SERANKING_DATA_API_TOKEN` | UUID (e.g., `80cfee7d-xxxx-xxxx-xxxx-fc8500816bb3`) | Access to keyword research, domain analysis, backlinks data, SERP analysis, and website audits. Tools prefixed with `DATA_`. |
+| Project API | `SERANKING_PROJECT_API_TOKEN` | 40-char hex (e.g., `253a73adxxxxxxxxxxxx340aa0a939`) | Access to project management, rank tracking, backlink monitoring, and account management. Tools prefixed with `PROJECT_`. |
 
 Get your tokens from: https://online.seranking.com/admin.api.dashboard.html
 
-You can use **one or both** tokens. If you only set one (e.g. only `DATA_API_TOKEN` or only `PROJECT_API_TOKEN`), the server uses it for both APIs so you don’t need to configure the other—the model won’t search for a second token.
+You can use **one or both** tokens. If you only set one (e.g. only `SERANKING_DATA_API_TOKEN` or only `SERANKING_PROJECT_API_TOKEN`), the server uses it for both APIs so you don’t need to configure the other—the model won’t search for a second token. Legacy names `DATA_API_TOKEN` and `PROJECT_API_TOKEN` remain supported.
 
 ## Rate Limits
 
@@ -110,7 +112,7 @@ HOST=127.0.0.1
 PORT=5555
 ```
 
-Additionally, when running in external environments like [Replit](https://replit.com/), you can set the `DATA_API_TOKEN` and `PROJECT_API_TOKEN` environment variables in the configuration panel.
+Additionally, when running in external environments like [Replit](https://replit.com/), you can set the `SERANKING_DATA_API_TOKEN` and `SERANKING_PROJECT_API_TOKEN` environment variables in the configuration panel.
 
 **Note**: If you change the API token values when the server is running, you need to restart the server.
 
@@ -130,20 +132,20 @@ For batch MCP Requests testing:
 
 ### API tokens: Docker (env) vs HTTP (headers)
 
-Like the [official SE Ranking MCP guide](https://seranking.com/api/integrations/mcp/), tokens are passed as **DATA_API_TOKEN** and **PROJECT_API_TOKEN**:
+Like the [official SE Ranking MCP guide](https://seranking.com/api/integrations/mcp/), tokens are passed as **SERANKING_DATA_API_TOKEN** and **SERANKING_PROJECT_API_TOKEN** (legacy: `DATA_API_TOKEN` / `PROJECT_API_TOKEN`):
 
 | Transport | How to pass tokens | Where to set |
 | ---------- | ------------------ | ------------ |
-| **Docker / stdio** | Environment variables | Client config `env`: `DATA_API_TOKEN`, `PROJECT_API_TOKEN` (see Connect to Claude Desktop / Gemini CLI below). |
-| **HTTP (remote server)** | HTTP headers (env is not sent to remote servers) | Client config `headers`: `X-Data-Api-Token`, `X-Project-Api-Token` — same names as env, passed as headers. Optionally `Authorization: Bearer <token>` for a single token used for both APIs. |
+| **Docker / stdio** | Environment variables | Client config `env`: `SERANKING_DATA_API_TOKEN`, `SERANKING_PROJECT_API_TOKEN` (see Connect to Claude Desktop / Gemini CLI below). |
+| **HTTP (remote server)** | HTTP headers (env is not sent to remote servers) | Client config `headers`: `X-Seranking-Data-Api-Token`, `X-Seranking-Project-Api-Token` (or `X-Data-Api-Token` / `X-Project-Api-Token`). Optionally `Authorization: Bearer <token>` for a single token used for both APIs. |
 
-**Gemini CLI with HTTP** (`httpUrl`): Use `headers` with the token names below. Prefer **env vars** so keys stay out of the config and the model doesn’t search for them on every call: put tokens in a `.env` file and reference them in `settings.json` with `${DATA_API_TOKEN}` / `${PROJECT_API_TOKEN}`. Gemini loads `.env` (from project dir or `~/.gemini/`) before parsing `settings.json`, so the values are available and the MCP client sends them automatically.
+**Gemini CLI with HTTP** (`httpUrl`): Use `headers` with the token names below. Prefer **env vars** so keys stay out of the config: put tokens in a `.env` file and reference them in `settings.json` with `${SERANKING_DATA_API_TOKEN}` / `${SERANKING_PROJECT_API_TOKEN}`. Gemini loads `.env` (from project dir or `~/.gemini/`) before parsing `settings.json`.
 
 Example **`.env`** (e.g. in project root or `~/.gemini/.env`):
 
 ```bash
-DATA_API_TOKEN=your-data-api-token-uuid
-PROJECT_API_TOKEN=your-project-api-token-40char-hex
+SERANKING_DATA_API_TOKEN=your-data-api-token-uuid
+SERANKING_PROJECT_API_TOKEN=your-project-api-token-40char-hex
 ```
 
 Example **`~/.gemini/settings.json`** (HTTP, tokens from .env):
@@ -154,8 +156,8 @@ Example **`~/.gemini/settings.json`** (HTTP, tokens from .env):
     "seo-data-api-mcp": {
       "httpUrl": "http://your-server:5000/mcp",
       "headers": {
-        "X-Data-Api-Token": "${DATA_API_TOKEN}",
-        "X-Project-Api-Token": "${PROJECT_API_TOKEN}"
+        "X-Seranking-Data-Api-Token": "${SERANKING_DATA_API_TOKEN}",
+        "X-Seranking-Project-Api-Token": "${SERANKING_PROJECT_API_TOKEN}"
       },
       "timeout": 30000,
       "trust": true
@@ -164,7 +166,7 @@ Example **`~/.gemini/settings.json`** (HTTP, tokens from .env):
 }
 ```
 
-**Only one token?** Set just one in `.env` (e.g. `DATA_API_TOKEN`) and use e.g. `"X-Data-Api-Token": "${DATA_API_TOKEN}"` or `"Authorization": "Bearer ${PROJECT_API_TOKEN}"` (or `${DATA_API_TOKEN}`) and the server uses that single token for both APIs so the model won't search for a project token. With tokens in `.env` and `${...}` in the config, the MCP client sends them with every request.
+**Only one token?** Set just one in `.env` (e.g. `SERANKING_DATA_API_TOKEN`) and use e.g. `"X-Seranking-Data-Api-Token": "${SERANKING_DATA_API_TOKEN}"` or `"Authorization": "Bearer ${SERANKING_DATA_API_TOKEN}"`. The server uses that single token for both APIs so the model won't search for a project token. With tokens in `.env` and `${...}` in the config, the MCP client sends them with every request.
 
 ## Connect to Claude Desktop
 
@@ -194,21 +196,21 @@ Example of **Claude Desktop** configuration for MCP server
         "-i",
         "--rm",
         "-e",
-        "DATA_API_TOKEN",
+        "SERANKING_DATA_API_TOKEN",
         "-e",
-        "PROJECT_API_TOKEN",
+        "SERANKING_PROJECT_API_TOKEN",
         "se-ranking/seo-data-api-mcp-server"
       ],
       "env": {
-        "DATA_API_TOKEN": "<your-data-api-token-here>",
-        "PROJECT_API_TOKEN": "<your-project-api-token-here>"
+        "SERANKING_DATA_API_TOKEN": "<your-data-api-token-here>",
+        "SERANKING_PROJECT_API_TOKEN": "<your-project-api-token-here>"
       }
     }
   }
 }
 ```
 
-- Replace the `DATA_API_TOKEN` and `PROJECT_API_TOKEN` placeholder values with your tokens (see [API Tokens](#api-tokens) section).
+- Replace the `SERANKING_DATA_API_TOKEN` and `SERANKING_PROJECT_API_TOKEN` placeholder values with your tokens (see [API Tokens](#api-tokens) section).
 
 - After saving **claude_desktop_config.json**, restart Claude Desktop. You should see the server under MCP Servers/Tools.
 
@@ -236,14 +238,14 @@ Open the Gemini CLI settings file: `~/.gemini/settings.json`.
         "-i",
         "--rm",
         "-e",
-        "DATA_API_TOKEN",
+        "SERANKING_DATA_API_TOKEN",
         "-e",
-        "PROJECT_API_TOKEN",
+        "SERANKING_PROJECT_API_TOKEN",
         "se-ranking/seo-data-api-mcp-server"
       ],
       "env": {
-        "DATA_API_TOKEN": "your-data-api-token",
-        "PROJECT_API_TOKEN": "your-project-api-token"
+        "SERANKING_DATA_API_TOKEN": "your-data-api-token",
+        "SERANKING_PROJECT_API_TOKEN": "your-project-api-token"
       }
     }
   }
@@ -254,17 +256,17 @@ Open the Gemini CLI settings file: `~/.gemini/settings.json`.
 
 ```json
 "seo-data-api-mcp": {
-  "httpUrl": "http://192.168.13.19:5000/mcp",
+  "httpUrl": "http://your-server:5000/mcp",
   "headers": {
-    "X-Data-Api-Token": "${DATA_API_TOKEN}",
-    "X-Project-Api-Token": "${PROJECT_API_TOKEN}"
+    "X-Seranking-Data-Api-Token": "${SERANKING_DATA_API_TOKEN}",
+    "X-Seranking-Project-Api-Token": "${SERANKING_PROJECT_API_TOKEN}"
   },
   "timeout": 30000,
   "trust": true
 }
 ```
 
-Define `DATA_API_TOKEN` and `PROJECT_API_TOKEN` in your `.env` (see [API tokens](#api-tokens-docker-env-vs-http-headers) for the example). Alternatively, you can paste the token values directly in `headers` (less secure).
+Define `SERANKING_DATA_API_TOKEN` and `SERANKING_PROJECT_API_TOKEN` in your `.env` (see [API tokens](#api-tokens-docker-env-vs-http-headers) for the example). Alternatively, you can paste the token values directly in `headers` (less secure).
 
 - Save the configuration file.
 
@@ -534,8 +536,8 @@ This will show you the big JSON output, where particularly important is the "Con
     "OpenStdin": true,
     "StdinOnce": true,
     "Env": [
-      "DATA_API_TOKEN=80cfee7d-xxxx-xxxx-xxxx-fc8500816bb3",
-      "PROJECT_API_TOKEN=253a73adxxxxxxxxxxxxxx340aa0a939",
+      "SERANKING_DATA_API_TOKEN=80cfee7d-xxxx-xxxx-xxxx-fc8500816bb3",
+      "SERANKING_PROJECT_API_TOKEN=253a73adxxxxxxxxxxxxxx340aa0a939",
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
       "NODE_VERSION=20.19.5",
       "YARN_VERSION=1.22.22",
@@ -569,12 +571,12 @@ npm run test:watch
 
 ### Environment Variables for Testing
 
-Create a `.env` file in the project root with the following variables:
+Create a `.env` file in the project root with the following variables (as in the [upstream Contributing guidelines](https://github.com/seranking/seo-data-api-mcp-server?tab=readme-ov-file#contributing)):
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATA_API_TOKEN` | Yes | API token for Data API tools |
-| `PROJECT_API_TOKEN` | Yes | API token for Project API tools |
+| `SERANKING_DATA_API_TOKEN` or `DATA_API_TOKEN` | Yes | API token for Data API tools |
+| `SERANKING_PROJECT_API_TOKEN` or `PROJECT_API_TOKEN` | Yes | API token for Project API tools |
 | `E2E_ENABLED` | No | Set to `true` to enable E2E tests |
 | `GEMINI_E2E_ENABLED` | No | Set to `true` to enable Gemini assistant tests |
 

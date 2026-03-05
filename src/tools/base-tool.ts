@@ -1,10 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
 
-import {
-  DATA_API_BASE,
-  PROJECT_API_BASE,
-} from '../constants.js';
+import { DATA_API_BASE, PROJECT_API_BASE } from '../constants.js';
 import { getRequestToken } from '../request-token-context.js';
 
 export enum ApiType {
@@ -20,7 +17,7 @@ export function setTokenProvider(provider: (() => string) | null) {
 
 export abstract class BaseTool {
   private readonly MISSING_TOKEN_MESSAGE = (type: ApiType) =>
-    `Missing ${type === ApiType.DATA ? 'DATA_API_TOKEN' : 'PROJECT_API_TOKEN'}. When using HTTP/MCP client, set it in your client config (e.g. Gemini settings.json) as headers.Authorization: "Bearer <token>".`;
+    `Missing ${type === ApiType.DATA ? 'SERANKING_DATA_API_TOKEN' : 'SERANKING_PROJECT_API_TOKEN'}. When using HTTP/MCP client, set it in your client config (e.g. Gemini settings.json) as headers.Authorization: "Bearer <token>".`;
 
   abstract registerTool(server: McpServer): void;
 
@@ -67,13 +64,13 @@ export abstract class BaseTool {
     }
     if (this.apiType === ApiType.DATA) {
       return (
-        process.env.DATA_API_TOKEN ||
         process.env.SERANKING_DATA_API_TOKEN ||
+        process.env.DATA_API_TOKEN ||
         process.env.SERANKING_API_TOKEN ||
         ''
       );
     }
-    return process.env.PROJECT_API_TOKEN || process.env.SERANKING_PROJECT_API_TOKEN || '';
+    return process.env.SERANKING_PROJECT_API_TOKEN || process.env.PROJECT_API_TOKEN || '';
   }
 
   protected getBaseUrl(): string {
