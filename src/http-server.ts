@@ -1,5 +1,7 @@
 import 'dotenv/config';
 
+import { randomUUID } from 'node:crypto';
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { hostHeaderValidation } from '@modelcontextprotocol/sdk/server/middleware/hostHeaderValidation.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -8,6 +10,15 @@ import express from 'express';
 import { DATA_API_TOKEN, PROJECT_API_TOKEN } from './constants.js';
 import { runWithRequestTokens } from './request-token-context.js';
 import { SeoApiMcpServer } from './seo-api-mcp-server.js';
+
+interface SessionEntry {
+  server: McpServer;
+  transport: StreamableHTTPServerTransport;
+}
+
+const sessions = new Map<string, SessionEntry>();
+
+const SESSION_HEADER = 'mcp-session-id';
 
 function extractTokenFromHeader(authorization?: string) {
   const m = authorization?.match(/^Bearer\s+(.+)$/i);
@@ -51,6 +62,20 @@ app.use((req, _res, next) => {
   next();
 });
 
+function getSessionId(req: express.Request): string | undefined {
+  const id = req.headers[SESSION_HEADER];
+  return typeof id === 'string' ? id.trim() : Array.isArray(id) ? id[0]?.trim() : undefined;
+}
+
+async function closeSession(entry: SessionEntry): Promise<void> {
+  try {
+    await entry.transport.close();
+  } catch { }
+  try {
+    await entry.server.close();
+  } catch { }
+}
+
 // catch all requests for MCP requests
 app.all('/mcp', async (req, res) => {
   const bearer = extractTokenFromHeader(req.headers.authorization);
@@ -61,7 +86,37 @@ app.all('/mcp', async (req, res) => {
     return res.status(401).json({ error: 'Missing API Token (Bearer of DATA/PROJECT env)' });
   }
 
-  // Pass token from request (Bearer) or env into request context so tools use it
+  const sessionId = getSessionId(req);
+
+  // DELETE: terminate session (per MCP spec)
+  if (req.method === 'DELETE' && sessionId) {
+    const entry = sessions.get(sessionId);
+    sessions.delete(sessionId);
+    if (entry) void closeSession(entry).catch(console.error);
+    return res.status(202).end();
+  }
+
+  // Existing session: use same server/transport for GET and subsequent POSTs
+  if (sessionId) {
+    const entry = sessions.get(sessionId);
+    if (!entry) {
+      return res.status(404).json({ error: 'Session not found or expired' });
+    }
+    const requestTokens = {
+      dataApiToken: bearer || DATA_API_TOKEN || undefined,
+      projectApiToken: bearer || PROJECT_API_TOKEN || undefined,
+    };
+    return runWithRequestTokens(requestTokens, async () => {
+      try {
+        await entry.transport.handleRequest(req, res, req.body);
+      } catch (err) {
+        console.error('MCP Server Error (session):', err, req.method, req.url);
+        if (!res.headersSent) res.status(500).json({ error: 'Internal server error' });
+      }
+    });
+  }
+
+  // New session: initialize (first POST without session id)
   const requestTokens = {
     dataApiToken: bearer || DATA_API_TOKEN || undefined,
     projectApiToken: bearer || PROJECT_API_TOKEN || undefined,
@@ -69,31 +124,21 @@ app.all('/mcp', async (req, res) => {
 
   await runWithRequestTokens(requestTokens, async () => {
     const server = new McpServer({ name: 'ser-data-api-mcp-server', version: '1.0.0' });
-
     new SeoApiMcpServer(server).init();
 
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => randomUUID(),
+    });
 
-    let cleaned = false;
-
-    const cleanup = async () => {
-      if (cleaned) return;
-      cleaned = true;
-      try {
-        await transport.close();
-      } catch { }
-      try {
-        await server.close();
-      } catch { }
+    // Capture session id from response header so we can store the session for later requests
+    const originalSetHeader = res.setHeader.bind(res);
+    res.setHeader = function (name: string, value: string | number | string[]) {
+      const v = Array.isArray(value) ? value[0] : String(value);
+      if (name.toLowerCase() === SESSION_HEADER && v) {
+        sessions.set(v, { server, transport });
+      }
+      return originalSetHeader(name, value);
     };
-
-    res.on('close', () => {
-      void cleanup().catch(console.error);
-    });
-
-    res.on('finish', () => {
-      void cleanup().catch(console.error);
-    });
 
     try {
       await server.connect(transport);
@@ -109,9 +154,8 @@ app.all('/mcp', async (req, res) => {
         'body:',
         JSON.stringify(req.body),
       );
-
-      void cleanup().catch(console.error);
-
+      const sid = getSessionId(req);
+      if (sid) sessions.delete(sid);
       if (!res.headersSent) res.status(500).json({ error: 'Internal server error' });
     }
   });
