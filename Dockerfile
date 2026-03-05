@@ -21,5 +21,8 @@ COPY --from=builder /app/package-lock.json /app/package-lock.json
 RUN npm ci --omit=dev
 
 ENV NODE_ENV=production
+ENV HOST=0.0.0.0
 
-CMD ["node", "dist/index.js"]
+EXPOSE 5000
+
+CMD ["node", "dist/http-server.js"]
