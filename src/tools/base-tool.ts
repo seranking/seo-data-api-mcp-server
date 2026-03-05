@@ -5,6 +5,7 @@ import {
   DATA_API_BASE,
   PROJECT_API_BASE,
 } from '../constants.js';
+import { getRequestToken } from '../request-token-context.js';
 
 export enum ApiType {
   DATA = 'DATA',
@@ -59,6 +60,8 @@ export abstract class BaseTool {
   }
 
   protected getToken(): string | undefined {
+    const requestToken = getRequestToken(this.apiType);
+    if (requestToken) return requestToken;
     if (tokenProvider) {
       return tokenProvider();
     }

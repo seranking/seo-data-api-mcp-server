@@ -128,6 +128,30 @@ For batch MCP Requests testing:
 ./test-batch-http-server-curl-request.sh '<your-api-token-here>'
 ```
 
+### Passing API tokens in the client config (HTTP/remote)
+
+When you connect to the MCP server over HTTP (e.g. a remote Docker container or `npm run start-http`), you can pass **DATA_API_TOKEN** and **PROJECT_API_TOKEN** from your Claude Desktop or Gemini CLI config instead of setting them on the server. The client sends the token with each request using the `Authorization: Bearer <token>` header, and the server uses it for API calls.
+
+- **One token:** If you only use one token (e.g. Data API), set it as Bearer in your client; the server will use it for both APIs if needed.
+- **Two tokens:** Set **DATA_API_TOKEN** in the server environment (e.g. Docker) and pass **PROJECT_API_TOKEN** via Bearer, or run the server without env and pass one Bearer token (used for both APIs).
+
+Example for a client that supports URL + headers (exact keys may differ by client):
+
+```json
+{
+  "mcpServers": {
+    "seo-data-api-mcp": {
+      "url": "http://your-server:5000/mcp",
+      "headers": {
+        "Authorization": "Bearer <your-data-api-token-here>"
+      }
+    }
+  }
+}
+```
+
+If your client does not support custom headers for MCP URLs, set the tokens in the server environment (e.g. Docker `env` or `.env` when running locally).
+
 ## Connect to Claude Desktop
 
 Claude Desktop reads its configuration from `claude_desktop_config.json`.
