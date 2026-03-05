@@ -29,7 +29,7 @@ This MCP server supports two types of API access:
 
 Get your tokens from: https://online.seranking.com/admin.api.dashboard.html
 
-You can use one or both tokens depending on which tools you need. If you only use Data API tools, you can omit `PROJECT_API_TOKEN`, and vice versa.
+You can use **one or both** tokens. If you only set one (e.g. only `DATA_API_TOKEN` or only `PROJECT_API_TOKEN`), the server uses it for both APIs so you don’t need to configure the other—the model won’t search for a second token.
 
 ## Rate Limits
 
@@ -164,7 +164,7 @@ Example **`~/.gemini/settings.json`** (HTTP, tokens from .env):
 }
 ```
 
-If you only have one token, use `"Authorization": "Bearer ${PROJECT_API_TOKEN}"` (or `${DATA_API_TOKEN}`) and the server will use it for both APIs. With tokens in `.env` and `${...}` in the config, the model does not need to “find” the keys—the MCP client sends them with every request.
+**Only one token?** Set just one in `.env` (e.g. `DATA_API_TOKEN`) and use e.g. `"X-Data-Api-Token": "${DATA_API_TOKEN}"` or `"Authorization": "Bearer ${PROJECT_API_TOKEN}"` (or `${DATA_API_TOKEN}`) and the server uses that single token for both APIs so the model won't search for a project token. With tokens in `.env` and `${...}` in the config, the MCP client sends them with every request.
 
 ## Connect to Claude Desktop
 

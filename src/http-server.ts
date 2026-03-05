@@ -40,17 +40,18 @@ function headerToken(req: express.Request, name: string): string | undefined {
   return undefined;
 }
 
-/** Build request tokens: headers (X-Data-Api-Token / X-Project-Api-Token) > Bearer > server env */
+/** Build request tokens: headers > Bearer > server env. If only one token is set, use it for both APIs (one token is enough for many setups). */
 function getRequestTokensFromReq(req: express.Request): RequestTokens {
   const bearer = extractTokenFromHeader(req.headers.authorization);
   const dataFromHeader = headerToken(req, 'x-data-api-token');
   const projectFromHeader = headerToken(req, 'x-project-api-token');
-  return {
-    dataApiToken:
-      dataFromHeader ?? bearer ?? (DATA_API_TOKEN || undefined),
-    projectApiToken:
-      projectFromHeader ?? bearer ?? (PROJECT_API_TOKEN || undefined),
-  };
+  let dataApiToken =
+    dataFromHeader ?? bearer ?? (DATA_API_TOKEN || undefined);
+  let projectApiToken =
+    projectFromHeader ?? bearer ?? (PROJECT_API_TOKEN || undefined);
+  if (dataApiToken && !projectApiToken) projectApiToken = dataApiToken;
+  if (projectApiToken && !dataApiToken) dataApiToken = projectApiToken;
+  return { dataApiToken, projectApiToken };
 }
 
 function isAuthenticationRequired(req: express.Request) {
