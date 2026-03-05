@@ -22,14 +22,24 @@ const app = express();
 
 app.use(express.json());
 
-// DNS rebinding protection for localhost
+// DNS rebinding protection; allow remote hosts when using ALLOWED_HOSTS (e.g. for LAN access)
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = parseInt(process.env.PORT || '5000', 10);
 const allowedHosts = ['localhost', '127.0.0.1', '[::1]', `localhost:${PORT}`, `127.0.0.1:${PORT}`];
 if (HOST !== '0.0.0.0') {
   allowedHosts.push(HOST, `${HOST}:${PORT}`);
 }
-app.use(hostHeaderValidation(allowedHosts));
+const allowedHostsEnv = process.env.ALLOWED_HOSTS?.trim();
+if (allowedHostsEnv === '*') {
+  // Allow any Host (e.g. for LAN access); DNS rebinding risk only if server is on public IP
+  app.use((_req, _res, next) => next());
+} else {
+  const extraHosts = allowedHostsEnv?.split(',').map((h) => h.trim()).filter(Boolean) ?? [];
+  for (const h of extraHosts) {
+    allowedHosts.push(h, `${h}:${PORT}`);
+  }
+  app.use(hostHeaderValidation(allowedHosts));
+}
 
 // logger
 app.use((req, _res, next) => {
