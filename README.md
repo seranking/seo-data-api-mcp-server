@@ -137,7 +137,16 @@ Like the [official SE Ranking MCP guide](https://seranking.com/api/integrations/
 | **Docker / stdio** | Environment variables | Client config `env`: `DATA_API_TOKEN`, `PROJECT_API_TOKEN` (see Connect to Claude Desktop / Gemini CLI below). |
 | **HTTP (remote server)** | HTTP headers (env is not sent to remote servers) | Client config `headers`: `X-Data-Api-Token`, `X-Project-Api-Token` — same names as env, passed as headers. Optionally `Authorization: Bearer <token>` for a single token used for both APIs. |
 
-**Gemini CLI with HTTP** (`httpUrl`): Use `headers` with the token names below. You can use one token (Bearer) or both (X-Data-Api-Token and X-Project-Api-Token):
+**Gemini CLI with HTTP** (`httpUrl`): Use `headers` with the token names below. Prefer **env vars** so keys stay out of the config and the model doesn’t search for them on every call: put tokens in a `.env` file and reference them in `settings.json` with `${DATA_API_TOKEN}` / `${PROJECT_API_TOKEN}`. Gemini loads `.env` (from project dir or `~/.gemini/`) before parsing `settings.json`, so the values are available and the MCP client sends them automatically.
+
+Example **`.env`** (e.g. in project root or `~/.gemini/.env`):
+
+```bash
+DATA_API_TOKEN=your-data-api-token-uuid
+PROJECT_API_TOKEN=your-project-api-token-40char-hex
+```
+
+Example **`~/.gemini/settings.json`** (HTTP, tokens from .env):
 
 ```json
 {
@@ -145,8 +154,8 @@ Like the [official SE Ranking MCP guide](https://seranking.com/api/integrations/
     "seo-data-api-mcp": {
       "httpUrl": "http://your-server:5000/mcp",
       "headers": {
-        "X-Data-Api-Token": "your-data-api-token-uuid",
-        "X-Project-Api-Token": "your-project-api-token-40char-hex"
+        "X-Data-Api-Token": "${DATA_API_TOKEN}",
+        "X-Project-Api-Token": "${PROJECT_API_TOKEN}"
       },
       "timeout": 30000,
       "trust": true
@@ -155,7 +164,7 @@ Like the [official SE Ranking MCP guide](https://seranking.com/api/integrations/
 }
 ```
 
-If you only have one token, use `Authorization: Bearer <token>` and the server will use it for both APIs. If the model looks for tokens in shell env, tell it: *"The SE Ranking tokens are in the MCP client config (Gemini settings). Use the MCP tools directly."*
+If you only have one token, use `"Authorization": "Bearer ${PROJECT_API_TOKEN}"` (or `${DATA_API_TOKEN}`) and the server will use it for both APIs. With tokens in `.env` and `${...}` in the config, the model does not need to “find” the keys—the MCP client sends them with every request.
 
 ## Connect to Claude Desktop
 
@@ -241,25 +250,21 @@ Open the Gemini CLI settings file: `~/.gemini/settings.json`.
 }
 ```
 
-**Option B — HTTP (remote server):** Use `httpUrl` and pass tokens as headers (env is not sent to remote servers). Same token names as env, as headers:
+**Option B — HTTP (remote server):** Use `httpUrl` and pass tokens as headers. **Recommended:** put tokens in `.env` (project dir or `~/.gemini/.env`) and reference them in `settings.json` so the model doesn’t search for keys on each call:
 
 ```json
-{
-  "mcpServers": {
-    "seo-data-api-mcp": {
-      "httpUrl": "http://192.168.13.19:5000/mcp",
-      "headers": {
-        "X-Data-Api-Token": "your-data-api-token",
-        "X-Project-Api-Token": "your-project-api-token"
-      },
-      "timeout": 30000,
-      "trust": true
-    }
-  }
+"seo-data-api-mcp": {
+  "httpUrl": "http://192.168.13.19:5000/mcp",
+  "headers": {
+    "X-Data-Api-Token": "${DATA_API_TOKEN}",
+    "X-Project-Api-Token": "${PROJECT_API_TOKEN}"
+  },
+  "timeout": 30000,
+  "trust": true
 }
 ```
 
-Replace the token placeholder values with your tokens (see [API Tokens](#api-tokens) section).
+Define `DATA_API_TOKEN` and `PROJECT_API_TOKEN` in your `.env` (see [API tokens](#api-tokens-docker-env-vs-http-headers) for the example). Alternatively, you can paste the token values directly in `headers` (less secure).
 
 - Save the configuration file.
 
