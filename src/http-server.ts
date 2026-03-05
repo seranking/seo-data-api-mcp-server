@@ -47,9 +47,9 @@ function getRequestTokensFromReq(req: express.Request): RequestTokens {
   const projectFromHeader = headerToken(req, 'x-project-api-token');
   return {
     dataApiToken:
-      dataFromHeader ?? bearer ?? DATA_API_TOKEN || undefined,
+      dataFromHeader ?? bearer ?? (DATA_API_TOKEN || undefined),
     projectApiToken:
-      projectFromHeader ?? bearer ?? PROJECT_API_TOKEN || undefined,
+      projectFromHeader ?? bearer ?? (PROJECT_API_TOKEN || undefined),
   };
 }
 
