@@ -57,10 +57,8 @@ function getRequestTokensFromReq(req: express.Request): RequestTokens {
     'x-seranking-project-api-token',
     'x-project-api-token',
   );
-  let dataApiToken = dataFromHeader ?? bearer ?? (DATA_API_TOKEN || undefined);
-  let projectApiToken = projectFromHeader ?? bearer ?? (PROJECT_API_TOKEN || undefined);
-  if (dataApiToken && !projectApiToken) projectApiToken = dataApiToken;
-  if (projectApiToken && !dataApiToken) dataApiToken = projectApiToken;
+  const dataApiToken = dataFromHeader ?? bearer ?? (DATA_API_TOKEN || undefined);
+  const projectApiToken = projectFromHeader ?? bearer ?? (PROJECT_API_TOKEN || undefined);
   return { dataApiToken, projectApiToken };
 }
 

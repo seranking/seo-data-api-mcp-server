@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Remote/LAN access**: `ALLOWED_HOSTS` env var (comma-separated list or `*`) so the server accepts requests when the `Host` header is not localhost (e.g. `http://your-server:5000/mcp`).
 - **Token via HTTP headers**: Clients can send tokens with each request via `X-Seranking-Data-Api-Token`, `X-Seranking-Project-Api-Token`, or `Authorization: Bearer <token>`. Tokens are read from the request and passed into tools (no need to set env on the server for HTTP).
 - **Session handling**: MCP Streamable HTTP sessions are kept so that GET (event stream) and subsequent POSTs use the same server/transport. Session ID is captured from the first response and reused.
-- **Single-token fallback**: If only one token is configured (Data or Project), it is used for both APIs so the model does not search for a second token.
+- **Clear token errors**: When a token is missing for the requested API (Data vs Project), the error message tells the agent exactly which token is needed and where to add it (e.g. “Project API tools require SERANKING_PROJECT_API_TOKEN … Add it in your MCP client config”), so the agent can guide the user instead of suggesting shell env.
 - **SERANKING\_\* env names**: Primary env vars are `SERANKING_DATA_API_TOKEN` and `SERANKING_PROJECT_API_TOKEN`; `DATA_API_TOKEN` and `PROJECT_API_TOKEN` remain supported as legacy.
 - **Claude Desktop**: README documents HTTP (remote) setup with `mcp-remote` and `--header` for token passing (Option B).
 - **Gemini CLI**: README documents HTTP setup with `httpUrl` and `headers`, and using `.env` with `${SERANKING_DATA_API_TOKEN}` / `${SERANKING_PROJECT_API_TOKEN}` so tokens stay out of `settings.json`.

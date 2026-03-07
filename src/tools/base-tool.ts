@@ -16,8 +16,18 @@ export function setTokenProvider(provider: (() => string) | null) {
 }
 
 export abstract class BaseTool {
-  private readonly MISSING_TOKEN_MESSAGE = (type: ApiType) =>
-    `Missing ${type === ApiType.DATA ? 'SERANKING_DATA_API_TOKEN' : 'SERANKING_PROJECT_API_TOKEN'}. When using HTTP/MCP client, set it in your client config (e.g. Gemini settings.json) as headers.Authorization: "Bearer <token>".`;
+  private readonly MISSING_TOKEN_MESSAGE = (type: ApiType) => {
+    const isData = type === ApiType.DATA;
+    const tokenName = isData ? 'SERANKING_DATA_API_TOKEN' : 'SERANKING_PROJECT_API_TOKEN';
+    const headerName = isData ? 'X-Seranking-Data-Api-Token' : 'X-Seranking-Project-Api-Token';
+    const apiLabel = isData ? 'Data API' : 'Project API';
+    const otherLabel = isData ? 'Project API' : 'Data API';
+    return (
+      `${apiLabel} tools require ${tokenName} (or header ${headerName}). ` +
+      `You have only the ${otherLabel} token configured. ` +
+      `Add ${tokenName} in your MCP client config (e.g. Gemini settings.json headers or .env) to use ${apiLabel} tools.`
+    );
+  };
 
   abstract registerTool(server: McpServer): void;
 

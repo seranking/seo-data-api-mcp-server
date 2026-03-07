@@ -31,7 +31,7 @@ This MCP server supports two types of API access:
 
 Get your tokens from: https://online.seranking.com/admin.api.dashboard.html
 
-You can use **one or both** tokens. If you only set one (e.g. only `SERANKING_DATA_API_TOKEN` or only `SERANKING_PROJECT_API_TOKEN`), the server uses it for both APIs so you don’t need to configure the other—the model won’t search for a second token. Legacy names `DATA_API_TOKEN` and `PROJECT_API_TOKEN` remain supported.
+You can use **one or both** tokens. **Data API** tools (keyword research, backlinks, SERP, etc.) need `SERANKING_DATA_API_TOKEN`. **Project API** tools (projects, rank tracking, etc.) need `SERANKING_PROJECT_API_TOKEN`. If you only set one token, only that API’s tools work; the agent will see a clear message if it tries to use the other (e.g. “Project API tools require SERANKING_PROJECT_API_TOKEN … Add it in your MCP client config”). Legacy names `DATA_API_TOKEN` and `PROJECT_API_TOKEN` remain supported.
 
 ## Rate Limits
 
@@ -168,7 +168,7 @@ Example **`~/.gemini/settings.json`** (HTTP, tokens from .env):
 }
 ```
 
-**Only one token?** Set just one in `.env` (e.g. `SERANKING_DATA_API_TOKEN`) and use e.g. `"X-Seranking-Data-Api-Token": "${SERANKING_DATA_API_TOKEN}"` or `"Authorization": "Bearer ${SERANKING_DATA_API_TOKEN}"`. The server uses that single token for both APIs so the model won't search for a project token. With tokens in `.env` and `${...}` in the config, the MCP client sends them with every request.
+**Only one token?** Set the one you have (e.g. `SERANKING_DATA_API_TOKEN`) and the corresponding header. Only that API’s tools will work; if the agent tries the other API, it will see a clear error asking to add the other token in the client config. With tokens in `.env` and `${...}` in the config, the MCP client sends them with every request.
 
 ## Connect to Claude Desktop
 
@@ -241,7 +241,7 @@ Example of **Claude Desktop** configuration for MCP server
 }
 ```
 
-Only one token? Use a single header, e.g. `"--header", "Authorization: Bearer your-token"`. The server uses it for both APIs. Replace `your-server` and the token values with your setup.
+Only one token? Use the header for that token; only that API’s tools will work. For the other API the agent will see a clear message to add the missing token. Replace `your-server` and the token values with your setup.
 
 ## Connect to Gemini CLI
 
