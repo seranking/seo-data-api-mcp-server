@@ -246,11 +246,31 @@ export class GetDomainKeywords extends BaseTool {
             .string()
             .optional()
             .describe(
-              'Comma-separated list of SERP feature codes to include (e.g., featured_snippet,local_pack,sitelinks).',
+              'Comma-separated list of SERP feature codes to include (e.g., featured_snippet,local_pack,sitelinks). Filters keywords where the SERP feature exists on the SERP (keyword-level).',
+            ),
+          filter_serp_features_2_mode: z
+            .enum(['with_link', 'without_link'])
+            .optional()
+            .describe(
+              'SERP feature linking mode. "with_link" returns keywords where the analyzed domain IS referenced within the specified SERP feature. "without_link" returns keywords where it is NOT. Must be used together with filter_serp_features_2_value.',
+            ),
+          filter_serp_features_2_value: z
+            .string()
+            .optional()
+            .describe(
+              'The SERP feature code to check for domain linking (e.g., "sge" for AI Overview, "reviews", "featured_snippet"). Must be used together with filter_serp_features_2_mode.',
             ),
         },
       },
-      async (params) => this.makeGetRequest('/v1/domain/keywords', this.transformFilterParams(params)),
+      async (params) => {
+        const { filter_serp_features_2_mode, filter_serp_features_2_value, ...rest } = params;
+        const transformed = this.transformFilterParams(rest);
+        if (filter_serp_features_2_mode && filter_serp_features_2_value) {
+          transformed['filter[serp_features_2][mode]'] = filter_serp_features_2_mode;
+          transformed['filter[serp_features_2][value][0]'] = filter_serp_features_2_value;
+        }
+        return this.makeGetRequest('/v1/domain/keywords', transformed);
+      },
     );
   }
 }
