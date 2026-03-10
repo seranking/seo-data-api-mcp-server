@@ -167,6 +167,7 @@ app.all('/mcp', async (req, res) => {
 
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => randomUUID(),
+      retryInterval: 2000, // hint for client SSE reconnect backoff (ms)
     });
 
     // Capture session id from response header so we can store the session for later requests
@@ -209,9 +210,14 @@ app.get('/', (_req, res) => {
   });
 });
 
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   /* eslint-disable no-console */
   console.log(`MCP HTTP server running on http://${HOST}:${PORT}`);
   console.log(`MCP endpoint: http://${HOST}:${PORT}/mcp`);
   /* eslint-enable no-console */
 });
+
+// Keep SSE (GET /mcp) connections open: avoid server closing idle event streams.
+// Default keepAliveTimeout (e.g. 5s) can cause "SSE stream disconnected: TypeError: terminated" in clients.
+server.keepAliveTimeout = 72_000; // 72s, above common proxy timeouts (60s)
+server.headersTimeout = 73_000; // must be > keepAliveTimeout (Node requirement)

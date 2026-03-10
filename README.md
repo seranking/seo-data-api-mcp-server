@@ -498,6 +498,16 @@ This prompt instructs the model to perform a comprehensive competitive analysis 
 
 ## Troubleshooting
 
+### Gemini CLI: "SSE stream disconnected: TypeError: terminated"
+
+When using the HTTP transport (e.g. Gemini CLI with `httpUrl`), you may see:
+
+```text
+[MCP error] MCP ERROR (seo-data-api-mcp) Error: SSE stream disconnected: TypeError: terminated
+```
+
+This is a known [client-side behavior](https://github.com/modelcontextprotocol/typescript-sdk/issues/1211): when the SSE connection is closed (e.g. at startup or after idle), the MCP client can report it as an error even though it is often a normal disconnect. The server is configured with longer keep-alive timeouts to reduce unnecessary disconnects; the client will reconnect automatically. You can ignore this message if the server appears in the client's MCP list and tools work.
+
 ### Docker image problems
 
 If you’re having trouble getting the MCP server to connect, here are a few steps to diagnose the issue.
