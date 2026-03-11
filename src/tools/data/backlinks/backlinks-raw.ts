@@ -45,11 +45,11 @@ export class GetBacklinksRaw extends BaseTool {
                         .default('json')
                         .describe('Response format. Default: json.'),
                     order_by: z
-                        .enum(['date_found', 'first.domain_inlink_rank', 'first.inlink_rank'])
+                        .enum(['date_found', 'domain_inlink_rank', 'inlink_rank'])
                         .optional()
                         .default('date_found')
                         .describe(
-                            "Sort field: 'date_found' (most recent), 'first.domain_inlink_rank', or 'first.inlink_rank'.",
+                            "Sort field: 'date_found' (most recent), 'domain_inlink_rank', or 'inlink_rank'.",
                         ),
                     per_domain: z
                         .number()
