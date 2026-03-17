@@ -15,10 +15,9 @@ export class ListNewLostReferringDomains extends BaseTool {
           target: z.string().describe('Aim of the request: root domain, host, or URL.'),
           mode: z.enum(['domain', 'host', 'url']).optional().default('host'),
           new_lost_type: z
-            .enum(['new', 'lost', ''])
+            .enum(['new', 'lost'])
             .optional()
-            .default('')
-            .describe('Indicates whether the refdomain is new or lost. Empty returns both.'),
+            .describe('Indicates whether the refdomain is new or lost. Omit for both.'),
           date_from: z.string().optional().describe('Start date in YYYY-MM-DD format.'),
           date_to: z.string().optional().describe('End date in YYYY-MM-DD format.'),
           order_by: z

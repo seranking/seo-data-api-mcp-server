@@ -25,10 +25,9 @@ export class ListNewLostBacklinks extends BaseTool {
                             "Scope: 'domain' (incl. subdomains), 'host' (no subdomains), or 'url' (single URL). Default: host.",
                         ),
                     new_lost_type: z
-                        .enum(['new', 'lost', ''])
+                        .enum(['new', 'lost'])
                         .optional()
-                        .default('')
-                        .describe("Filter: 'new', 'lost', or empty (both)."),
+                        .describe("Filter: 'new' or 'lost'. Omit for both."),
                     date_from: z
                         .string()
                         .optional()
@@ -38,21 +37,18 @@ export class ListNewLostBacklinks extends BaseTool {
                         .optional()
                         .describe('End date in YYYY-MM-DD format (inclusive). Default: today.'),
                     link_type: z
-                        .enum(['href', 'redirect', ''])
+                        .enum(['href', 'redirect'])
                         .optional()
-                        .default('')
-                        .describe("Type: 'href' (standard), 'redirect', or empty (all)."),
+                        .describe("Type: 'href' (standard) or 'redirect'. Omit for all."),
                     anchor_type: z
-                        .enum(['text', 'image', 'undefined', ''])
+                        .enum(['text', 'image', 'undefined'])
                         .optional()
-                        .default('')
-                        .describe("Anchor type: 'text', 'image', 'undefined', or empty (all)."),
+                        .describe("Anchor type: 'text', 'image', or 'undefined'. Omit for all."),
                     dofollow: z
-                        .enum(['dofollow', 'nofollow', 'undefined', ''])
+                        .enum(['dofollow', 'nofollow', 'undefined'])
                         .optional()
-                        .default('')
                         .describe(
-                            "Attribute: 'dofollow', 'nofollow', 'undefined', or empty (all).",
+                            "Attribute: 'dofollow', 'nofollow', or 'undefined'. Omit for all.",
                         ),
                     url_from: z
                         .string()

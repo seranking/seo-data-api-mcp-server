@@ -277,7 +277,7 @@ export abstract class BaseTool {
     const query = new URLSearchParams();
 
     for (const [key, value] of Object.entries(queryParams || {})) {
-      if (value === undefined || value === null) continue;
+      if (value === undefined || value === null || value === '') continue;
 
       if (Array.isArray(value)) {
         for (const v of value) {
